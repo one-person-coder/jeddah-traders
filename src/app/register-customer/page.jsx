@@ -1,14 +1,12 @@
 "use client";
-import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import * as RadioGroup from "@radix-ui/react-radio-group";
 import { LoginHeader } from "@/components/LoginHeader/LoginHeader";
 import Link from "next/link";
-import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { toast } from "react-toastify";
-import { ErrorToast } from "@/components/utils/CustomToasts";
+import { ErrorToast, SuccessToast } from "@/components/utils/CustomToasts";
+import { useRouter } from "next/navigation";
 
 export default function RegisterCustomer() {
   const [registerFormData, setRegisterFormData] = useState({
@@ -21,6 +19,7 @@ export default function RegisterCustomer() {
     date: "",
   });
 
+  const router = useRouter();
   const [disableBtn, setDisableBtn] = useState(false);
 
   const handleInputChange = (e) => {
@@ -43,24 +42,27 @@ export default function RegisterCustomer() {
       !registerFormData.date
     ) {
       ErrorToast("Please fill in all required fields before proceeding.");
+      return;
     }
 
     setDisableBtn(true);
 
-    const response = await fetch("/api/user/register", {
+    const response = await fetch("/api/register", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify(registerFormData),
     });
 
     setDisableBtn(false);
 
-    if (!response.ok) {
-      toast.error("Failed to register. Please try again later.");
+    const rspJson = await response.json();
+
+    if (!rspJson.success) {
+      ErrorToast(rspJson.message);
       return;
     }
+
+    SuccessToast("Registration successful!");
+    router.push("/login");
   };
 
   return (

@@ -1,13 +1,58 @@
 "use client";
-import * as React from "react";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { LoginHeader } from "@/components/LoginHeader/LoginHeader";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { ErrorToast, SuccessToast } from "@/components/utils/CustomToasts";
 
 export default function LoginPage() {
-  const [showPassword, setShowPassword] = React.useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [loginFormData, SetLoginFormData] = useState({
+    username: "",
+    password: "",
+  });
 
+  const router = useRouter();
+  const [disableBtn, setDisableBtn] = useState(false);
+
+  const handleInputChange = (e) => {
+    SetLoginFormData({
+      ...loginFormData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!loginFormData.username || !loginFormData.password) {
+      ErrorToast("Please fill in all required fields before proceeding.");
+      return;
+    }
+
+    setDisableBtn(true);
+
+    const response = await fetch("/api/login", {
+      method: "POST",
+      body: JSON.stringify(loginFormData),
+    });
+
+    setDisableBtn(false);
+
+    const rspJson = await response.json();
+
+    if (!rspJson.success) {
+      ErrorToast(rspJson.message);
+      return;
+    }
+
+    SuccessToast("Login successful!");
+    setTimeout(() => {
+      router.push("/dashboard");
+    }, 600);
+  };
   return (
     <div>
       <LoginHeader />
@@ -27,17 +72,21 @@ export default function LoginPage() {
               </div>
 
               {/* Form */}
-              <form className="w-full space-y-4">
+              <form onSubmit={handleSubmit} className="w-full space-y-4">
                 <div className="space-y-4">
                   <input
                     type="text"
                     placeholder="Username"
+                    name="username"
+                    onChange={handleInputChange}
                     className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
                   />
                   <div className="relative">
                     <input
                       type={showPassword ? "text" : "password"}
                       placeholder="Password"
+                      name="password"
+                      onChange={handleInputChange}
                       className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
                     />
                     <button
