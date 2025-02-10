@@ -9,7 +9,7 @@ export function LoginHeader() {
 
   return (
     <header className="sticky top-0 z-50 px-6 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between">
+      <div className="flex h-16 items-center justify-between">
         <Link href="/">
           <span className="text-xl font-bold text-purple-600">
             Jeddah Traders
@@ -73,40 +73,19 @@ export function LoginHeader() {
         {/* Mobile Menu */}
         {isOpen && (
           <div className="absolute top-16 left-0 right-0 bg-background border-b md:hidden">
-            <nav className="container py-4 space-y-4">
-              <Link
-                href="/features"
-                className="block px-4 py-2 text-sm font-medium text-muted-foreground hover:text-purple-600 hover:bg-purple-50 rounded-md"
-              >
-                Features
-              </Link>
-              <Link
-                href="/pricing"
-                className="block px-4 py-2 text-sm font-medium text-muted-foreground hover:text-purple-600 hover:bg-purple-50 rounded-md"
-              >
-                Pricing
-              </Link>
-              <Link
-                href="/about"
-                className="block px-4 py-2 text-sm font-medium text-muted-foreground hover:text-purple-600 hover:bg-purple-50 rounded-md"
-              >
-                About
-              </Link>
-              <Link
-                href="/customers"
-                className="block px-4 py-2 text-sm font-medium text-muted-foreground hover:text-purple-600 hover:bg-purple-50 rounded-md"
-              >
-                Customers
-              </Link>
+            <nav className="bg-zinc-100 z-50 py-4 space-y-4">
               <div className="border-t pt-4 px-4 space-y-4">
                 <Button
-                  variant="ghost"
-                  className="w-full justify-start text-sm"
+                  asChild
+                  className="bg-purple-600 flex text-white hover:bg-purple-700"
                 >
-                  Sign In
+                  <Link href={"/login"}>Login</Link>
                 </Button>
-                <Button className="w-full bg-purple-600 text-white hover:bg-purple-700">
-                  Sign Up
+                <Button
+                  asChild
+                  className="bg-purple-600 flex text-white hover:bg-purple-700"
+                >
+                  <Link href={"/register-customer"}>Register Customer</Link>
                 </Button>
               </div>
             </nav>

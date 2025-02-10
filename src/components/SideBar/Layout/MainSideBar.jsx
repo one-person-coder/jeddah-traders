@@ -10,6 +10,8 @@ import {
   BookOpen,
   Tags,
   Images,
+  User,
+  ChartColumn,
 } from "lucide-react";
 import TopNav from "./TopNavBar";
 import AnchorLink from "@/components/utils/AnchorLink";
@@ -18,37 +20,32 @@ const navigation = [
   {
     title: "Dashboards",
     icon: LayoutDashboard,
-    url: "/",
+    url: "/dashboard",
+  },
+  {
+    title: "Stats",
+    icon: ChartColumn,
+    url: "/dashboard/stats",
   },
   {
     title: "Users",
+    icon: User,
+    url: "/dashboard/users",
+  },
+  {
+    title: "Customers",
     icon: Users,
-    url: "/users",
+    url: "/dashboard/customers",
   },
   {
-    title: "Blogs",
-    icon: BookOpen,
-    url: "/blogs",
-  },
-  {
-    title: "Categories",
-    icon: Tags,
-    url: "/categories",
-  },
-  {
-    title: "Comments",
-    icon: MessageSquare,
-    url: "/comments",
-  },
-  {
-    title: "Media",
-    icon: Images,
-    url: "/media",
+    title: "Reports",
+    icon: Users,
+    url: "/dashboard/reports",
   },
   {
     title: "Settings",
     icon: Settings,
-    url: "/settings/profile",
+    url: "/dashboard/settings/profile",
   },
 ];
 

@@ -1,5 +1,7 @@
+"use client";
+
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 
 const AnchorLink = ({
@@ -9,11 +11,13 @@ const AnchorLink = ({
   classes = "",
   style = {},
 }) => {
+  const pathname = usePathname();
   const router = useRouter();
+  const isActive = pathname === href;
+
+  console.log(isActive, pathname);
 
   const handleHover = (href) => {
-    console.log("fetching", href);
-
     router.prefetch(href);
   };
 
@@ -23,7 +27,14 @@ const AnchorLink = ({
         href={href}
         onMouseEnter={() => handleHover(href)}
         prefetch={prefetch}
-        className={classes}
+        className={
+          classes +
+          `${
+            isActive
+              ? "!text-white !bg-[#8C57FF]"
+              : "bg-transparent text-zinc-700"
+          }`
+        }
         style={style}
       >
         {children}

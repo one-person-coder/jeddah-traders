@@ -12,7 +12,7 @@ export default function LoginPage() {
     <div>
       <LoginHeader />
       <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
-        <Card className="w-full max-w-[400px]">
+        <Card className="w-full max-w-[600px]">
           <CardContent className="pt-6">
             <div className="flex flex-col items-center space-y-6">
               {/* Welcome Text */}

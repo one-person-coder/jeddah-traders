@@ -4,6 +4,7 @@ import MapPinSvg from "@/components/utils/SvgJsx/MapPinSvg";
 import MonitorSvg from "@/components/utils/SvgJsx/MonitorSvg";
 import NavBarPills from "@/components/NavBarPills";
 import Image from "next/image";
+import ProfileSvg from "@/components/utils/SvgJsx/ProfileSvg";
 
 const layout = ({ children }) => {
   return (
@@ -29,12 +30,8 @@ const layout = ({ children }) => {
               </div>
               <div className="mt-3 flex gap-x-6 flex-wrap justify-center gap-y-2">
                 <div className="flex gap-2 items-center text-zinc-600">
-                  <MonitorSvg />
-                  <span>Programmer & Ml Expert</span>
-                </div>
-                <div className="flex gap-2 items-center text-zinc-600">
-                  <MapPinSvg />
-                  <span>Dera Ghazi Khan</span>
+                  <ProfileSvg />
+                  <span>Hussain_coder</span>
                 </div>
                 <div className="flex gap-2 items-center text-zinc-600">
                   <CalendarSvg />

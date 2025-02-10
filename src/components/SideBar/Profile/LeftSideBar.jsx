@@ -9,7 +9,7 @@ import ProfileSvg from "@/components/utils/SvgJsx/ProfileSvg";
 const LeftSideBar = () => {
   return (
     <div>
-      <div className="prose max-w-[100%] sm:break-normal break-all">
+      <div className="prose max-w-[100%] grid sm:grid-cols-2 gap-4 sm:break-normal break-all">
         <div className="shadow-light p-4 rounded-md bg-white">
           <div>
             <span className="text-zinc-500">About</span>
@@ -36,25 +36,9 @@ const LeftSideBar = () => {
                 <span className="text-zinc-500 ml-2">Active</span>
               </div>
             </div>
-            <div className="text-zinc-600 flex gap-1 items-center">
-              <FlagSvg />
-              <div>
-                <span>Country:</span>
-                <span className="text-zinc-500 ml-2">Pakistan</span>
-              </div>
-            </div>
-            <div className="text-zinc-600 flex gap-1 items-center">
-              <MailSvg />
-              <div>
-                <span>Email:</span>
-                <span className="text-zinc-500 ml-2">
-                  hussaincoder2006@gmail.com
-                </span>
-              </div>
-            </div>
           </div>
         </div>
-        <div className="shadow-light p-4 rounded-md bg-white mt-5">
+        <div className="shadow-light p-4 rounded-md bg-white">
           <div>
             <span className="text-zinc-500">Overview</span>
           </div>
@@ -62,22 +46,8 @@ const LeftSideBar = () => {
             <div className="text-zinc-600 flex gap-1 items-center">
               <BookOpenSvg />
               <div>
-                <span>Total Blogs:</span>
+                <span>Total Bills:</span>
                 <span className="text-zinc-500 ml-2">38</span>
-              </div>
-            </div>
-            <div className="text-zinc-600 flex gap-1 items-center">
-              <MessageSquareSvg />
-              <div>
-                <span>Total Comments:</span>
-                <span className="text-zinc-500 ml-2">20</span>
-              </div>
-            </div>
-            <div className="text-zinc-600 flex gap-1 items-center">
-              <MessageSquareReplySvg />
-              <div>
-                <span>Total Replies:</span>
-                <span className="text-zinc-500 ml-2">8</span>
               </div>
             </div>
           </div>

@@ -29,7 +29,7 @@ export default function RegisterCustomer() {
 
               <form className="w-full space-y-10">
                 <hr />
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <h3 className="font-semibold mb-2 text-sm">
                       Choose Gender{" "}
@@ -73,7 +73,7 @@ export default function RegisterCustomer() {
                   <hr />
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <h3 className="font-semibold  mb-2 text-sm">
                       Customer Name{" "}
@@ -163,7 +163,7 @@ export default function RegisterCustomer() {
                     />
                   </div>
                   <div
-                    className="col-span-2
+                    className="md:col-span-2
                   "
                   >
                     <h3 className="font-semibold mb-2 text-sm">
