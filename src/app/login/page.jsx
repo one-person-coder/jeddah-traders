@@ -103,7 +103,7 @@ export default function LoginPage() {
                   </div>
                 </div>
 
-                <Button className="w-full h-11 bg-purple-600 hover:bg-purple-700">
+                <Button disabled={disableBtn} className="w-full h-11 bg-purple-600 hover:bg-purple-700">
                   Login
                 </Button>
 

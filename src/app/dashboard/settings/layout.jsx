@@ -1,11 +1,8 @@
 "use client";
 import CalendarSvg from "@/components/utils/SvgJsx/CalendarSvg";
-import MapPinSvg from "@/components/utils/SvgJsx/MapPinSvg";
-import MonitorSvg from "@/components/utils/SvgJsx/MonitorSvg";
 import NavBarPills from "@/components/NavBarPills";
 import Image from "next/image";
 import ProfileSvg from "@/components/utils/SvgJsx/ProfileSvg";
-import AnchorLink from "@/components/utils/AnchorLink";
 import { LogOut } from "lucide-react";
 import Link from "next/link";
 
@@ -30,7 +27,9 @@ const layout = ({ children }) => {
               </div>
               <div className="p-3 ml-3 sm:ml-0">
                 <div className="prose text-center lg:text-start">
-                  <h2 className="font-semibold text-zinc-700 mb-0 text-xl">John Doe</h2>
+                  <h2 className="font-semibold text-zinc-700 mb-0 text-xl">
+                    John Doe
+                  </h2>
                 </div>
                 <div className="mt-3 flex gap-x-6 flex-wrap justify-center gap-y-2">
                   <div className="flex gap-2 items-center text-zinc-600">

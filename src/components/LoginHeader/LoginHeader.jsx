@@ -58,7 +58,7 @@ export function LoginHeader() {
             asChild
             className="bg-purple-600 flex text-white hover:bg-purple-700"
           >
-            <Link href={"/register-customer"}>Register Customer</Link>
+            <Link href={"/register"}>Register Customer</Link>
           </Button>
         </div>
 
@@ -85,7 +85,7 @@ export function LoginHeader() {
                   asChild
                   className="bg-purple-600 flex text-white hover:bg-purple-700"
                 >
-                  <Link href={"/register-customer"}>Register Customer</Link>
+                  <Link href={"/register"}>Register Customer</Link>
                 </Button>
               </div>
             </nav>
