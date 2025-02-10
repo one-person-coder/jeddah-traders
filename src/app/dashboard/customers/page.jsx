@@ -1,12 +1,12 @@
+import CustomerLists from "@/components/Card/CustomerList";
 import UserCards from "@/components/Card/UserCards";
-import UserLists from "@/components/Card/UserLists";
 import React from "react";
 
 const CustomerPage = () => {
   return (
     <div className="custom-width">
       <UserCards />
-      <UserLists />
+      <CustomerLists />
     </div>
   );
 };

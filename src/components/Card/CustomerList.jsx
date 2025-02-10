@@ -37,6 +37,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
@@ -45,7 +46,7 @@ const users = [
     id: 1,
     name: "Hussain Coder",
     username: "hussain_coder",
-    avatar: "HC",
+    avatar: "OW",
     role: "Admin",
     plan: "Basic",
     status: "Pending",
@@ -56,7 +57,7 @@ const users = [
     id: 2,
     name: "Ali Coder",
     username: "ali_coder",
-    avatar: "AC",
+    avatar: "GM",
     role: "Admin",
     plan: "Basic",
     status: "Active",
@@ -65,7 +66,7 @@ const users = [
   },
 ];
 
-export default function UserLists() {
+export default function CustomerLists() {
   const [selectedUsers, setSelectedUsers] = React.useState([]);
   const [isFiltersVisible, setIsFiltersVisible] = React.useState(true);
 
@@ -183,7 +184,6 @@ export default function UserLists() {
             <Table>
               <TableHeader>
                 <TableRow className="bg-gray-50">
-                  <TableHead>Sr.</TableHead>
                   <TableHead>USER</TableHead>
                   <TableHead>ROLE</TableHead>
                   <TableHead>STATUS</TableHead>
@@ -192,13 +192,8 @@ export default function UserLists() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {users.map((user, index) => (
+                {users.map((user) => (
                   <TableRow key={user.id} className="hover:bg-gray-50/50">
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium">{index + 1}</span>
-                      </div>
-                    </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-3">
                         <div className="relative">

@@ -1,14 +1,67 @@
 "use client";
-import * as React from "react";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import * as RadioGroup from "@radix-ui/react-radio-group";
 import { LoginHeader } from "@/components/LoginHeader/LoginHeader";
 import Link from "next/link";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import { toast } from "react-toastify";
+import { ErrorToast } from "@/components/utils/CustomToasts";
 
 export default function RegisterCustomer() {
-  const [showPassword, setShowPassword] = React.useState(false);
+  const [registerFormData, setRegisterFormData] = useState({
+    fullname: "",
+    username: "",
+    email: "",
+    pNumber: "",
+    password: "",
+    gender: "male",
+    date: "",
+  });
+
+  const [disableBtn, setDisableBtn] = useState(false);
+
+  const handleInputChange = (e) => {
+    setRegisterFormData({
+      ...registerFormData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (
+      !registerFormData.fullname ||
+      !registerFormData.username ||
+      !registerFormData.email ||
+      !registerFormData.pNumber ||
+      !registerFormData.password ||
+      !registerFormData.gender ||
+      !registerFormData.date
+    ) {
+      ErrorToast("Please fill in all required fields before proceeding.");
+    }
+
+    setDisableBtn(true);
+
+    const response = await fetch("/api/user/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(registerFormData),
+    });
+
+    setDisableBtn(false);
+
+    if (!response.ok) {
+      toast.error("Failed to register. Please try again later.");
+      return;
+    }
+  };
 
   return (
     <div>
@@ -27,8 +80,77 @@ export default function RegisterCustomer() {
                 </p>
               </div>
 
-              <form className="w-full space-y-10">
+              <form onSubmit={handleSubmit} className="w-full space-y-10">
                 <hr />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <h3 className="font-semibold  mb-2 text-sm">
+                      Full Name <span className="text-red-500">*</span>
+                    </h3>
+                    <input
+                      type="text"
+                      name="fullname"
+                      placeholder="Enter Full Name"
+                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold  mb-2 text-sm">
+                      Username <span className="text-red-500">*</span>
+                    </h3>
+                    <input
+                      type="text"
+                      name="username"
+                      placeholder="Enter Username"
+                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold  mb-2 text-sm">
+                      Email <span className="text-red-500">*</span>
+                    </h3>
+                    <input
+                      type="email"
+                      name="email"
+                      placeholder="Enter Email"
+                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold  mb-2 text-sm">
+                      Phone No.
+                      <span className="text-red-500">*</span>
+                    </h3>
+                    <input
+                      type="text"
+                      name="pNumber"
+                      placeholder="Enter Phone Number"
+                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div className="col-span-2">
+                    <h3 className="font-semibold mb-2 text-sm">
+                      Password <span className="text-red-500 text-lg">*</span>
+                    </h3>
+                    <input
+                      type="text"
+                      name="password"
+                      placeholder="Enter Password"
+                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                </div>
+
+                <div className="my-6">
+                  <hr />
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <h3 className="font-semibold mb-2 text-sm">
@@ -37,7 +159,14 @@ export default function RegisterCustomer() {
                     </h3>
                     <div>
                       <RadioGroup.Root
-                        defaultValue={"male"}
+                        defaultValue={registerFormData.gender}
+                        onValueChange={(value) =>
+                          setRegisterFormData((prevData) => ({
+                            ...prevData,
+                            gender: value,
+                          }))
+                        }
+                        name="gender"
                         className="max-w-lg w-full grid grid-cols-2 gap-3"
                       >
                         <RadioGroup.Item
@@ -63,122 +192,16 @@ export default function RegisterCustomer() {
                     <input
                       type="date"
                       name="date"
-                      id="date"
+                      onChange={handleInputChange}
                       className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[7px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
                     />
                   </div>
                 </div>
 
-                <div className="my-6">
-                  <hr />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <h3 className="font-semibold  mb-2 text-sm">
-                      Customer Name{" "}
-                      <span className="text-red-500 text-lg">*</span>
-                    </h3>
-                    <input
-                      type="text"
-                      placeholder="Customer Name"
-                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
-                    />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold  mb-2 text-sm">
-                      Father Name{" "}
-                      <span className="text-red-500 text-lg">*</span>
-                    </h3>
-                    <input
-                      type="text"
-                      placeholder="Father Name"
-                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
-                    />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold  mb-2 text-sm">
-                      Cast (Zaat){" "}
-                      <span className="text-red-500 text-lg">*</span>
-                    </h3>
-                    <input
-                      type="text"
-                      placeholder="Cast"
-                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
-                    />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold  mb-2 text-sm">
-                      NIC (Nation Identity Card){" "}
-                      <span className="text-red-500 text-lg">*</span>
-                    </h3>
-                    <input
-                      type="text"
-                      placeholder="NIC"
-                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
-                    />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-2 text-sm">
-                      Working Address{" "}
-                      <span className="text-red-500 text-lg">*</span>
-                    </h3>
-                    <input
-                      type="text"
-                      placeholder="Working Address"
-                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
-                    />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-2 text-sm">
-                      Residence Address{" "}
-                      <span className="text-red-500 text-lg">*</span>
-                    </h3>
-                    <input
-                      type="text"
-                      placeholder="Residence Address"
-                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
-                    />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-2 text-sm">
-                      Contact No 1{" "}
-                      <span className="text-red-500 text-lg">*</span>
-                    </h3>
-                    <input
-                      type="text"
-                      placeholder="Contact"
-                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
-                    />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-2 text-sm">
-                      Contact No 2{" "}
-                      <span className="text-red-500 text-lg"></span>
-                    </h3>
-                    <input
-                      type="text"
-                      placeholder="Contact"
-                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
-                    />
-                  </div>
-                  <div
-                    className="md:col-span-2
-                  "
-                  >
-                    <h3 className="font-semibold mb-2 text-sm">
-                      Buying Details{" "}
-                      <span className="text-red-500 text-lg">*</span>
-                    </h3>
-                    <textarea
-                      type="text"
-                      placeholder="Buying Details"
-                      className="w-full border-2 min-h-[100px] max-h-[200px] border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
-                    />
-                  </div>
-                </div>
-
-                <Button className="w-full h-11 bg-purple-600 hover:bg-purple-700">
+                <Button
+                  disabled={disableBtn}
+                  className="w-full h-11 bg-purple-600 hover:bg-purple-700"
+                >
                   Register Now
                 </Button>
 

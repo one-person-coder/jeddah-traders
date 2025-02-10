@@ -1,16 +1,9 @@
-import {
-  Users,
-  UserCheck,
-  UserX,
-  ClockIcon as UserClock,
-  TrendingUp,
-  TrendingDown,
-} from "lucide-react";
+import { Users, UserCheck, UserX, ClockIcon as UserClock } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 export default function UserCards() {
   return (
-    <div className="container py-6">
+    <div className="py-6">
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {/* Total Users Card */}
         <Card className="relative overflow-hidden transition-all hover:shadow-lg">
