@@ -15,8 +15,6 @@ const AnchorLink = ({
   const router = useRouter();
   const isActive = pathname === href;
 
-  console.log(isActive, pathname);
-
   const handleHover = (href) => {
     router.prefetch(href);
   };
