@@ -38,7 +38,6 @@ export async function POST(request) {
       id: user._id,
     };
 
-
     const token = await jwt.sign(tokenData, process.env.TOKEN_SECRET, {
       expiresIn: "15d",
     });
@@ -53,7 +52,7 @@ export async function POST(request) {
 
     return response;
   } catch (error) {
-    
+
     return NextResponse.json(
       {
         success: false,
