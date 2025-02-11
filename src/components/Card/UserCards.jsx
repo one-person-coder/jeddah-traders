@@ -1,11 +1,15 @@
 import { Users, UserCheck, UserX, ClockIcon as UserClock } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
-export default function UserCards() {
+export default async function UserCards({ data }) {
+  const users = data.data;
+  const activeUsers = users.filter((user) => user.status === "active");
+  const inActiveUsers = users.filter((user) => user.status === "inactive");
+  const pendingUsers = users.filter((user) => user.status === "pending");
+
   return (
     <div className="py-6">
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {/* Total Users Card */}
         <Card className="relative overflow-hidden transition-all hover:shadow-lg">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
@@ -13,7 +17,7 @@ export default function UserCards() {
                 <p className="text-sm font-medium text-muted-foreground">
                   Total Users
                 </p>
-                <h2 className="text-3xl font-bold">2,543</h2>
+                <h2 className="text-3xl font-bold">{users.length}</h2>
               </div>
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-purple-100">
                 <Users className="h-6 w-6 text-purple-600" />
@@ -31,7 +35,7 @@ export default function UserCards() {
                 <p className="text-sm font-medium text-muted-foreground">
                   Active Users
                 </p>
-                <h2 className="text-3xl font-bold">1,875</h2>
+                <h2 className="text-3xl font-bold">{activeUsers.length}</h2>
               </div>
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
                 <UserCheck className="h-6 w-6 text-green-600" />
@@ -49,7 +53,7 @@ export default function UserCards() {
                 <p className="text-sm font-medium text-muted-foreground">
                   Inactive Users
                 </p>
-                <h2 className="text-3xl font-bold">428</h2>
+                <h2 className="text-3xl font-bold">{inActiveUsers.length}</h2>
               </div>
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
                 <UserX className="h-6 w-6 text-red-600" />
@@ -67,7 +71,7 @@ export default function UserCards() {
                 <p className="text-sm font-medium text-muted-foreground">
                   Pending Users
                 </p>
-                <h2 className="text-3xl font-bold">240</h2>
+                <h2 className="text-3xl font-bold">{pendingUsers.length}</h2>
               </div>
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-100">
                 <UserClock className="h-6 w-6 text-amber-600" />

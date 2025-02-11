@@ -36,71 +36,117 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { statusColors } from "@/constant/constant";
 
-const users = [
-  {
-    id: 1,
-    name: "Hussain Coder",
-    username: "hussain_coder",
-    avatar: "HC",
-    role: "Admin",
-    plan: "Basic",
-    status: "Pending",
-    lastActive: "2 hours ago",
-    joinDate: "Jan 15, 2024",
-  },
-  {
-    id: 2,
-    name: "Ali Coder",
-    username: "ali_coder",
-    avatar: "AC",
-    role: "Admin",
-    plan: "Basic",
-    status: "Active",
-    lastActive: "5 mins ago",
-    joinDate: "Jan 12, 2024",
-  },
-];
-
-export default function UserLists() {
-  const [selectedUsers, setSelectedUsers] = React.useState([]);
+export default function UserLists({ data }) {
   const [isFiltersVisible, setIsFiltersVisible] = React.useState(true);
 
-  const toggleUser = (userId) => {
-    setSelectedUsers((prev) =>
-      prev.includes(userId)
-        ? prev.filter((id) => id !== userId)
-        : [...prev, userId]
-    );
-  };
+  const [storeUsers, setStoreUsers] = React.useState(
+    data.data.sort((a, b) => (b.role === "admin") - (a.role === "admin"))
+  );
 
-  const toggleAll = () => {
-    setSelectedUsers((prev) =>
-      prev.length === users.length ? [] : users.map((user) => user.id)
-    );
-  };
+  const [users, setUsers] = React.useState(
+    data.data.sort((a, b) => (b.role === "admin") - (a.role === "admin"))
+  );
+  const [statusFilter, setStatusFilter] = React.useState("all");
+  const [roleFilter, setRoleFilter] = React.useState("all");
+  const [searchTerm, setSearchTerm] = React.useState("");
 
-  // Status badge variants
-  const getStatusBadge = (status) => {
-    const variants = {
-      Active:
-        "bg-emerald-50 text-emerald-700 border-emerald-100 hover:bg-emerald-100",
-      Pending: "bg-amber-50 text-amber-700 border-amber-100 hover:bg-amber-100",
-      Inactive: "bg-red-50 text-red-700 border-red-100 hover:bg-red-100",
+  React.useEffect(() => {
+    const fetchFilterData = async () => {
+      const response = await fetch(`/api/users/status`, {
+        method: "GET",
+      });
+      const userStatus = await response.json();
+
+      if (!userStatus.success) {
+        ErrorToast("User Cannot Fetch Server Error");
+      }
+
+      if (!userStatus.success) {
+        ErrorToast("User Cannot Fetch Server Error");
+      }
+
+      const sortUsers = userStatus.data.sort(
+        (a, b) => (b.role === "admin") - (a.role === "admin")
+      );
+
+      const filtered = sortUsers.filter((user) => user.status === statusFilter);
+      setUsers(filtered);
     };
 
-    return (
-      <Badge
-        variant="secondary"
-        className={cn("font-medium border px-2 py-0.5 capitalize")}
-      >
-        {status}
-      </Badge>
+    if (statusFilter !== "all") {
+      fetchFilterData();
+    } else {
+      refreshData();
+    }
+  }, [statusFilter]);
+
+  React.useEffect(() => {
+    const fetchFilterData = async () => {
+      const response = await fetch(`/api/users/status`, {
+        method: "GET",
+      });
+      const userStatus = await response.json();
+
+      if (!userStatus.success) {
+        ErrorToast("User Cannot Fetch Server Error");
+      }
+
+      if (!userStatus.success) {
+        ErrorToast("User Cannot Fetch Server Error");
+      }
+
+      const sortUsers = userStatus.data.sort(
+        (a, b) => (b.role === "admin") - (a.role === "admin")
+      );
+
+      const filtered = sortUsers.filter((user) => user.role === roleFilter);
+      setUsers(filtered);
+    };
+
+    if (roleFilter !== "all") {
+      fetchFilterData();
+    } else {
+      refreshData();
+    }
+  }, [roleFilter]);
+
+  const refreshData = async () => {
+    const response = await fetch(`/api/users/status`, {
+      method: "GET",
+    });
+    const userStatus = await response.json();
+
+    if (!userStatus.success) {
+      ErrorToast("User Cannot Fetch Server Error");
+    }
+
+    if (!userStatus.success) {
+      ErrorToast("User Cannot Fetch Server Error");
+    }
+
+    setUsers(
+      userStatus.data.sort(
+        (a, b) => (b.role === "admin") - (a.role === "admin")
+      )
     );
   };
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  React.useEffect(() => {
+    const filteredUsers = storeUsers.filter(
+      (user) =>
+        user.fullname.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.username.toLowerCase().includes(searchTerm)
+    );
+    setUsers(filteredUsers);
+  }, [searchTerm]);
 
   return (
     <div className="py-8 space-y-8">
@@ -116,9 +162,12 @@ export default function UserLists() {
         <Button
           className="bg-purple-600 hover:bg-purple-700 transition-all shadow-lg hover:shadow-purple-200"
           size="lg"
+          asChild
         >
-          <Plus className="mr-2 h-4 w-4" />
-          Add New User
+          <Link href={"/dashboard/users/new"}>
+            <Plus className="h-4 w-4" />
+            Add New User
+          </Link>
         </Button>
       </div>
 
@@ -135,7 +184,7 @@ export default function UserLists() {
                 <Filter className="mr-2 h-4 w-4 text-purple-600" />
                 Filters
               </Button>
-              <Button variant="outline">
+              <Button onClick={refreshData} variant="outline">
                 <RefreshCcw className="mr-2 h-4 w-4 text-purple-600" />
                 Refresh
               </Button>
@@ -144,6 +193,7 @@ export default function UserLists() {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
+                onChange={handleSearchChange}
                 placeholder="Search users..."
                 className="w-full pl-9 sm:w-[300px] bg-gray-50 border-0 ring-1 ring-gray-200"
               />
@@ -153,18 +203,18 @@ export default function UserLists() {
           {/* Filters */}
           {isFiltersVisible && (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 mb-6 p-4 bg-gray-50 rounded-lg border border-dashed">
-              <Select>
+              <Select value={roleFilter} onValueChange={setRoleFilter}>
                 <SelectTrigger className="bg-white">
                   <SelectValue placeholder="Role: All" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Roles</SelectItem>
                   <SelectItem value="admin">Admin</SelectItem>
-                  <SelectItem value="user">Manager</SelectItem>
+                  <SelectItem value="manager">Manager</SelectItem>
                 </SelectContent>
               </Select>
 
-              <Select>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger className="bg-white">
                   <SelectValue placeholder="Status: All" />
                 </SelectTrigger>
@@ -193,7 +243,7 @@ export default function UserLists() {
               </TableHeader>
               <TableBody>
                 {users.map((user, index) => (
-                  <TableRow key={user.id} className="hover:bg-gray-50/50">
+                  <TableRow key={index} className="hover:bg-gray-50/50">
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <span className="font-medium">{index + 1}</span>
@@ -203,13 +253,22 @@ export default function UserLists() {
                       <div className="flex items-center gap-3">
                         <div className="relative">
                           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100 text-sm font-medium text-purple-600 ring-2 ring-white">
-                            {user.avatar}
+                            {user.fullname
+                              .split(" ")
+                              .map((word) => word.charAt(0))
+                              .join("")}
                           </div>
-                          <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white bg-emerald-500" />
+                          <div
+                            className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white"
+                            style={{
+                              backgroundColor:
+                                statusColors[`more-${user.status}`],
+                            }}
+                          />
                         </div>
                         <div>
                           <div className="font-medium text-gray-900">
-                            {user.name}
+                            {user.fullname}
                           </div>
                           <div className="text-sm text-muted-foreground">
                             {user.username}
@@ -220,13 +279,30 @@ export default function UserLists() {
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <User2 className="h-4 w-4 text-purple-600" />
-                        <span className="font-medium">{user.role}</span>
+                        <span className="font-medium">
+                          {user.role.toUpperCase()}
+                        </span>
                       </div>
                     </TableCell>
-                    <TableCell>{getStatusBadge(user.status)}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <span
+                          className="inline-flex items-center rounded-md text-xs transition-colors font-medium px-2 py-0.5 capitalize"
+                          style={{
+                            backgroundColor: statusColors[user.status],
+                          }}
+                        >
+                          {user.status}
+                        </span>
+                      </div>
+                    </TableCell>
                     <TableCell>
                       <span className="text-sm text-muted-foreground">
-                        {user.joinDate}
+                        {new Date(user.createdAt).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "2-digit",
+                          year: "numeric",
+                        })}
                       </span>
                     </TableCell>
                     <TableCell>

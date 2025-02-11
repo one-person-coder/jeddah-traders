@@ -3,12 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import * as RadioGroup from "@radix-ui/react-radio-group";
 import { LoginHeader } from "@/components/LoginHeader/LoginHeader";
-import Link from "next/link";
 import { useState } from "react";
 import { ErrorToast, SuccessToast } from "@/components/utils/CustomToasts";
 import { useRouter } from "next/navigation";
 
-export default function RegisterCustomer() {
+export default function UserPopUp() {
   const [registerFormData, setRegisterFormData] = useState({
     fullname: "",
     username: "",
@@ -17,6 +16,7 @@ export default function RegisterCustomer() {
     password: "",
     gender: "male",
     date: "",
+    status: "pending",
   });
 
   const router = useRouter();
@@ -67,18 +67,14 @@ export default function RegisterCustomer() {
 
   return (
     <div>
-      <LoginHeader />
-      <div className="flex items-center justify-center bg-slate-50 p-4">
-        <Card className="w-full max-w-[800px]">
+      <div className="flex items-center justify-center0 p-4">
+        <Card className="absolute z-[100] right-0 top-0 min-h-screen w-full max-w-[800px]">
           <CardContent className="pt-6">
             <div className="flex flex-col items-center space-y-6">
               <div className="text-center">
-                <h1 className="text-2xl font-semibold mb-4">
-                  Welcome to <br />
-                  Jeddah Traders!
-                </h1>
+                <h1 className="text-2xl font-semibold mb-4">Register User</h1>
                 <p className="text-muted-foreground">
-                  Please Register your account here.
+                  Please register a new user.
                 </p>
               </div>
 
@@ -135,7 +131,7 @@ export default function RegisterCustomer() {
                       onChange={handleInputChange}
                     />
                   </div>
-                  <div className="sm:col-span-2">
+                  <div className="md:col-span-2">
                     <h3 className="font-semibold mb-2 text-sm">
                       Password <span className="text-red-500 text-lg">*</span>
                     </h3>
@@ -153,7 +149,7 @@ export default function RegisterCustomer() {
                   <hr />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <h3 className="font-semibold mb-2 text-sm">
                       Choose Gender{" "}
@@ -198,23 +194,52 @@ export default function RegisterCustomer() {
                       className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[7px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
                     />
                   </div>
+                  <div className="col-span-1 sm:col-span-2">
+                    <h3 className="font-semibold mb-2 text-sm">
+                      Choose User Status{" "}
+                      <span className="text-red-500 text-lg">*</span>
+                    </h3>
+                    <div>
+                      <RadioGroup.Root
+                        defaultValue={registerFormData.status}
+                        onValueChange={(value) =>
+                          setRegisterFormData((prevData) => ({
+                            ...prevData,
+                            status: value,
+                          }))
+                        }
+                        name="status"
+                        className="max-w-lg w-full grid sm:grid-cols-3 gap-3"
+                      >
+                        <RadioGroup.Item
+                          value="active"
+                          className="ring-[1px] ring-border rounded py-[9px] px-3 data-[state=checked]:ring-2 data-[state=checked]:ring-blue-500 "
+                        >
+                          <span className="tracking-tight">Active</span>
+                        </RadioGroup.Item>
+                        <RadioGroup.Item
+                          value="pending"
+                          className="ring-[1px] ring-border rounded py-[9px] px-3 data-[state=checked]:ring-2 data-[state=checked]:ring-blue-500"
+                        >
+                          <span className="tracking-tight">Pending</span>
+                        </RadioGroup.Item>
+                        <RadioGroup.Item
+                          value="inactive"
+                          className="ring-[1px] ring-border rounded py-[9px] px-3 data-[state=checked]:ring-2 data-[state=checked]:ring-blue-500"
+                        >
+                          <span className="tracking-tight">Inactive</span>
+                        </RadioGroup.Item>
+                      </RadioGroup.Root>
+                    </div>
+                  </div>
                 </div>
 
                 <Button
                   disabled={disableBtn}
                   className="w-full h-11 bg-purple-600 hover:bg-purple-700"
                 >
-                  Register Now
+                  Register User
                 </Button>
-
-                <div className="text-center">
-                  <Link
-                    href={"/login"}
-                    className="text-center text-sm text-muted-foreground hover:underline"
-                  >
-                    Already have an account.
-                  </Link>
-                </div>
               </form>
             </div>
           </CardContent>
