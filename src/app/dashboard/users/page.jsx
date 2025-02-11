@@ -3,6 +3,8 @@ import UserLists from "@/components/Card/UserLists";
 import connectDB from "@/dbConfig/config";
 import UserInfo from "@/models/UserInfo";
 
+export const revalidate = 0;
+
 const UsersPage = async () => {
   await connectDB();
   const users = JSON.parse(
