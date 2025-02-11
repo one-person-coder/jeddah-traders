@@ -1,6 +1,8 @@
 import { Users, UserCheck, UserX, ClockIcon as UserClock } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
+export const reValidate = 0;
+
 export default async function UserCards({ data }) {
   const users = data;
   const activeUsers = users.filter((user) => user.status === "active");
