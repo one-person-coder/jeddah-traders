@@ -18,6 +18,7 @@ export async function POST(request) {
       date,
       status,
     } = reqBody;
+    console.log(date);
 
     const existingUser = await UserInfo.findOne({
       $or: [{ username }, { email }],

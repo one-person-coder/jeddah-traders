@@ -39,7 +39,7 @@ const UserInfoSchema = new mongoose.Schema(
     },
     date: {
       type: Date,
-      default: Date.now,
+      required: [true, "Please enter your date of birth"],
     },
     status: {
       type: String,

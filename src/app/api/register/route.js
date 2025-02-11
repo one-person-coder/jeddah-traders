@@ -11,6 +11,7 @@ export async function POST(request) {
     const { fullname, username, email, pNumber, password, gender, date } =
       reqBody;
 
+
     // Check if user already exists
     const existingUser = await UserInfo.findOne({
       $or: [{ username }, { email }],

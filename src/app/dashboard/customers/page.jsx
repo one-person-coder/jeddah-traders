@@ -3,7 +3,7 @@ import UserLists from "@/components/Card/UserLists";
 import connectDB from "@/dbConfig/config";
 import UserInfo from "@/models/UserInfo";
 
-export const revalidate = 0; 
+export const revalidate = 0;
 
 const UsersPage = async () => {
   await connectDB();
@@ -14,6 +14,8 @@ const UsersPage = async () => {
       }).select("-password")
     )
   );
+
+  
 
   return (
     <div className="custom-width">

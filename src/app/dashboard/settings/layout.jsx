@@ -27,7 +27,7 @@ const layout = ({ children }) => {
               </div>
               <div className="p-3 ml-3 sm:ml-0">
                 <div className="prose text-center lg:text-start">
-                  <h2 className="font-semibold text-zinc-700 mb-0 text-xl">
+                  <h2 className="font-semibold text-zinc-700 mb-0 text-2xl">
                     John Doe
                   </h2>
                 </div>

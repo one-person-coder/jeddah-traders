@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import {
-  MoreVertical,
   Pencil,
   Search,
   User2,
@@ -13,13 +12,6 @@ import {
   Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -39,6 +31,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import { statusColors } from "@/constant/constant";
+import { ErrorToast, SuccessToast } from "../utils/CustomToasts";
 
 export default function UserLists({ data }) {
   const [isFiltersVisible, setIsFiltersVisible] = React.useState(true);
@@ -139,11 +132,30 @@ export default function UserLists({ data }) {
     setSearchTerm(e.target.value);
   };
 
+  const deleteUser = async (userId) => {
+    const response = await fetch("/api/users/delete", {
+      method: "POST",
+      body: JSON.stringify({
+        id: userId,
+      }),
+    });
+    const responseJson = await response.json();
+
+    if (!responseJson.success) {
+      ErrorToast(responseJson.message);
+      return;
+    }
+    refreshData();
+    SuccessToast("User Deleted Successfully!");
+  };
+
   React.useEffect(() => {
     const filteredUsers = storeUsers.filter(
       (user) =>
         user.fullname.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.username.toLowerCase().includes(searchTerm)
+        user.email.toLowerCase().includes(searchTerm) ||
+        user.username.toLowerCase().includes(searchTerm) ||
+        user.pNumber.toLowerCase().includes(searchTerm)
     );
     setUsers(filteredUsers);
   }, [searchTerm]);
@@ -229,7 +241,7 @@ export default function UserLists({ data }) {
           )}
 
           {/* Table */}
-          <div className="rounded-lg border shadow-sm">
+          <div className="rounded-lg border shadow-sm max-h-[500px] overflow-scroll">
             <Table>
               <TableHeader>
                 <TableRow className="bg-gray-50">
@@ -237,6 +249,7 @@ export default function UserLists({ data }) {
                   <TableHead>USER</TableHead>
                   <TableHead>ROLE</TableHead>
                   <TableHead>STATUS</TableHead>
+                  <TableHead>CONTACT</TableHead>
                   <TableHead>JOIN DATE</TableHead>
                   <TableHead className="text-right">ACTIONS</TableHead>
                 </TableRow>
@@ -296,6 +309,7 @@ export default function UserLists({ data }) {
                         </span>
                       </div>
                     </TableCell>
+                    <TableCell>{user.pNumber}</TableCell>
                     <TableCell>
                       <span className="text-sm text-muted-foreground">
                         {new Date(user.createdAt).toLocaleDateString("en-US", {
@@ -310,20 +324,29 @@ export default function UserLists({ data }) {
                         <Button
                           variant="ghost"
                           size="icon"
+                          asChild
                           className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
                         >
-                          <Eye className="h-4 w-4" />
+                          <Link href={`/dashboard/users/${user._id}/view`}>
+                            <Eye className="h-4 w-4" />
+                          </Link>
                         </Button>
                         <Button
                           variant="ghost"
                           size="icon"
                           className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
+                          asChild
                         >
-                          <Pencil className="h-4 w-4" />
+                          <Link href={`/dashboard/users/${user._id}/edit`}>
+                            <Pencil className="h-4 w-4" />
+                          </Link>
                         </Button>
                         <Button
                           variant="ghost"
                           size="icon"
+                          onClick={() => {
+                            deleteUser(user._id);
+                          }}
                           className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
                         >
                           <Trash2 className="h-4 w-4" />

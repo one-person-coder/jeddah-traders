@@ -1,10 +1,8 @@
 import BookOpenSvg from "@/components/utils/SvgJsx/BookOpenSvg";
+import CalendarSvg from "@/components/utils/SvgJsx/CalendarSvg";
 import CheckSvg from "@/components/utils/SvgJsx/CheckSvg";
-import FlagSvg from "@/components/utils/SvgJsx/FlagSvg";
-import MailSvg from "@/components/utils/SvgJsx/MailSvg";
-import MessageSquareReplySvg from "@/components/utils/SvgJsx/MessageSquareReplySvg";
-import MessageSquareSvg from "@/components/utils/SvgJsx/MessageSquareSvg";
 import ProfileSvg from "@/components/utils/SvgJsx/ProfileSvg";
+import { Mail, Transgender } from "lucide-react";
 
 const LeftSideBar = () => {
   return (
@@ -27,6 +25,27 @@ const LeftSideBar = () => {
               <div>
                 <span>Username:</span>
                 <span className="text-zinc-500 ml-2">hussain_coder</span>
+              </div>
+            </div>
+            <div className="text-zinc-600 flex gap-1 items-center">
+              <Mail className="h-5 w-5" />
+              <div>
+                <span>Email:</span>
+                <span className="text-zinc-500 ml-2">Active</span>
+              </div>
+            </div>
+            <div className="text-zinc-600 flex gap-1 items-center">
+              <Transgender className="h-5 w-5" />
+              <div>
+                <span>Gender:</span>
+                <span className="text-zinc-500 ml-2">Male</span>
+              </div>
+            </div>
+            <div className="text-zinc-600 flex gap-1 items-center">
+              <CalendarSvg />
+              <div>
+                <span>Birth:</span>
+                <span className="text-zinc-500 ml-2">April 2021</span>
               </div>
             </div>
             <div className="text-zinc-600 flex gap-1 items-center">
