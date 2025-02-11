@@ -2,9 +2,40 @@ import BookOpenSvg from "@/components/utils/SvgJsx/BookOpenSvg";
 import CalendarSvg from "@/components/utils/SvgJsx/CalendarSvg";
 import CheckSvg from "@/components/utils/SvgJsx/CheckSvg";
 import ProfileSvg from "@/components/utils/SvgJsx/ProfileSvg";
+import connectDB from "@/dbConfig/config";
 import { Mail, Transgender } from "lucide-react";
+import jwt from "jsonwebtoken";
+import { cookies } from "next/headers";
+import UserInfo from "@/models/UserInfo";
 
-const LeftSideBar = () => {
+const LeftSideBar = async () => {
+  await connectDB();
+
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+
+  if (!token) {
+    return <h3>Please log in</h3>;
+  }
+
+  let decoded;
+  try {
+    decoded = jwt.verify(token, process.env.TOKEN_SECRET);
+  } catch (error) {
+    return <h3>Invalid token</h3>;
+  }
+
+  const user = await UserInfo.findById(decoded.id).select("-password");
+
+  if (!user) {
+    return <h3>User Not Found</h3>;
+  }
+  const formattedDate = new Date(user.date).toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
+
   return (
     <div>
       <div className="prose max-w-[100%] grid sm:grid-cols-2 gap-4 sm:break-normal break-all">
@@ -17,42 +48,42 @@ const LeftSideBar = () => {
               <ProfileSvg />
               <div>
                 <span>Full Name:</span>
-                <span className="text-zinc-500 ml-2">Hussain Coder</span>
+                <span className="text-zinc-500 ml-2">{user.fullname}</span>
               </div>
             </div>
             <div className="text-zinc-600 flex gap-1 items-center">
               <ProfileSvg />
               <div>
                 <span>Username:</span>
-                <span className="text-zinc-500 ml-2">hussain_coder</span>
+                <span className="text-zinc-500 ml-2">{user.username}</span>
               </div>
             </div>
             <div className="text-zinc-600 flex gap-1 items-center">
               <Mail className="h-5 w-5" />
               <div>
                 <span>Email:</span>
-                <span className="text-zinc-500 ml-2">Active</span>
+                <span className="text-zinc-500 ml-2">{user.email}</span>
               </div>
             </div>
             <div className="text-zinc-600 flex gap-1 items-center">
               <Transgender className="h-5 w-5" />
               <div>
                 <span>Gender:</span>
-                <span className="text-zinc-500 ml-2">Male</span>
+                <span className="text-zinc-500 ml-2">{user.gender}</span>
               </div>
             </div>
             <div className="text-zinc-600 flex gap-1 items-center">
               <CalendarSvg />
               <div>
                 <span>Birth:</span>
-                <span className="text-zinc-500 ml-2">April 2021</span>
+                <span className="text-zinc-500 ml-2">{formattedDate}</span>
               </div>
             </div>
             <div className="text-zinc-600 flex gap-1 items-center">
               <CheckSvg />
               <div>
                 <span>Status:</span>
-                <span className="text-zinc-500 ml-2">Active</span>
+                <span className="text-zinc-500 ml-2">{user.status}</span>
               </div>
             </div>
           </div>

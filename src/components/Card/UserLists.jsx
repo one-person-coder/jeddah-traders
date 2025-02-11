@@ -31,7 +31,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import { statusColors } from "@/constant/constant";
-import { ErrorToast, SuccessToast } from "../utils/CustomToasts";
+import { ErrorToast, InfoToast, SuccessToast } from "../utils/CustomToasts";
 
 export default function UserLists({ data }) {
   const [isFiltersVisible, setIsFiltersVisible] = React.useState(true);
@@ -120,12 +120,15 @@ export default function UserLists({ data }) {
     if (!userStatus.success) {
       ErrorToast("User Cannot Fetch Server Error");
     }
-
-    setUsers(
-      userStatus.data.sort(
-        (a, b) => (b.role === "admin") - (a.role === "admin")
-      )
-    );
+    if (userStatus.data && userStatus.data.length >= 1) {
+      setUsers(
+        userStatus.data.sort(
+          (a, b) => (b.role === "admin") - (a.role === "admin")
+        )
+      );
+    } else {
+      setUsers([]);
+    }
   };
 
   const handleSearchChange = (e) => {

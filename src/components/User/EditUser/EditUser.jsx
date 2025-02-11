@@ -24,8 +24,6 @@ export default function EditUser({ user }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(registerFormData);
-
     if (
       !registerFormData.fullname ||
       !registerFormData.username ||

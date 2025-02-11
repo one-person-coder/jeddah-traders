@@ -1,4 +1,5 @@
 import MainSideBar from "@/components/SideBar/Layout/MainSideBar";
+import { ToastContainer } from "react-toastify";
 
 export const metadata = {
   title: "Create Next App",
@@ -6,11 +7,5 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
-  return (
-    <html lang="en" >
-      <body className="bg-[#F4F5FA] custom-width">
-        <MainSideBar>{children}</MainSideBar>
-      </body>
-    </html>
-  );
+  return <MainSideBar>{children}</MainSideBar>;
 }

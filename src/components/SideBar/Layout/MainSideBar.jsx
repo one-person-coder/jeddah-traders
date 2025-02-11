@@ -3,13 +3,9 @@
 import { useState, useEffect } from "react";
 import {
   LayoutDashboard,
-  MessageSquare,
   ChevronRight,
   Settings,
   Users,
-  BookOpen,
-  Tags,
-  Images,
   User,
   ChartColumn,
 } from "lucide-react";

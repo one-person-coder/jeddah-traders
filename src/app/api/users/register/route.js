@@ -2,9 +2,22 @@ import { NextResponse } from "next/server";
 import bcryptjs from "bcryptjs";
 import connectDB from "@/dbConfig/config";
 import UserInfo from "@/models/UserInfo";
+import { checkLoginToken } from "../../checker";
 
 export async function POST(request) {
   try {
+    const login = await checkLoginToken(request);
+    if (!login) {
+      const response = NextResponse.json({
+        success: true,
+        message: "Logout successful",
+      });
+      response.cookies.set("token", "", {
+        httpOnly: true,
+        expires: new Date(0),
+      });
+      return response;
+    }
     await connectDB();
     const reqBody = await request.json();
 
@@ -18,7 +31,6 @@ export async function POST(request) {
       date,
       status,
     } = reqBody;
-    console.log(date);
 
     const existingUser = await UserInfo.findOne({
       $or: [{ username }, { email }],
