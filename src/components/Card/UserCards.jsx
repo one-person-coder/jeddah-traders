@@ -2,7 +2,7 @@ import { Users, UserCheck, UserX, ClockIcon as UserClock } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 export default async function UserCards({ data }) {
-  const users = data.data;
+  const users = data;
   const activeUsers = users.filter((user) => user.status === "active");
   const inActiveUsers = users.filter((user) => user.status === "inactive");
   const pendingUsers = users.filter((user) => user.status === "pending");

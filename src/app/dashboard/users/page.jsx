@@ -1,25 +1,22 @@
 import UserCards from "@/components/Card/UserCards";
 import UserLists from "@/components/Card/UserLists";
-import { ErrorToast } from "@/components/utils/CustomToasts";
+import connectDB from "@/dbConfig/config";
+import UserInfo from "@/models/UserInfo";
 
 const UsersPage = async () => {
-  const response = await fetch(`${process.env.MAIN_API}/api/users/status`, {
-    method: "GET",
-  });
-  const userStatus = await response.json();
-
-  if (!userStatus.success) {
-    ErrorToast("User Cannot Fetch Server Error");
-  }
-
-  if (!userStatus.success) {
-    ErrorToast("User Cannot Fetch Server Error");
-  }
+  await connectDB();
+  const users = JSON.parse(
+    JSON.stringify(
+      await UserInfo.find({
+        role: { $in: ["admin", "manager"] },
+      }).select("-password")
+    )
+  );
 
   return (
     <div className="custom-width">
-      <UserCards data={userStatus} />
-      <UserLists data={userStatus} />
+      <UserCards data={users} />
+      <UserLists data={users} />
     </div>
   );
 };

@@ -44,11 +44,11 @@ export default function UserLists({ data }) {
   const [isFiltersVisible, setIsFiltersVisible] = React.useState(true);
 
   const [storeUsers, setStoreUsers] = React.useState(
-    data.data.sort((a, b) => (b.role === "admin") - (a.role === "admin"))
+    data.sort((a, b) => (b.role === "admin") - (a.role === "admin"))
   );
 
   const [users, setUsers] = React.useState(
-    data.data.sort((a, b) => (b.role === "admin") - (a.role === "admin"))
+    data.sort((a, b) => (b.role === "admin") - (a.role === "admin"))
   );
   const [statusFilter, setStatusFilter] = React.useState("all");
   const [roleFilter, setRoleFilter] = React.useState("all");
