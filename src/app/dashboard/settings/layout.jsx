@@ -42,11 +42,9 @@ const layout = async ({ children }) => {
     return <h3>User Not Found</h3>;
   }
 
-  const formattedDate = new Date(user.createdAt).toLocaleDateString("en-GB", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-  });
+  const date = new Date(user.createdAt);
+  const formattedDate = date.toISOString().split("T")[0];
+
 
   return (
     <div>

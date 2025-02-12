@@ -34,11 +34,6 @@ const navigation = [
     url: "/dashboard/customers",
   },
   {
-    title: "Reports",
-    icon: Users,
-    url: "/dashboard/reports",
-  },
-  {
     title: "Settings",
     icon: Settings,
     url: "/dashboard/settings/profile",

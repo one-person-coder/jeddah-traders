@@ -1,58 +1,48 @@
-"use client";
+import EditAccount from "@/components/Account/EditAccount";
+import { cookies } from "next/headers";
+import jwt from "jsonwebtoken";
+import prisma from "@/lib/prisma";
 
-import { useState, useCallback } from "react";
+const EditPage = async () => {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
 
-const Account = () => {
-  const initialFormState = {
-    firstName: "",
-    lastName: "",
-    username: "",
-    email: "",
-    country: "",
-    city: "",
-    skills: "",
-    overview: "",
-  };
+  if (!token) {
+    return <h3>Please log in</h3>;
+  }
 
-  const [formData, setFormData] = useState(initialFormState);
+  let decoded;
+  try {
+    decoded = jwt.verify(token, process.env.TOKEN_SECRET);
+  } catch (error) {
+    return <h3>Invalid token</h3>;
+  }
+  
 
-  const handleInputChange = useCallback((e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  }, []);
+  const user = await prisma.userInfo.findUnique({
+    where: { id: parseInt(decoded.id) },
+    select: {
+      id: true,
+      fullname: true,
+      username: true,
+      email: true,
+      pNumber: true,
+      gender: true,
+      date: true,
+    },
+  });
+
+  if (!user) {
+    return <div>User not found</div>;
+  }
+
+  user.date = user.date.toISOString().split("T")[0];
 
   return (
-    <div className="shadow-light py-7 px-4 rounded-md bg-white">
-      <div className="grid sm:grid-cols-2 gap-6">
-        <div>
-          <input
-            type="fullName"
-            name="fullName"
-            placeholder="Full Name"
-            className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
-            onChange={handleInputChange}
-          />
-        </div>
-        <div>
-          <input
-            type="username"
-            name="username"
-            placeholder="Username"
-            className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
-            onChange={handleInputChange}
-          />
-        </div>
-        <div className="sm:col-span-2">
-          <button
-            type="submit"
-            className="bg-[#8C57FF] text-white py-2 px-4 rounded-md hover:bg-[#7745e0] duration-200"
-          >
-            Save Changes
-          </button>
-        </div>
-      </div>
+    <div>
+      <EditAccount user={user} />
     </div>
   );
 };
 
-export default Account;
+export default EditPage;
