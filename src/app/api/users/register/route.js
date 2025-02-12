@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import bcryptjs from "bcryptjs";
-import connectDB from "@/dbConfig/config";
-import UserInfo from "@/models/UserInfo";
 import { checkLoginToken } from "../../checker";
+import prisma from "@/lib/prisma";
 
 export async function POST(request) {
   try {
@@ -18,9 +17,8 @@ export async function POST(request) {
       });
       return response;
     }
-    await connectDB();
-    const reqBody = await request.json();
 
+    const reqBody = await request.json();
     const {
       fullname,
       username,
@@ -32,8 +30,11 @@ export async function POST(request) {
       status,
     } = reqBody;
 
-    const existingUser = await UserInfo.findOne({
-      $or: [{ username }, { email }],
+    // Check if user already exists
+    const existingUser = await prisma.userInfo.findFirst({
+      where: {
+        OR: [{ username }, { email }],
+      },
     });
 
     if (existingUser) {
@@ -53,20 +54,19 @@ export async function POST(request) {
     const salt = await bcryptjs.genSalt(10);
     const hashedPassword = await bcryptjs.hash(password, salt);
 
-    // Save new user
-    const newCustomer = new UserInfo({
-      fullname,
-      username,
-      email,
-      pNumber,
-      password: hashedPassword,
-      gender,
-      date,
-      status,
-      role: "manager",
+    const newUser = await prisma.userInfo.create({
+      data: {
+        fullname,
+        username,
+        email,
+        pNumber,
+        password: hashedPassword,
+        gender,
+        date: new Date(date),
+        status,
+        role: "manager",
+      },
     });
-
-    await newCustomer.save();
 
     return NextResponse.json({
       success: true,
@@ -80,5 +80,5 @@ export async function POST(request) {
       },
       { status: 500 }
     );
-  }
+  } 
 }

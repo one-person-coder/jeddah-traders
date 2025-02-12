@@ -4,17 +4,14 @@ import Image from "next/image";
 import ProfileSvg from "@/components/utils/SvgJsx/ProfileSvg";
 import { LogOut } from "lucide-react";
 import Link from "next/link";
-import connectDB from "@/dbConfig/config";
 import jwt from "jsonwebtoken";
+import prisma from "@/lib/prisma";
 import { cookies } from "next/headers";
-import UserInfo from "@/models/UserInfo";
 
 const layout = async ({ children }) => {
-  await connectDB();
-
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
-  
+
   if (!token) {
     return <h3>Please log in</h3>;
   }
@@ -26,16 +23,31 @@ const layout = async ({ children }) => {
     return <h3>Invalid token</h3>;
   }
 
-  const user = await UserInfo.findById(decoded.id).select("-password");
+  const user = await prisma.userInfo.findUnique({
+    where: { id: decoded.id },
+    select: {
+      id: true,
+      fullname: true,
+      username: true,
+      email: true,
+      gender: true,
+      date: true,
+      status: true,
+      role: true,
+      createdAt: true,
+    },
+  });
+
+  if (!user) {
+    return <h3>User Not Found</h3>;
+  }
+
   const formattedDate = new Date(user.createdAt).toLocaleDateString("en-GB", {
     day: "2-digit",
     month: "long",
     year: "numeric",
   });
-  if (!user) {
-    return <h3>User Not Found</h3>;
-  }
-  
+
   return (
     <div>
       <div>

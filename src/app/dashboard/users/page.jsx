@@ -1,19 +1,29 @@
 import UserCards from "@/components/Card/UserCards";
 import UserLists from "@/components/Card/UserLists";
-import connectDB from "@/dbConfig/config";
-import UserInfo from "@/models/UserInfo";
+import prisma from "@/lib/prisma";
 
 export const revalidate = 0;
 
 const UsersPage = async () => {
-  await connectDB();
-  const users = JSON.parse(
-    JSON.stringify(
-      await UserInfo.find({
-        role: { $in: ["admin", "manager"] },
-      }).select("-password")
-    )
-  );
+  const users = await prisma.userInfo.findMany({
+    where: {
+      role: {
+        in: ["admin", "manager"],
+      },
+    },
+    select: {
+      id: true,
+      fullname: true,
+      username: true,
+      email: true,
+      gender: true,
+      date: true,
+      status: true,
+      pNumber: true,
+      role: true,
+      createdAt: true,
+    },
+  });
 
   return (
     <div className="custom-width">

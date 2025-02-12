@@ -1,13 +1,12 @@
-import connectDB from "@/dbConfig/config";
-import UserInfo from "@/models/UserInfo";
 import jwt from "jsonwebtoken";
 import { NextResponse } from "next/server";
 import { checkLoginToken } from "../../checker";
+import prisma from "@/lib/prisma";
 
 export async function GET(request) {
   try {
     const login = await checkLoginToken(request);
-    
+
     if (!login) {
       const response = NextResponse.json({
         success: true,
@@ -19,7 +18,6 @@ export async function GET(request) {
       });
       return response;
     }
-    await connectDB();
 
     const token = request.cookies.get("token")?.value;
     if (!token) {
@@ -30,7 +28,24 @@ export async function GET(request) {
     }
 
     const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
-    const user = await UserInfo.findById(decoded.id).select("-password");
+
+    // Fetch user from Prisma database
+    const user = await prisma.userInfo.findUnique({
+      where: { id: decoded.id },
+      select: {
+        id: true,
+        fullname: true,
+        username: true,
+        email: true,
+        pNumber: true,
+        gender: true,
+        date: true,
+        status: true,
+        role: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
 
     if (!user) {
       return NextResponse.json(

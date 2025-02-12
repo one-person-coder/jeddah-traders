@@ -1,7 +1,6 @@
-import connectDB from "@/dbConfig/config";
-import UserInfo from "@/models/UserInfo";
 import { NextResponse } from "next/server";
 import { checkLoginToken } from "../../checker";
+import prisma from "@/lib/prisma";
 
 export async function GET(request) {
   const login = await checkLoginToken(request);
@@ -13,10 +12,26 @@ export async function GET(request) {
     response.cookies.set("token", "", { httpOnly: true, expires: new Date(0) });
     return response;
   }
-  await connectDB();
-  const users = await UserInfo.find({
-    role: { $in: ["admin", "manager"] },
-  }).select("-password");
+
+  const users = await prisma.userInfo.findMany({
+    where: {
+      role: {
+        in: ["admin", "manager"],
+      },
+    },
+    select: {
+      id: true,
+      fullname: true,
+      username: true,
+      email: true,
+      pNumber: true,
+      gender: true,
+      date: true,
+      createdAt: true,
+      status: true,
+      role: true,
+    },
+  });
 
   return NextResponse.json({
     success: true,

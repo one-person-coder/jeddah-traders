@@ -1,7 +1,6 @@
-import connectDB from "@/dbConfig/config";
-import UserInfo from "@/models/UserInfo";
 import { NextResponse } from "next/server";
 import { checkLoginToken } from "../../checker";
+import prisma from "@/lib/prisma";
 
 export async function POST(request) {
   const login = await checkLoginToken(request);
@@ -16,12 +15,11 @@ export async function POST(request) {
     });
     return response;
   }
-  await connectDB();
 
   try {
     const reqBody = await request.json();
     const {
-      _id,
+      id,
       fullname,
       username,
       email,
@@ -32,14 +30,16 @@ export async function POST(request) {
       role,
     } = reqBody;
 
-    if (!_id) {
+    if (!id) {
       return NextResponse.json(
         { success: false, message: "ID is required" },
         { status: 400 }
       );
     }
 
-    const user = await UserInfo.findById(_id);
+    const user = await prisma.userInfo.findUnique({
+      where: { id: parseInt(id) },
+    });
     if (!user) {
       return NextResponse.json(
         { success: false, message: "User not found" },
@@ -47,26 +47,50 @@ export async function POST(request) {
       );
     }
 
-    user.fullname = fullname || user.fullname;
-    user.username = username || user.username;
-    user.email = email || user.email;
-    user.pNumber = pNumber || user.pNumber;
-    user.gender = gender || user.gender;
-    user.date = date || user.date;
-    user.status = status || user.status;
-    user.role = role || user.role;
+    const existingUser = await prisma.userInfo.findFirst({
+      where: {
+        OR: [
+          { username: username, NOT: { id: parseInt(id) } },
+          { email: email, NOT: { id: parseInt(id) } },
+        ],
+      },
+    });
 
-    await user.save();
+    if (existingUser) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Username or Email already exists Please choose another",
+        },
+        { status: 400 }
+      );
+    }
+
+    const updatedUser = await prisma.userInfo.update({
+      where: { id: parseInt(id) },
+      data: {
+        fullname: fullname || user.fullname,
+        username: username || user.username,
+        email: email || user.email,
+        pNumber: pNumber || user.pNumber,
+        gender: gender || user.gender,
+        date: date ? new Date(date) : user.date,
+        status: status || user.status,
+        role: role || user.role,
+      },
+    });
 
     return NextResponse.json({
       success: true,
       message: "User updated successfully",
-      user,
+      user: updatedUser,
     });
   } catch (error) {
     return NextResponse.json(
       { success: false, message: error.message },
       { status: 500 }
     );
+  } finally {
+    await prisma.$disconnect();
   }
 }

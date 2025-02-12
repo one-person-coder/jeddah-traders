@@ -1,22 +1,31 @@
 import EditUser from "@/components/User/EditUser/EditUser";
-import connectDB from "@/dbConfig/config";
-import UserInfo from "@/models/UserInfo";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 const EditPage = async ({ params }) => {
   const { id } = await params;
 
-  await connectDB();
-
-  const user = JSON.parse(
-    JSON.stringify(
-      await UserInfo.findById(id).select("-password -createdAt -updatedAt -__v")
-    )
-  );
-  user.date = new Date(user.date).toISOString().split("T")[0];
+  const user = await prisma.userInfo.findUnique({
+    where: { id: parseInt(id) },
+    select: {
+      id: true,
+      fullname: true,
+      username: true,
+      email: true,
+      pNumber: true,
+      gender: true,
+      date: true,
+      status: true,
+      role: true,
+    },
+  });
 
   if (!user) {
     return <div>User not found</div>;
   }
+
+  user.date = user.date.toISOString().split("T")[0];
 
   return (
     <div>

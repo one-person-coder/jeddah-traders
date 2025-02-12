@@ -2,15 +2,12 @@ import BookOpenSvg from "@/components/utils/SvgJsx/BookOpenSvg";
 import CalendarSvg from "@/components/utils/SvgJsx/CalendarSvg";
 import CheckSvg from "@/components/utils/SvgJsx/CheckSvg";
 import ProfileSvg from "@/components/utils/SvgJsx/ProfileSvg";
-import connectDB from "@/dbConfig/config";
 import { Mail, Transgender } from "lucide-react";
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
-import UserInfo from "@/models/UserInfo";
+import prisma from "@/lib/prisma";
 
 const LeftSideBar = async () => {
-  await connectDB();
-
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
 
@@ -25,12 +22,26 @@ const LeftSideBar = async () => {
     return <h3>Invalid token</h3>;
   }
 
-  const user = await UserInfo.findById(decoded.id).select("-password");
+  const user = await prisma.userInfo.findUnique({
+    where: { id: decoded.id },
+    select: {
+      id: true,
+      fullname: true,
+      username: true,
+      email: true,
+      gender: true,
+      date: true,
+      status: true,
+      role: true,
+      createdAt: true,
+    },
+  });
 
   if (!user) {
     return <h3>User Not Found</h3>;
   }
-  const formattedDate = new Date(user.date).toLocaleDateString("en-GB", {
+
+  const formattedDate = new Date(user.createdAt).toLocaleDateString("en-GB", {
     day: "2-digit",
     month: "long",
     year: "numeric",

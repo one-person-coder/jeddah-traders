@@ -1,6 +1,5 @@
-import connectDB from "@/dbConfig/config";
-import UserInfo from "@/models/UserInfo";
 import { NextResponse } from "next/server";
+import prisma from "@/lib/prisma";
 import { checkLoginToken } from "../../checker";
 
 export async function POST(request) {
@@ -17,8 +16,7 @@ export async function POST(request) {
       });
       return response;
     }
-    
-    await connectDB();
+
     const reqBody = await request.json();
     const { id } = reqBody;
 
@@ -29,7 +27,9 @@ export async function POST(request) {
       );
     }
 
-    const deletedUser = await UserInfo.findByIdAndDelete(id);
+    const deletedUser = await prisma.userInfo.delete({
+      where: { id: parseInt(id) },
+    });
 
     if (!deletedUser) {
       return NextResponse.json(
@@ -47,5 +47,7 @@ export async function POST(request) {
       { success: false, message: error.message },
       { status: 500 }
     );
+  } finally {
+    await prisma.$disconnect();
   }
 }

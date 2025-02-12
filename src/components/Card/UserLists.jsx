@@ -31,7 +31,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import { statusColors } from "@/constant/constant";
-import { ErrorToast, InfoToast, SuccessToast } from "../utils/CustomToasts";
+import { ErrorToast, SuccessToast } from "../utils/CustomToasts";
 
 export default function UserLists({ data }) {
   const [isFiltersVisible, setIsFiltersVisible] = React.useState(true);
@@ -330,7 +330,7 @@ export default function UserLists({ data }) {
                           asChild
                           className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
                         >
-                          <Link href={`/dashboard/users/${user._id}/view`}>
+                          <Link href={`/dashboard/users/${user.id}/view`}>
                             <Eye className="h-4 w-4" />
                           </Link>
                         </Button>
@@ -340,7 +340,7 @@ export default function UserLists({ data }) {
                           className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
                           asChild
                         >
-                          <Link href={`/dashboard/users/${user._id}/edit`}>
+                          <Link href={`/dashboard/users/${user.id}/edit`}>
                             <Pencil className="h-4 w-4" />
                           </Link>
                         </Button>
@@ -348,7 +348,7 @@ export default function UserLists({ data }) {
                           variant="ghost"
                           size="icon"
                           onClick={() => {
-                            deleteUser(user._id);
+                            deleteUser(user.id);
                           }}
                           className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
                         >

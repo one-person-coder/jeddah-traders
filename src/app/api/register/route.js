@@ -1,20 +1,17 @@
 import { NextResponse } from "next/server";
 import bcryptjs from "bcryptjs";
-import connectDB from "@/dbConfig/config";
-import UserInfo from "@/models/UserInfo";
+import prisma from "@/lib/prisma";
 
 export async function POST(request) {
   try {
-    await connectDB();
     const reqBody = await request.json();
-
     const { fullname, username, email, pNumber, password, gender, date } =
       reqBody;
 
-
-    // Check if user already exists
-    const existingUser = await UserInfo.findOne({
-      $or: [{ username }, { email }],
+    const existingUser = await prisma.userInfo.findFirst({
+      where: {
+        OR: [{ username }, { email }],
+      },
     });
 
     if (existingUser) {
@@ -30,28 +27,26 @@ export async function POST(request) {
       );
     }
 
-    // Hash password
-    const salt = await bcryptjs.genSalt(10);
-    const hashedPassword = await bcryptjs.hash(password, salt);
+    const hashedPassword = await bcryptjs.hash(password, 10);
 
-    // Save new user
-    const newCustomer = new UserInfo({
-      fullname,
-      username,
-      email,
-      pNumber,
-      password: hashedPassword,
-      gender,
-      date,
+    await prisma.userInfo.create({
+      data: {
+        fullname,
+        username,
+        email,
+        pNumber,
+        password: hashedPassword,
+        gender,
+        date: new Date(date),
+      },
     });
-
-    await newCustomer.save();
 
     return NextResponse.json({
       success: true,
       message: "User registered successfully",
     });
   } catch (error) {
+    console.error("Registration Error:", error);
     return NextResponse.json(
       {
         success: false,
