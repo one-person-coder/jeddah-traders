@@ -36,7 +36,7 @@ export async function POST(request) {
     });
     if (!user) {
       return NextResponse.json(
-        { success: false, message: "User not found" },
+        { success: false, message: "Customer not found" },
         { status: 404 }
       );
     }
@@ -76,7 +76,7 @@ export async function POST(request) {
 
     return NextResponse.json({
       success: true,
-      message: "User updated successfully",
+      message: "Customer updated successfully",
       user: updatedUser,
     });
   } catch (error) {

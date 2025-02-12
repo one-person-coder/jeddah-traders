@@ -64,13 +64,13 @@ export async function POST(request) {
 
     return NextResponse.json({
       success: true,
-      message: "User registered successfully",
+      message: "Customer registered successfully",
     });
   } catch (error) {
     return NextResponse.json(
       {
         success: false,
-        message: "Failed to register user",
+        message: "Failed to register customer",
       },
       { status: 500 }
     );

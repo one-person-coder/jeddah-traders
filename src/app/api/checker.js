@@ -13,11 +13,12 @@ export async function checkLoginToken(request) {
 
     const user = await prisma.userInfo.findUnique({
       where: { id: decoded.id },
-      select: { id: true },
+      select: { id: true, status: true },
     });
 
-    return !!user;
+    return user;
   } catch (error) {
+    console.error("Error verifying JWT:", error);
     return false;
   }
 }

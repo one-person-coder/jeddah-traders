@@ -49,9 +49,6 @@ export default function LoginPage() {
     }
 
     SuccessToast("Login successful!");
-    setTimeout(() => {
-      router.push("/dashboard");
-    }, 600);
   };
   return (
     <div>
@@ -103,7 +100,10 @@ export default function LoginPage() {
                   </div>
                 </div>
 
-                <Button disabled={disableBtn} className="w-full h-11 bg-purple-600 hover:bg-purple-700">
+                <Button
+                  disabled={disableBtn}
+                  className="w-full h-11 bg-purple-600 hover:bg-purple-700"
+                >
                   Login
                 </Button>
 

@@ -1,38 +1,36 @@
-import UserCards from "@/components/Card/UserCards";
-import UserLists from "@/components/Card/UserLists";
-import prisma from "@/lib/prisma"; // Prisma connection
+import CustomerCards from "@/components/Customer/CustomerCards";
+import CustomerLists from "@/components/Customer/CustomerLists";
+import prisma from "@/lib/prisma";
 
 export const revalidate = 0;
 
-const UsersPage = async () => {
-  // ✅ Fetch users from Prisma (MySQL)
+const CustomersPage = async () => {
   const users = await prisma.userInfo.findMany({
     where: {
-      role: { in: ["admin", "manager"] },
+      role: {
+        in: ["customer"],
+      },
     },
     select: {
       id: true,
       fullname: true,
       username: true,
       email: true,
-      pNumber: true,
       gender: true,
       date: true,
       status: true,
+      pNumber: true,
       role: true,
       createdAt: true,
-      updatedAt: true,
     },
   });
 
-  
-
   return (
     <div className="custom-width">
-      <UserCards data={users} />
-      <UserLists data={users} />
+      <CustomerCards data={users} />
+      <CustomerLists data={users} />
     </div>
   );
 };
 
-export default UsersPage;
+export default CustomersPage;

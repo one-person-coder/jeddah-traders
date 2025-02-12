@@ -42,7 +42,7 @@ export async function GET(request) {
 
     if (!user) {
       return NextResponse.json(
-        { success: false, message: "User not found" },
+        { success: false, message: "Customer not found" },
         { status: 404 }
       );
     }

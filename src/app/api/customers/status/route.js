@@ -13,7 +13,7 @@ export async function GET(request) {
   const users = await prisma.userInfo.findMany({
     where: {
       role: {
-        in: ["admin", "manager"],
+        in: ["customer"],
       },
     },
     select: {
@@ -33,6 +33,6 @@ export async function GET(request) {
   return NextResponse.json({
     success: true,
     data: users,
-    message: "Users fetched successfully",
+    message: "Customer fetched successfully",
   });
 }

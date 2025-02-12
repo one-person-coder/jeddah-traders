@@ -8,7 +8,6 @@ export async function POST(request) {
     const reqBody = await request.json();
     const { username, password } = reqBody;
 
-    // ✅ Find user by username
     const user = await prisma.userInfo.findUnique({
       where: { username },
     });
@@ -23,7 +22,28 @@ export async function POST(request) {
       );
     }
 
-    // ✅ Compare password with hashed password
+    if (user.status === "inactive") {
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "Your account is inactive. For more details, please contact the site owner.",
+        },
+        { status: 401 }
+      );
+    }
+
+    if (user.status === "pending") {
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "Your account is currently pending. The site administrator will activate it after review.",
+        },
+        { status: 401 }
+      );
+    }
+
     const isMatch = await bcryptjs.compare(password, user.password);
     if (!isMatch) {
       return NextResponse.json(
@@ -35,13 +55,11 @@ export async function POST(request) {
       );
     }
 
-    // ✅ Create JWT token
-    const tokenData = { id: user.id }; // Prisma uses `id`, not `_id`
+    const tokenData = { id: user.id };
     const token = jwt.sign(tokenData, process.env.TOKEN_SECRET, {
       expiresIn: "15d",
     });
 
-    // ✅ Send token in HttpOnly cookie
     const response = NextResponse.json({
       success: true,
       message: "Login successful",
@@ -51,7 +69,7 @@ export async function POST(request) {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
-      maxAge: 15 * 24 * 60 * 60, // 15 days in seconds
+      maxAge: 15 * 24 * 60 * 60,
     });
 
     return response;
