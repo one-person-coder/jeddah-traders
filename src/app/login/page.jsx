@@ -47,7 +47,7 @@ export default function LoginPage() {
       ErrorToast(rspJson.message);
       return;
     }
-
+    router.push("/dashboard");
     SuccessToast("Login successful!");
   };
   return (
