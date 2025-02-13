@@ -38,6 +38,17 @@ export async function POST(request) {
       );
     }
 
+    const admin = await prisma.userInfo.findUnique({
+      where: { id: parseInt(id) },
+    });
+
+    if (admin.role === "admin") {
+      return NextResponse.json({
+        success: false,
+        message: "You don't have permisson to edit admin!",
+      });
+    }
+
     const user = await prisma.userInfo.findUnique({
       where: { id: parseInt(id) },
     });

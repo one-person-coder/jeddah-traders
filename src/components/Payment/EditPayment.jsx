@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ErrorToast, SuccessToast } from "@/components/utils/CustomToasts";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -12,22 +12,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ChevronDown } from "lucide-react";
 
-export default function NewPayment() {
+export default function EditPayment({ user }) {
   const { id } = useParams();
-  const [registerFormData, setRegisterFormData] = useState({
-    amount: "",
-    paidAmount: "",
-    description: "",
-    method: "",
-    customerId: id,
-  });
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filteredUsers, setFilteredUsers] = useState([]);
-  const [selectedIndex, setSelectedIndex] = useState(-1);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-
+  const [registerFormData, setRegisterFormData] = useState(user);
   const router = useRouter();
 
   const [disableBtn, setDisableBtn] = useState(false);
@@ -52,7 +40,7 @@ export default function NewPayment() {
 
     setDisableBtn(true);
 
-    const response = await fetch("/api/customers/payments/register", {
+    const response = await fetch("/api/customers/payments/edit", {
       method: "POST",
       body: JSON.stringify(registerFormData),
     });
@@ -66,7 +54,7 @@ export default function NewPayment() {
       return;
     }
 
-    SuccessToast("Payment Registered successful!");
+    SuccessToast("Payment Updated successful!");
     router.push(`/dashboard/customers/${id}/payments`);
   };
 
@@ -78,7 +66,7 @@ export default function NewPayment() {
             <div className="flex flex-col items-center space-y-6">
               <div className="text-center">
                 <h1 className="text-2xl font-semibold mb-4">
-                  Register New Payment
+                  Update Payment
                 </h1>
               </div>
 
@@ -94,6 +82,7 @@ export default function NewPayment() {
                       placeholder="Enter Amount"
                       className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
                       onChange={handleInputChange}
+                      value={registerFormData.amount}
                     />
                   </div>
                   <div>
@@ -104,6 +93,7 @@ export default function NewPayment() {
                       placeholder="Enter Paid Amount"
                       className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
                       onChange={handleInputChange}
+                      value={registerFormData.paid_amount}
                     />
                   </div>
                   <div className="sm:col-span-2">
@@ -118,6 +108,7 @@ export default function NewPayment() {
                         })
                       }
                       name="method"
+                      value={registerFormData.method}
                     >
                       <SelectTrigger className="bg-white py-[21px]">
                         <SelectValue placeholder="Choose Payment Method" />
@@ -137,6 +128,7 @@ export default function NewPayment() {
                       placeholder="Enter Description"
                       className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF] min-h-[100px] max-h-[200px]"
                       onChange={handleInputChange}
+                      value={registerFormData.description}
                     ></textarea>
                   </div>
                 </div>
@@ -157,7 +149,7 @@ export default function NewPayment() {
                     disabled={disableBtn}
                     className="w-full h-11 bg-purple-600 hover:bg-purple-700"
                   >
-                    Register Payment
+                    Update Payment
                   </Button>
                 </div>
               </form>

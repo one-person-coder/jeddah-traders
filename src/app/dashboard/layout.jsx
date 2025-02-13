@@ -1,15 +1,9 @@
 import MainSideBar from "@/components/SideBar/Layout/MainSideBar";
 import { ErrorToast } from "@/components/utils/CustomToasts";
 import { cookies } from "next/headers";
-import {
-  LayoutDashboard,
-  Settings,
-  Users,
-  User,
-  ChartColumn,
-} from "lucide-react";
 import jwt from "jsonwebtoken";
 import prisma from "@/lib/prisma";
+import { redirect } from "next/navigation";
 
 export default async function RootLayout({ children }) {
   const cookieStore = await cookies();
@@ -21,18 +15,13 @@ export default async function RootLayout({ children }) {
   });
 
   if (!user) {
-    ErrorToast("Session expired, please login again");
-    return <></>;
+    return redirect("/logout")
   }
   if (user.status === "inactive") {
-    ErrorToast("Your account has been deactivated");
-    return <></>;
+    return redirect("/logout")
   }
   if (user.status === "pending") {
-    ErrorToast(
-      "Your account is pending. The site administrator will activate it after review."
-    );
-    return <></>;
+    return redirect("/logout")
   }
 
   let userType;

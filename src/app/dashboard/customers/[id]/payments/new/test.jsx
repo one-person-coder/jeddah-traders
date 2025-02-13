@@ -15,20 +15,44 @@ import {
 import { ChevronDown } from "lucide-react";
 
 export default function NewPayment() {
-  const { id } = useParams();
   const [registerFormData, setRegisterFormData] = useState({
+    username: "",
     amount: "",
     paidAmount: "",
     description: "",
     method: "",
-    customerId: id,
   });
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [users, setUsers] = useState();
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const response = await fetch(`/api/customers/status`, {
+        method: "GET",
+      });
+      const userStatus = await response.json();
+
+      if (!userStatus.success) {
+        ErrorToast("User Cannot Fetch Server Error");
+      }
+
+      if (!userStatus.success) {
+        ErrorToast("User Cannot Fetch Server Error");
+      }
+
+      if (userStatus.data && userStatus.data.length >= 1) {
+        setUsers(userStatus.data);
+        setFilteredUsers(userStatus.data);
+      }
+    };
+    fetchUsers();
+  }, []);
 
   const router = useRouter();
+  const { id } = useParams();
 
   const [disableBtn, setDisableBtn] = useState(false);
 
@@ -43,31 +67,86 @@ export default function NewPayment() {
     e.preventDefault();
 
     if (
-      !registerFormData.method ||
-      (!registerFormData.paidAmount && !registerFormData.amount)
+      !registerFormData.username ||
+      (!registerFormData.method && !registerFormData.paidAmount) ||
+      !registerFormData.amount
     ) {
       ErrorToast("Please fill in all required fields before proceeding.");
       return;
     }
 
-    setDisableBtn(true);
+    // setDisableBtn(true);
 
-    const response = await fetch("/api/customers/payments/register", {
-      method: "POST",
-      body: JSON.stringify(registerFormData),
+    // const response = await fetch("/api/customers/register", {
+    //   method: "POST",
+    //   body: JSON.stringify(registerFormData),
+    // });
+
+    // setDisableBtn(false);
+
+    // const rspJson = await response.json();
+
+    // if (!rspJson.success) {
+    //   ErrorToast(rspJson.message);
+    //   return;
+    // }
+
+    // SuccessToast("Customer Registered successful!");
+    // router.push("/dashboard/customers");
+  };
+
+  const handleSearch = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    setDropdownOpen(true);
+    setRegisterFormData({
+      ...registerFormData,
+      username: value,
     });
-
-    setDisableBtn(false);
-
-    const rspJson = await response.json();
-
-    if (!rspJson.success) {
-      ErrorToast(rspJson.message);
-      return;
+    if (value.trim() === "") {
+      setFilteredUsers([]);
+      setDropdownOpen(false);
+    } else {
+      const filtered = users.filter((user) =>
+        user.fullname.toLowerCase().includes(value.toLowerCase())
+      );
+      setFilteredUsers(filtered);
     }
+  };
 
-    SuccessToast("Payment Registered successful!");
-    router.push(`/dashboard/customers/${id}/payments`);
+  const handleUserSelect = (user) => {
+    setRegisterFormData({ ...registerFormData, user: user.id });
+    setSearchTerm(user.name);
+    setRegisterFormData({
+      ...registerFormData,
+      username: user.name,
+    });
+    setFilteredUsers([]);
+    setDropdownOpen(false);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "ArrowDown") {
+      setSelectedIndex((prev) =>
+        prev < filteredUsers.length - 1 ? prev + 1 : prev
+      );
+    } else if (e.key === "ArrowUp") {
+      setSelectedIndex((prev) => (prev > 0 ? prev - 1 : prev));
+    } else if (e.key === "Enter" && selectedIndex >= 0) {
+      handleUserSelect(filteredUsers[selectedIndex]);
+      e.preventDefault();
+    } else if (e.key === "Escape") {
+      setDropdownOpen(false);
+    }
+  };
+
+  const handleDropdownToggle = () => {
+    setDropdownOpen(!dropdownOpen);
+    if (!dropdownOpen) {
+      setFilteredUsers(users);
+    } else {
+      setFilteredUsers([]);
+    }
   };
 
   return (
@@ -86,6 +165,43 @@ export default function NewPayment() {
                 <hr />
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="relative w-full">
+                    <h3 className="font-semibold mb-2 text-sm">
+                      Choose User <span className="text-red-500">*</span>
+                    </h3>
+                    <input
+                      type="text"
+                      name="username"
+                      placeholder="Enter Username"
+                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
+                      onChange={handleSearch}
+                      onKeyDown={handleKeyDown}
+                      onFocus={() => setDropdownOpen(true)}
+                      value={searchTerm}
+                      autoComplete="off"
+                    />
+                    <ChevronDown
+                      className="absolute right-3 top-[39px] cursor-pointer text-gray-500"
+                      onClick={handleDropdownToggle}
+                    />
+                    {dropdownOpen && filteredUsers.length > 0 && (
+                      <div className="absolute w-full bg-white border border-gray-200 rounded-lg shadow-md mt-1 max-h-40 overflow-y-auto">
+                        {filteredUsers.map((user, index) => (
+                          <div
+                            key={user.id}
+                            className={`p-2 cursor-pointer ${
+                              selectedIndex === index
+                                ? "bg-gray-200"
+                                : "hover:bg-gray-100"
+                            }`}
+                            onClick={() => handleUserSelect(user.username)}
+                          >
+                            {user.fullname}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                   <div>
                     <h3 className="font-semibold  mb-2 text-sm">Amount</h3>
                     <input
@@ -106,7 +222,7 @@ export default function NewPayment() {
                       onChange={handleInputChange}
                     />
                   </div>
-                  <div className="sm:col-span-2">
+                  <div>
                     <h3 className="font-semibold  mb-2 text-sm">
                       Payment Method.
                       <span className="text-red-500">*</span>

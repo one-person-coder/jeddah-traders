@@ -13,7 +13,6 @@ import TopNav from "./TopNavBar";
 import AnchorLink from "@/components/utils/AnchorLink";
 
 export default function Sidebar({ children, userType }) {
-  
   let navigation;
   if (userType === "customer") {
     navigation = [

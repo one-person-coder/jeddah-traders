@@ -74,7 +74,7 @@ export async function POST(request) {
 
     return response;
   } catch (error) {
-    console.error("Login Error:", error);
+    console.error("Login Error:", error.message);
     return NextResponse.json(
       {
         success: false,

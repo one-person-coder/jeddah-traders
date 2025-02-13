@@ -42,7 +42,7 @@ export default function TopNav({ onMenuClick }) {
             alt="Profile"
             className="w-8 h-8 rounded-full ring-2 ring-purple-500"
           />
-          <div className="hidden md:block text-left">
+          <div className="text-left">
             <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
               {userData.fullname}
             </p>

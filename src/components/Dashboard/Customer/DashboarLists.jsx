@@ -7,7 +7,6 @@ import {
   User2,
   Eye,
   Plus,
-  Filter,
   RefreshCcw,
   Trash2,
 } from "lucide-react";
@@ -30,12 +29,10 @@ import {
 } from "@/components/ui/table";
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
-import { statusColors } from "@/constant/constant";
-import { ErrorToast, SuccessToast } from "../utils/CustomToasts";
+import { ErrorToast, SuccessToast } from "@/components/utils/CustomToasts";
 
-export default function PaymentLists({ data, customerId }) {
+export default function DashboardLists({ data, customerId }) {
   const [isFiltersVisible, setIsFiltersVisible] = React.useState(true);
-
   const [storeUsers, setStoreUsers] = React.useState(data);
   const [users, setUsers] = React.useState(data);
 
@@ -52,9 +49,6 @@ export default function PaymentLists({ data, customerId }) {
       ErrorToast("User Cannot Fetch Server Error");
     }
 
-    if (!userStatus.success) {
-      ErrorToast("User Cannot Fetch Server Error");
-    }
     if (userStatus.data && userStatus.data.length >= 1) {
       setUsers(userStatus.data);
     } else {
@@ -118,39 +112,29 @@ export default function PaymentLists({ data, customerId }) {
         user.description
           .toLowerCase()
           .includes(searchTerm.toLowerCase().trim()) ||
-        user.paid_amount
-          .toString()
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase().trim()) ||
-        user.amount
-          .toString()
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase().trim())
+        user?.paid_amount
+          ?.toString()
+          ?.toLowerCase()
+          ?.includes(searchTerm.toLowerCase().trim()) ||
+        user?.amount
+          ?.toString()
+          ?.toLowerCase()
+          ?.includes(searchTerm.toLowerCase().trim())
     );
     setUsers(filteredUsers);
   }, [searchTerm]);
 
   return (
     <div className="py-8 space-y-8">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="text-center">
         <div>
           <h1 className="text-2xl font-semibold text-gray-900">
-            Customer Management
+            Payment History
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Manage and monitor Customer accounts
+            Monitor your payment history
           </p>
         </div>
-        <Button
-          className="bg-purple-600 hover:bg-purple-700 transition-all shadow-lg hover:shadow-purple-200"
-          size="lg"
-          asChild
-        >
-          <Link href={`/dashboard/customers/${customerId}/payments/new`}>
-            <Plus className="h-4 w-4" />
-            Add New Payment
-          </Link>
-        </Button>
       </div>
 
       <Card className="border-none shadow-lg">
@@ -185,7 +169,7 @@ export default function PaymentLists({ data, customerId }) {
                   <TableHead>AMOUNT</TableHead>
                   <TableHead>PAID</TableHead>
                   <TableHead>DESCRIPTION</TableHead>
-                  <TableHead>ACTIONS</TableHead>
+                  {/* <TableHead>ACTIONS</TableHead> */}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -193,7 +177,9 @@ export default function PaymentLists({ data, customerId }) {
                   <TableRow
                     key={index}
                     className={`${
-                      user.isDelete ? "bg-[#ffd2d2] hover:bg-[#ffd2d2]" : "hover:bg-gray-50/50"
+                      user.isDelete
+                        ? "bg-[#ffd2d2] hover:bg-[#ffd2d2]"
+                        : "hover:bg-gray-50/50"
                     }`}
                   >
                     <TableCell>
@@ -290,7 +276,7 @@ export default function PaymentLists({ data, customerId }) {
                         {user.description}
                       </span>
                     </TableCell>
-                    <TableCell>
+                    {/* <TableCell>
                       <div className="flex items-center justify-end gap-2">
                         <Button
                           variant="ghost"
@@ -298,7 +284,9 @@ export default function PaymentLists({ data, customerId }) {
                           asChild
                           className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
                         >
-                          <Link href={`/dashboard/customers/${customerId}/payments/${user.id}/view`}>
+                          <Link
+                            href={`/dashboard/customers/${customerId}/payments/${user.id}/view`}
+                          >
                             <Eye className="h-4 w-4" />
                           </Link>
                         </Button>
@@ -308,7 +296,9 @@ export default function PaymentLists({ data, customerId }) {
                           className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
                           asChild
                         >
-                          <Link href={`/dashboard/customers/${customerId}/payments/${user.id}/edit`}>
+                          <Link
+                            href={`/dashboard/customers/${customerId}/payments/${user.id}/edit`}
+                          >
                             <Pencil className="h-4 w-4" />
                           </Link>
                         </Button>
@@ -323,7 +313,7 @@ export default function PaymentLists({ data, customerId }) {
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
-                    </TableCell>
+                    </TableCell> */}
                   </TableRow>
                 ))}
               </TableBody>

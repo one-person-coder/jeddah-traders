@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { checkLoginToken } from "../../checker";
-import { handleLogout } from "../../handleLogout";
+import { handleLogout } from "@/app/api/handleLogout";
+import { checkLoginToken } from "@/app/api/checker";
 
 export async function POST(request) {
   try {
@@ -28,31 +28,21 @@ export async function POST(request) {
       );
     }
 
-    const user = await prisma.userInfo.findUnique({
+    const deletedUser = await prisma.paymentRecord.update({
       where: { id: parseInt(id) },
-    });
-
-    if (user.role === "admin") {
-      return NextResponse.json({
-        success: false,
-        message: "You don't have permisson to delete admin!",
-      });
-    }
-
-    const deletedUser = await prisma.userInfo.delete({
-      where: { id: parseInt(id) },
+      data: { isDelete: true },
     });
 
     if (!deletedUser) {
       return NextResponse.json(
-        { success: false, message: "User not found" },
+        { success: false, message: "Payment not found" },
         { status: 404 }
       );
     }
 
     return NextResponse.json({
       success: true,
-      message: "User deleted successfully",
+      message: "Payment deleted successfully",
     });
   } catch (error) {
     return NextResponse.json(

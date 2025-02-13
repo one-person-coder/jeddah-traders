@@ -10,8 +10,8 @@ const Payments = async ({ params }) => {
   const payments = await prisma.paymentRecord.findMany({
     where: { customer_id: parseInt(id) },
     include: {
-      user: true, // Jis user ne payment ki
-      customer: true, // Jis customer ke liye payment hui
+      user: true, 
+      customer: true,
     },
   });
 

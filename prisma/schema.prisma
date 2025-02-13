@@ -45,12 +45,13 @@ model PaymentRecord {
   id          Int           @id @default(autoincrement())
   user_id     Int
   customer_id Int
-  amount      Float
-  paid_amount Float
-  description String
+  amount      Float?
+  paid_amount Float?
+  description String?
   method      PaymentMethod
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
+  isDelete    Boolean       @default(false)
 
   user     UserInfo @relation(name: "UserPayments", fields: [user_id], references: [id], onDelete: NoAction)
   customer UserInfo @relation(name: "CustomerPayments", fields: [customer_id], references: [id], onDelete: NoAction)
