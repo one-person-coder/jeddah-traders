@@ -10,6 +10,13 @@ export async function GET(request) {
     return handleLogout(login);
   }
 
+  if (login.role === "customer") {
+    return NextResponse.json({
+      success: false,
+      message: "Unauthorized access detected!",
+    });
+  }
+
   const users = await prisma.userInfo.findMany({
     where: {
       role: {

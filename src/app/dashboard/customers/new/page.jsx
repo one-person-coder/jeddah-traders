@@ -62,7 +62,7 @@ export default function NewUser() {
       return;
     }
 
-    SuccessToast("User Registered successful!");
+    SuccessToast("Customer Registered successful!");
     router.push("/dashboard/customers");
   };
 

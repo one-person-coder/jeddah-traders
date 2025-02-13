@@ -12,35 +12,51 @@ import {
 import TopNav from "./TopNavBar";
 import AnchorLink from "@/components/utils/AnchorLink";
 
-const navigation = [
-  {
-    title: "Dashboards",
-    icon: LayoutDashboard,
-    url: "/dashboard",
-  },
-  {
-    title: "Stats",
-    icon: ChartColumn,
-    url: "/dashboard/stats",
-  },
-  {
-    title: "Users",
-    icon: User,
-    url: "/dashboard/users",
-  },
-  {
-    title: "Customers",
-    icon: Users,
-    url: "/dashboard/customers",
-  },
-  {
-    title: "Settings",
-    icon: Settings,
-    url: "/dashboard/settings/profile",
-  },
-];
-
-export default function Sidebar({ children }) {
+export default function Sidebar({ children, userType }) {
+  
+  let navigation;
+  if (userType === "customer") {
+    navigation = [
+      {
+        title: "Dashboards",
+        icon: LayoutDashboard,
+        url: "/dashboard",
+      },
+      {
+        title: "Settings",
+        icon: Settings,
+        url: "/dashboard/settings/profile",
+      },
+    ];
+  } else if (userType === "admin") {
+    navigation = [
+      {
+        title: "Dashboards",
+        icon: LayoutDashboard,
+        url: "/dashboard",
+      },
+      {
+        title: "Stats",
+        icon: ChartColumn,
+        url: "/dashboard/stats",
+      },
+      {
+        title: "Users",
+        icon: User,
+        url: "/dashboard/users",
+      },
+      {
+        title: "Customers",
+        icon: Users,
+        url: "/dashboard/customers",
+      },
+      {
+        title: "Settings",
+        icon: Settings,
+        url: "/dashboard/settings/profile",
+      },
+    ];
+  }
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [openMenus, setOpenMenus] = useState([]);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

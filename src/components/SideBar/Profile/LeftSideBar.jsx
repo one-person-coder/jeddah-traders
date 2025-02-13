@@ -48,7 +48,7 @@ const LeftSideBar = async () => {
 
   return (
     <div>
-      <div className="prose max-w-[100%] grid sm:grid-cols-2 gap-4 sm:break-normal break-all">
+      <div className="prose max-w-[100%] grid sm:grid-cols-1 gap-4 sm:break-normal break-all">
         <div className="shadow-light p-4 rounded-md bg-white">
           <div>
             <span className="text-zinc-500">About</span>
@@ -98,7 +98,7 @@ const LeftSideBar = async () => {
             </div>
           </div>
         </div>
-        <div className="shadow-light p-4 rounded-md bg-white">
+        <div className="hidden shadow-light p-4 rounded-md bg-white">
           <div>
             <span className="text-zinc-500">Overview</span>
           </div>

@@ -4,7 +4,7 @@ import UsersSvg from "./utils/SvgJsx/UsersSvg";
 import AnchorLink from "./utils/AnchorLink";
 import { LockKeyhole } from "lucide-react";
 
-const NavBarPills = () => {
+const NavBarPills = ({ user }) => {
   return (
     <div>
       <div className="custom-width pl-2">
@@ -18,13 +18,16 @@ const NavBarPills = () => {
                 <ProfileSvg />
                 Profile
               </AnchorLink>
-              <AnchorLink
-                href="/dashboard/settings/account"
-                classes="hover:bg-[#EDE4FF] py-[7px] justify-center rounded-md px-6 text-white duration-150 flex gap-2 items-center no-underline"
-              >
-                <UsersSvg />
-                Account
-              </AnchorLink>
+              {user.role !== "customer" ? (
+                <AnchorLink
+                  href="/dashboard/settings/account"
+                  classes="hover:bg-[#EDE4FF] py-[7px] justify-center rounded-md px-6 text-white duration-150 flex gap-2 items-center no-underline"
+                >
+                  <UsersSvg />
+                  Account
+                </AnchorLink>
+              ) : null}
+
               <AnchorLink
                 href="/dashboard/settings/security"
                 classes="hover:bg-[#EDE4FF] py-[7px] justify-center rounded-md px-6 text-white duration-150 flex gap-2 items-center no-underline"

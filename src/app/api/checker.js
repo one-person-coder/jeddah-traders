@@ -13,7 +13,7 @@ export async function checkLoginToken(request) {
 
     const user = await prisma.userInfo.findUnique({
       where: { id: decoded.id },
-      select: { id: true, status: true },
+      select: { id: true, status: true, role: true },
     });
 
     return user;

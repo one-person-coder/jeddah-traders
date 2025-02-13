@@ -11,6 +11,12 @@ export async function POST(request) {
     if (!login || login.status === "inactive" || login.status === "pending") {
       return handleLogout(login);
     }
+    if (login.role === "customer") {
+      return NextResponse.json({
+        success: false,
+        message: "Unauthorized access detected!",
+      });
+    }
 
     const reqBody = await request.json();
     const {
@@ -58,7 +64,7 @@ export async function POST(request) {
         gender,
         date: new Date(date),
         status,
-        role: "manager",
+        role: "customer",
       },
     });
 

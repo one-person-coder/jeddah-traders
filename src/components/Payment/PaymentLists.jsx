@@ -33,52 +33,19 @@ import Link from "next/link";
 import { statusColors } from "@/constant/constant";
 import { ErrorToast, SuccessToast } from "../utils/CustomToasts";
 
-export default function CustomerLists({ data }) {
+
+export default function PaymentLists({ data, customerId }) {
   const [isFiltersVisible, setIsFiltersVisible] = React.useState(true);
 
-  const [storeUsers, setStoreUsers] = React.useState(
-    data.sort((a, b) => (b.role === "customer") - (a.role === "customer"))
-  );
+  const [storeUsers, setStoreUsers] = React.useState(data);
+  const [users, setUsers] = React.useState(data);
 
-  const [users, setUsers] = React.useState(
-    data.sort((a, b) => (b.role === "customer") - (a.role === "customer"))
-  );
-  const [statusFilter, setStatusFilter] = React.useState("all");
   const [searchTerm, setSearchTerm] = React.useState("");
 
-  React.useEffect(() => {
-    const fetchFilterData = async () => {
-      const response = await fetch(`/api/customers/status`, {
-        method: "GET",
-      });
-      const userStatus = await response.json();
-
-      if (!userStatus.success) {
-        ErrorToast("User Cannot Fetch Server Error");
-      }
-
-      if (!userStatus.success) {
-        ErrorToast("User Cannot Fetch Server Error");
-      }
-
-      const sortUsers = userStatus.data.sort(
-        (a, b) => (b.role === "customer") - (a.role === "customer")
-      );
-
-      const filtered = sortUsers.filter((user) => user.status === statusFilter);
-      setUsers(filtered);
-    };
-
-    if (statusFilter !== "all") {
-      fetchFilterData();
-    } else {
-      refreshData();
-    }
-  }, [statusFilter]);
-
   const refreshData = async () => {
-    const response = await fetch(`/api/customers/status`, {
-      method: "GET",
+    const response = await fetch(`/api/customers/payments/status`, {
+      method: "POST",
+      body: JSON.stringify({ customerId: customerId }),
     });
     const userStatus = await response.json();
 
@@ -90,13 +57,9 @@ export default function CustomerLists({ data }) {
       ErrorToast("User Cannot Fetch Server Error");
     }
     if (userStatus.data && userStatus.data.length >= 1) {
-      setUsers(
-        userStatus.data.sort(
-          (a, b) => (b.role === "customer") - (a.role === "customer")
-        )
-      );
+      setUsers(userStatus.data);
     } else {
-      setUsers([]);
+      window.location.reload();
     }
   };
 
@@ -129,10 +92,41 @@ export default function CustomerLists({ data }) {
   React.useEffect(() => {
     const filteredUsers = storeUsers.filter(
       (user) =>
-        user.fullname.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchTerm) ||
-        user.username.toLowerCase().includes(searchTerm) ||
-        user.pNumber.toLowerCase().includes(searchTerm)
+        user.user.fullname
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase().trim()) ||
+        user.customer.fullname
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase().trim()) ||
+        user.user.email
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase().trim()) ||
+        user.customer.email
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase().trim()) ||
+        user.user.username
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase().trim()) ||
+        user.customer.username
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase().trim()) ||
+        user.user.pNumber
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase().trim()) ||
+        user.customer.pNumber
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase().trim()) ||
+        user.description
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase().trim()) ||
+        user.paid_amount
+          .toString()
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase().trim()) ||
+        user.amount
+          .toString()
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase().trim())
     );
     setUsers(filteredUsers);
   }, [searchTerm]);
@@ -153,9 +147,9 @@ export default function CustomerLists({ data }) {
           size="lg"
           asChild
         >
-          <Link href={"/dashboard/customers/new"}>
+          <Link href={`/dashboard/customers/${customerId}/payments/new`}>
             <Plus className="h-4 w-4" />
-            Add New Customer
+            Add New Payment
           </Link>
         </Button>
       </div>
@@ -164,14 +158,6 @@ export default function CustomerLists({ data }) {
         <CardContent className="p-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
             <div className="flex flex-wrap items-center gap-3">
-              <Button
-                variant="outline"
-                className="border-dashed"
-                onClick={() => setIsFiltersVisible(!isFiltersVisible)}
-              >
-                <Filter className="mr-2 h-4 w-4 text-purple-600" />
-                Filters
-              </Button>
               <Button onClick={refreshData} variant="outline">
                 <RefreshCcw className="mr-2 h-4 w-4 text-purple-600" />
                 Refresh
@@ -182,28 +168,11 @@ export default function CustomerLists({ data }) {
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 onChange={handleSearchChange}
-                placeholder="Search users..."
+                placeholder="Search payment..."
                 className="w-full pl-9 sm:w-[300px] bg-gray-50 border-0 ring-1 ring-gray-200"
               />
             </div>
           </div>
-
-          {/* Filters */}
-          {isFiltersVisible && (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 mb-6 p-4 bg-gray-50 rounded-lg border border-dashed">
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="bg-white">
-                  <SelectValue placeholder="Status: All" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="inactive">Inactive</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          )}
 
           {/* Table */}
           <div className="rounded-lg border shadow-sm max-h-[500px] overflow-scroll">
@@ -211,13 +180,13 @@ export default function CustomerLists({ data }) {
               <TableHeader>
                 <TableRow className="bg-gray-50">
                   <TableHead>Sr.</TableHead>
-                  <TableHead>PAYMENTS</TableHead>
                   <TableHead>USER</TableHead>
-                  <TableHead>ROLE</TableHead>
+                  <TableHead>DATE</TableHead>
                   <TableHead>STATUS</TableHead>
-                  <TableHead>CONTACT</TableHead>
-                  <TableHead>JOIN DATE</TableHead>
-                  <TableHead className="text-right">ACTIONS</TableHead>
+                  <TableHead>AMOUNT</TableHead>
+                  <TableHead>PAID</TableHead>
+                  <TableHead>DESCRIPTION</TableHead>
+                  <TableHead>ACTIONS</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -229,17 +198,10 @@ export default function CustomerLists({ data }) {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Button asChild variant="outline" className="">
-                        <Link href={`/dashboard/customers/${user.id}/payments`}>
-                          View
-                        </Link>
-                      </Button>
-                    </TableCell>
-                    <TableCell>
                       <div className="flex items-center gap-3">
                         <div className="relative">
                           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100 text-sm font-medium text-purple-600 ring-2 ring-white">
-                            {user.fullname
+                            {user.user.fullname
                               .split(" ")
                               .map((word) => word.charAt(0))
                               .join("")}
@@ -248,16 +210,22 @@ export default function CustomerLists({ data }) {
                             className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white"
                             style={{
                               backgroundColor:
-                                statusColors[`more-${user.status}`],
+                                user.amount && user.paid_amount
+                                  ? "#9333ea"
+                                  : user.amount && !user.paid_amount
+                                  ? "#c5bd00"
+                                  : !user.amount && user.paid_amount
+                                  ? "#00cd0e"
+                                  : null,
                             }}
                           />
                         </div>
                         <div>
                           <div className="font-medium text-gray-900">
-                            {user.fullname}
+                            {user.user.fullname}
                           </div>
                           <div className="text-sm text-muted-foreground">
-                            {user.username}
+                            {user.user.username}
                           </div>
                         </div>
                       </div>
@@ -266,7 +234,19 @@ export default function CustomerLists({ data }) {
                       <div className="flex items-center gap-2">
                         <User2 className="h-4 w-4 text-purple-600" />
                         <span className="font-medium">
-                          {user.role.toUpperCase()}
+                          {new Date(user.createdAt).toLocaleDateString(
+                            "en-US",
+                            {
+                              month: "short",
+                              day: "2-digit",
+                              year: "numeric",
+                              timeZone: "UTC",
+                              hour12: true,
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
+                            }
+                          )}
                         </span>
                       </div>
                     </TableCell>
@@ -275,21 +255,35 @@ export default function CustomerLists({ data }) {
                         <span
                           className="inline-flex items-center rounded-md text-xs transition-colors font-medium px-2 py-0.5 capitalize"
                           style={{
-                            backgroundColor: statusColors[user.status],
+                            backgroundColor:
+                              user.amount && user.paid_amount
+                                ? "#f3e8ff"
+                                : user.amount && !user.paid_amount
+                                ? "#f1f5b2"
+                                : !user.amount && user.paid_amount
+                                ? "#c8ffc8"
+                                : null,
                           }}
                         >
-                          {user.status}
+                          {user.amount && user.paid_amount ? (
+                            <span>partial</span>
+                          ) : user.amount && !user.paid_amount ? (
+                            <span>pending</span>
+                          ) : !user.amount && user.paid_amount ? (
+                            <span>paid</span>
+                          ) : null}
                         </span>
                       </div>
                     </TableCell>
-                    <TableCell>{user.pNumber}</TableCell>
+                    <TableCell>{user.amount}</TableCell>
                     <TableCell>
                       <span className="text-sm text-muted-foreground">
-                        {new Date(user.createdAt).toLocaleDateString("en-US", {
-                          month: "short",
-                          day: "2-digit",
-                          year: "numeric",
-                        })}
+                        {user.paid_amount}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-sm text-muted-foreground">
+                        {user.description}
                       </span>
                     </TableCell>
                     <TableCell>

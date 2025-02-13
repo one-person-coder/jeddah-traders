@@ -135,7 +135,13 @@ export default function UserLists({ data }) {
     setSearchTerm(e.target.value);
   };
 
-  const deleteUser = async (userId) => {
+  const deleteUser = async (userId, username) => {
+    let userResponse = confirm(
+      `Are you sure you want to delete user [ ${username} ]`
+    );
+
+    if (!userResponse) return;
+
     const response = await fetch("/api/users/delete", {
       method: "POST",
       body: JSON.stringify({
@@ -348,7 +354,7 @@ export default function UserLists({ data }) {
                           variant="ghost"
                           size="icon"
                           onClick={() => {
-                            deleteUser(user.id);
+                            deleteUser(user.id, user.username);
                           }}
                           className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
                         >

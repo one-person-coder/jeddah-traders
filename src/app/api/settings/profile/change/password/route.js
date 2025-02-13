@@ -11,7 +11,6 @@ export async function POST(request) {
     return handleLogout(login);
   }
 
-  console.log("User ID:", login.id);
 
   try {
     const reqBody = await request.json();

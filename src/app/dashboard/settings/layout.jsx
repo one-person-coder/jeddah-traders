@@ -94,7 +94,7 @@ const layout = async ({ children }) => {
           </div>
         </div>
       </div>
-      <NavBarPills />
+      <NavBarPills user={user} />
       {children}
     </div>
   );

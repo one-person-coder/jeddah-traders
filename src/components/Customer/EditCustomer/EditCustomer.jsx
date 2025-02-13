@@ -53,7 +53,7 @@ export default function EditCustomer({ user }) {
       return;
     }
 
-    SuccessToast("User Updated successful!");
+    SuccessToast("Customer Updated successful!");
     router.push("/dashboard/customers");
   };
 

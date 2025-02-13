@@ -12,6 +12,7 @@ export async function GET(request) {
       return handleLogout(login);
     }
 
+
     const token = request.cookies.get("token")?.value;
     if (!token) {
       return NextResponse.json(

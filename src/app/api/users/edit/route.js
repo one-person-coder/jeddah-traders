@@ -10,6 +10,13 @@ export async function POST(request) {
     return handleLogout(login);
   }
 
+  if (login.role === "customer") {
+    return NextResponse.json({
+      success: false,
+      message: "Unauthorized access detected!",
+    });
+  }
+
   try {
     const reqBody = await request.json();
     const {
