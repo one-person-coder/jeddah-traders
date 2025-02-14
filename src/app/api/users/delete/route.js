@@ -28,11 +28,7 @@ export async function POST(request) {
       );
     }
 
-    const user = await prisma.userInfo.findUnique({
-      where: { id: parseInt(id) },
-    });
-
-    if (user.role !== "admin") {
+    if (login.role !== "admin") {
       return NextResponse.json({
         success: false,
         message: "You don't have permisson to delete admin!",

@@ -14,6 +14,10 @@ import AnchorLink from "@/components/utils/AnchorLink";
 
 export default function Sidebar({ children, userType }) {
   let navigation;
+
+  console.log(userType);
+  
+  
   if (userType === "customer") {
     navigation = [
       {
@@ -27,7 +31,7 @@ export default function Sidebar({ children, userType }) {
         url: "/dashboard/settings/profile",
       },
     ];
-  } else if (userType === "admin") {
+  } else if (userType === "admin" || userType === "manager") {
     navigation = [
       {
         title: "Dashboards",

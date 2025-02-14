@@ -36,6 +36,14 @@ const Payments = async ({ params }) => {
     },
   });
 
+  let base64String;
+  let imageSrc;
+
+  if (currentUser.user_img) {
+    base64String = btoa(String.fromCharCode(...currentUser.user_img));
+    imageSrc = `data:image/jpeg;base64,${base64String}`;
+  }
+
   if (!payments) {
     return <div>User not found</div>;
   }
@@ -46,7 +54,12 @@ const Payments = async ({ params }) => {
       <div className="flex sm:items-end flex-col justify-between sm:flex-row items-center bg-white shadow-light rounded-md p-2">
         <div className="flex sm:items-end flex-col sm:flex-row items-center">
           <div className="border-4 rounded-md overflow-hidden z-20 border-white">
-            <Image src={"/1.png"} height={80} width={80} alt="image" />
+            <Image
+              src={imageSrc || "/1.png"}
+              height={80}
+              width={80}
+              alt="image"
+            />
           </div>
           <div className="p-3 sm:text-start text-center ml-3 sm:ml-0">
             <div className="prose sm:text-start">

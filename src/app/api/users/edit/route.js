@@ -40,14 +40,8 @@ export async function POST(request) {
     }
 
     const ac = parseInt(account_number);
-    const admin = await prisma.userInfo.findUnique({
-      where: { id: parseInt(id) },
-    });
 
-    console.log(admin.role);
-    
-
-    if (admin.role !== "admin") {
+    if (login.role !== "admin") {
       return NextResponse.json({
         success: false,
         message: "You don't have permisson to edit admin!",

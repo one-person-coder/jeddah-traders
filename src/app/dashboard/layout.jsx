@@ -15,13 +15,13 @@ export default async function RootLayout({ children }) {
   });
 
   if (!user) {
-    return redirect("/logout")
+    return redirect("/logout");
   }
   if (user.status === "inactive") {
-    return redirect("/logout")
+    return redirect("/logout");
   }
   if (user.status === "pending") {
-    return redirect("/logout")
+    return redirect("/logout");
   }
 
   let userType;
@@ -31,6 +31,9 @@ export default async function RootLayout({ children }) {
   }
   if (user.role === "customer") {
     userType = "customer";
+  }
+  if (user.role === "manager") {
+    userType = "manager";
   }
 
   return <MainSideBar userType={userType}>{children}</MainSideBar>;
