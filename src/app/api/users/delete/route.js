@@ -32,7 +32,7 @@ export async function POST(request) {
       where: { id: parseInt(id) },
     });
 
-    if (user.role === "admin") {
+    if (user.role !== "admin") {
       return NextResponse.json({
         success: false,
         message: "You don't have permisson to delete admin!",

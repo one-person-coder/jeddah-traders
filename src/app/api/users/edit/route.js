@@ -44,7 +44,10 @@ export async function POST(request) {
       where: { id: parseInt(id) },
     });
 
-    if (admin.role === "admin") {
+    console.log(admin.role);
+    
+
+    if (admin.role !== "admin") {
       return NextResponse.json({
         success: false,
         message: "You don't have permisson to edit admin!",
