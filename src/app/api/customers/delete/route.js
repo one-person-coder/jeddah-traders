@@ -28,6 +28,10 @@ export async function POST(request) {
       );
     }
 
+    await prisma.paymentRecord.deleteMany({
+      where: { customer_id: id },
+    });
+
     const deletedUser = await prisma.userInfo.delete({
       where: { id: parseInt(id) },
     });

@@ -1,4 +1,3 @@
-import { ErrorToast } from "@/components/utils/CustomToasts";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import prisma from "@/lib/prisma";
@@ -13,6 +12,7 @@ const Dashboard = async () => {
     where: { id: decoded.id },
     select: { id: true, status: true, role: true },
   });
+
   const stats = await prisma.paymentRecord.findMany({
     where: { customer_id: decoded.id },
     include: {
@@ -34,7 +34,7 @@ const Dashboard = async () => {
   return (
     <>
       <div className="custom-width">
-        {stats && stats.length >= 1 || user.role === "customer" ? (
+        {(stats && stats.length >= 1) || user.role === "customer" ? (
           <h3 className="text-3xl font-bold">
             <DashboardCards data={stats} />
             <DashboardLists data={stats} customerId={decoded.id} />

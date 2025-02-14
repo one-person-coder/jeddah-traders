@@ -18,6 +18,7 @@ const EditPage = async ({ params }) => {
       date: true,
       status: true,
       role: true,
+      cnic_no: true,
     },
   });
 

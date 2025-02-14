@@ -34,6 +34,7 @@ import { statusColors } from "@/constant/constant";
 import { ErrorToast, SuccessToast } from "../utils/CustomToasts";
 
 export default function PaymentLists({ data, customerId }) {
+  let runningRemaining = 0;
   const [isFiltersVisible, setIsFiltersVisible] = React.useState(true);
 
   const [storeUsers, setStoreUsers] = React.useState(data);
@@ -183,149 +184,162 @@ export default function PaymentLists({ data, customerId }) {
                   <TableHead>DATE</TableHead>
                   <TableHead>STATUS</TableHead>
                   <TableHead>AMOUNT</TableHead>
-                  <TableHead>PAID</TableHead>
+                  <TableHead>PAID AMOUNT</TableHead>
+                  <TableHead>Remaining AMOUNT</TableHead>
                   <TableHead>DESCRIPTION</TableHead>
                   <TableHead>ACTIONS</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {users.map((user, index) => (
-                  <TableRow
-                    key={index}
-                    className={`${
-                      user.isDelete ? "bg-[#ffd2d2] hover:bg-[#ffd2d2]" : "hover:bg-gray-50/50"
-                    }`}
-                  >
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium">{index + 1}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-3">
-                        <div className="relative">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100 text-sm font-medium text-purple-600 ring-2 ring-white">
-                            {user.user.fullname
-                              .split(" ")
-                              .map((word) => word.charAt(0))
-                              .join("")}
+                {users.map((user, index) => {
+                  runningRemaining += user.amount || 0;
+                  runningRemaining -= user.paid_amount || 0;
+
+                  return (
+                    <TableRow
+                      key={index}
+                      className={`${
+                        user.isDelete
+                          ? "bg-[#ffd2d2] hover:bg-[#ffd2d2]"
+                          : "hover:bg-gray-50/50"
+                      }`}
+                    >
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium">{index + 1}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <div className="relative">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100 text-sm font-medium text-purple-600 ring-2 ring-white">
+                              {user.user.fullname
+                                .split(" ")
+                                .map((word) => word.charAt(0))
+                                .join("")}
+                            </div>
+                            <div
+                              className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white"
+                              style={{
+                                backgroundColor:
+                                  user.amount && user.paid_amount
+                                    ? "#9333ea"
+                                    : user.amount && !user.paid_amount
+                                    ? "#c5bd00"
+                                    : !user.amount && user.paid_amount
+                                    ? "#00cd0e"
+                                    : null,
+                              }}
+                            />
                           </div>
-                          <div
-                            className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white"
+                          <div>
+                            <div className="font-medium text-gray-900">
+                              {user.customer.fullname}
+                            </div>
+                            <div className="text-sm ml-2 text-[#712fff] text-muted-foreground">
+                              {user.user.fullname}
+                            </div>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <User2 className="h-4 w-4 text-purple-600" />
+                          <span className="font-medium">
+                            {new Date(user.createdAt).toLocaleDateString(
+                              "en-US",
+                              {
+                                month: "short",
+                                day: "2-digit",
+                                year: "numeric",
+                                timeZone: "UTC",
+                                hour12: true,
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                second: "2-digit",
+                              }
+                            )}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <span
+                            className="inline-flex items-center rounded-md text-xs transition-colors font-medium px-2 py-0.5 capitalize"
                             style={{
                               backgroundColor:
                                 user.amount && user.paid_amount
-                                  ? "#9333ea"
+                                  ? "#f3e8ff"
                                   : user.amount && !user.paid_amount
-                                  ? "#c5bd00"
+                                  ? "#f1f5b2"
                                   : !user.amount && user.paid_amount
-                                  ? "#00cd0e"
+                                  ? "#c8ffc8"
                                   : null,
                             }}
-                          />
+                          >
+                            {user.amount && user.paid_amount ? (
+                              <span>partial</span>
+                            ) : user.amount && !user.paid_amount ? (
+                              <span>pending</span>
+                            ) : !user.amount && user.paid_amount ? (
+                              <span>paid</span>
+                            ) : null}
+                          </span>
                         </div>
-                        <div>
-                          <div className="font-medium text-gray-900">
-                            {user.user.fullname}
-                          </div>
-                          <div className="text-sm text-muted-foreground">
-                            {user.user.username}
-                          </div>
+                      </TableCell>
+                      <TableCell>{user.amount}</TableCell>
+                      <TableCell>
+                        <span className="text-sm text-muted-foreground">
+                          {user.paid_amount}
+                        </span>
+                      </TableCell>
+                      <TableCell>{runningRemaining}</TableCell>
+                      <TableCell>
+                        <span className="text-sm text-muted-foreground">
+                          {user.description}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center justify-end gap-2">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            asChild
+                            className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
+                          >
+                            <Link
+                              href={`/dashboard/customers/${customerId}/payments/${user.id}/view`}
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Link>
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
+                            asChild
+                          >
+                            <Link
+                              href={`/dashboard/customers/${customerId}/payments/${user.id}/edit`}
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Link>
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => {
+                              deleteUser(user.id, user.username);
+                            }}
+                            className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
                         </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <User2 className="h-4 w-4 text-purple-600" />
-                        <span className="font-medium">
-                          {new Date(user.createdAt).toLocaleDateString(
-                            "en-US",
-                            {
-                              month: "short",
-                              day: "2-digit",
-                              year: "numeric",
-                              timeZone: "UTC",
-                              hour12: true,
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              second: "2-digit",
-                            }
-                          )}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <span
-                          className="inline-flex items-center rounded-md text-xs transition-colors font-medium px-2 py-0.5 capitalize"
-                          style={{
-                            backgroundColor:
-                              user.amount && user.paid_amount
-                                ? "#f3e8ff"
-                                : user.amount && !user.paid_amount
-                                ? "#f1f5b2"
-                                : !user.amount && user.paid_amount
-                                ? "#c8ffc8"
-                                : null,
-                          }}
-                        >
-                          {user.amount && user.paid_amount ? (
-                            <span>partial</span>
-                          ) : user.amount && !user.paid_amount ? (
-                            <span>pending</span>
-                          ) : !user.amount && user.paid_amount ? (
-                            <span>paid</span>
-                          ) : null}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell>{user.amount}</TableCell>
-                    <TableCell>
-                      <span className="text-sm text-muted-foreground">
-                        {user.paid_amount}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <span className="text-sm text-muted-foreground">
-                        {user.description}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center justify-end gap-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          asChild
-                          className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
-                        >
-                          <Link href={`/dashboard/customers/${customerId}/payments/${user.id}/view`}>
-                            <Eye className="h-4 w-4" />
-                          </Link>
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
-                          asChild
-                        >
-                          <Link href={`/dashboard/customers/${customerId}/payments/${user.id}/edit`}>
-                            <Pencil className="h-4 w-4" />
-                          </Link>
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => {
-                            deleteUser(user.id, user.username);
-                          }}
-                          className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </div>

@@ -9,10 +9,15 @@ datasource db {
 
 model UserInfo {
   id               Int             @id @default(autoincrement())
+  account_number   Int?            @unique
   fullname         String
   username         String          @unique
   email            String          @unique
   pNumber          String
+  cnic_no          String?
+  user_img         Bytes?
+  cnic_back_img    Bytes?
+  cnic_front_img   Bytes?
   password         String          @db.VarChar(255)
   gender           Gender          @default(male)
   date             DateTime

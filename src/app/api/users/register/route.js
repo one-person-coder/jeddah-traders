@@ -26,15 +26,18 @@ export async function POST(request) {
       email,
       pNumber,
       password,
+      account_number,
       gender,
       date,
       status,
     } = reqBody;
 
+    const ac = parseInt(account_number);
+
     // Check if user already exists
     const existingUser = await prisma.userInfo.findFirst({
       where: {
-        OR: [{ username }, { email }],
+        OR: [{ username }, { email }, { account_number: ac }],
       },
     });
 
@@ -45,7 +48,9 @@ export async function POST(request) {
           message:
             existingUser.username === username
               ? "Username already exists"
-              : "Email already exists",
+              : existingUser.email === email
+              ? "Email already exists"
+              : "This account number is already used please choose another.",
         },
         { status: 400 }
       );
@@ -55,7 +60,7 @@ export async function POST(request) {
     const salt = await bcryptjs.genSalt(10);
     const hashedPassword = await bcryptjs.hash(password, salt);
 
-    const newUser = await prisma.userInfo.create({
+    await prisma.userInfo.create({
       data: {
         fullname,
         username,
@@ -63,6 +68,7 @@ export async function POST(request) {
         pNumber,
         password: hashedPassword,
         gender,
+        account_number: ac,
         date: new Date(date),
         status,
         role: "manager",
@@ -74,6 +80,8 @@ export async function POST(request) {
       message: "User registered successfully",
     });
   } catch (error) {
+    console.log(error);
+
     return NextResponse.json(
       {
         success: false,

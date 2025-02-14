@@ -1,6 +1,6 @@
 "use client";
 import { ErrorToast } from "@/components/utils/CustomToasts";
-import { Menu } from "lucide-react";
+import { Menu, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -22,6 +22,14 @@ export default function TopNav({ onMenuClick }) {
     };
     fetchUserData();
   }, []);
+  let imageSrc;
+  if (userData.user_img) {
+    let newImage = userData.user_img;
+    newImage = Object.values(newImage);
+    const base64String = btoa(String.fromCharCode(...newImage));
+    imageSrc = `data:image/jpeg;base64,${base64String}`;
+  }
+
   return (
     <header className="fixed top-0 right-0 left-0 h-16 bg-white dark:bg-gray-900 border-b dark:border-gray-800 px-4 flex items-center gap-4 z-30 justify-between">
       <button
@@ -38,7 +46,7 @@ export default function TopNav({ onMenuClick }) {
           className="flex items-center gap-2 p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
         >
           <img
-            src={"/1.png"}
+            src={imageSrc || "/1.png"}
             alt="Profile"
             className="w-8 h-8 rounded-full ring-2 ring-purple-500"
           />

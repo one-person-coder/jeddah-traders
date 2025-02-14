@@ -34,9 +34,14 @@ export async function GET(request) {
         gender: true,
         date: true,
         status: true,
+        account_number: true,
         role: true,
         createdAt: true,
         updatedAt: true,
+        cnic_front_img: true,
+        cnic_back_img: true,
+        user_img: true,
+        cnic_no: true,
       },
     });
 

@@ -3,8 +3,14 @@ import { Card, CardContent } from "@/components/ui/card";
 
 export default async function PaymentCards({ data }) {
   const users = data;
-  const totalAmount = users.reduce((acc, user) => acc + user.amount, 0);
-  const totalPaid = users.reduce((acc, user) => acc + user.paid_amount, 0);
+  const totalAmount = users.reduce(
+    (acc, user) => (user.isDelete ? acc : acc + user.amount),
+    0
+  );
+  const totalPaid = users.reduce(
+    (acc, user) => (user.isDelete ? acc : acc + user.paid_amount),
+    0
+  );
   const totalPending = totalAmount - totalPaid;
 
   return (
@@ -33,7 +39,7 @@ export default async function PaymentCards({ data }) {
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">
-                  Total Paid
+                  Paid Amount
                 </p>
                 <h2 className="text-3xl font-bold">{totalPaid}</h2>
               </div>

@@ -14,6 +14,7 @@ const ViewPage = async ({ params }) => {
       username: true,
       email: true,
       pNumber: true,
+      account_number: true,
       gender: true,
       date: true,
       status: true,

@@ -131,8 +131,8 @@ export default function CustomerLists({ data }) {
       (user) =>
         user.fullname.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.email.toLowerCase().includes(searchTerm) ||
-        user.username.toLowerCase().includes(searchTerm) ||
-        user.pNumber.toLowerCase().includes(searchTerm)
+        user.account_number.toLocaleString() === searchTerm ||
+        user.username.toLowerCase().includes(searchTerm)
     );
     setUsers(filteredUsers);
   }, [searchTerm]);
@@ -211,6 +211,7 @@ export default function CustomerLists({ data }) {
               <TableHeader>
                 <TableRow className="bg-gray-50">
                   <TableHead>Sr.</TableHead>
+                  <TableHead>A/C</TableHead>
                   <TableHead>PAYMENTS</TableHead>
                   <TableHead>USER</TableHead>
                   <TableHead>ROLE</TableHead>
@@ -226,6 +227,13 @@ export default function CustomerLists({ data }) {
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <span className="font-medium">{index + 1}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium">
+                          {user.account_number}
+                        </span>
                       </div>
                     </TableCell>
                     <TableCell>

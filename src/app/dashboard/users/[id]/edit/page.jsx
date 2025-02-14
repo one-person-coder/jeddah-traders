@@ -15,6 +15,7 @@ const EditPage = async ({ params }) => {
       email: true,
       pNumber: true,
       gender: true,
+      account_number: true,
       date: true,
       status: true,
       role: true,

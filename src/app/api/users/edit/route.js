@@ -26,6 +26,7 @@ export async function POST(request) {
       email,
       pNumber,
       gender,
+      account_number,
       date,
       status,
       role,
@@ -38,6 +39,7 @@ export async function POST(request) {
       );
     }
 
+    const ac = parseInt(account_number);
     const admin = await prisma.userInfo.findUnique({
       where: { id: parseInt(id) },
     });
@@ -64,6 +66,7 @@ export async function POST(request) {
         OR: [
           { username: username, NOT: { id: parseInt(id) } },
           { email: email, NOT: { id: parseInt(id) } },
+          { account_number: ac, NOT: { id: parseInt(id) } },
         ],
       },
     });
@@ -72,7 +75,8 @@ export async function POST(request) {
       return NextResponse.json(
         {
           success: false,
-          message: "Username or Email already exists Please choose another",
+          message:
+            "Maybe username, email or account number is already using please change it.",
         },
         { status: 400 }
       );
@@ -85,6 +89,7 @@ export async function POST(request) {
         username: username || user.username,
         email: email || user.email,
         pNumber: pNumber || user.pNumber,
+        account_number: ac || user.pNumber,
         gender: gender || user.gender,
         date: date ? new Date(date) : user.date,
         status: status || user.status,

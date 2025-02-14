@@ -32,6 +32,7 @@ export async function GET(request) {
       gender: true,
       date: true,
       createdAt: true,
+      account_number: true,
       status: true,
       role: true,
     },

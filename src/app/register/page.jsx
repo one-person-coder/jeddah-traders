@@ -4,9 +4,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import * as RadioGroup from "@radix-ui/react-radio-group";
 import { LoginHeader } from "@/components/LoginHeader/LoginHeader";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ErrorToast, SuccessToast } from "@/components/utils/CustomToasts";
 import { useRouter } from "next/navigation";
+import { Camera, CameraIcon, ImageIcon, Upload, X } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { AvatarImage } from "@radix-ui/react-avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 export default function RegisterCustomer() {
   const [registerFormData, setRegisterFormData] = useState({
@@ -17,6 +21,19 @@ export default function RegisterCustomer() {
     password: "",
     gender: "male",
     date: "",
+    cnic_no: "",
+    cnic_front_img: {
+      preview: "",
+      binary: "",
+    },
+    cnic_back_img: {
+      preview: "",
+      binary: "",
+    },
+    user_img: {
+      preview: "",
+      binary: "",
+    },
   });
 
   const router = useRouter();
@@ -39,6 +56,10 @@ export default function RegisterCustomer() {
       !registerFormData.pNumber ||
       !registerFormData.password ||
       !registerFormData.gender ||
+      !registerFormData.cnic_front_img.preview.length >= 1 ||
+      !registerFormData.cnic_back_img.preview.length >= 1 ||
+      !registerFormData.user_img.preview.length >= 1 ||
+      !registerFormData.cnic_no ||
       !registerFormData.date
     ) {
       ErrorToast("Please fill in all required fields before proceeding.");
@@ -65,11 +86,29 @@ export default function RegisterCustomer() {
     router.push("/login");
   };
 
+  const handleImageChange = (e, key) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+
+      reader.onloadend = () => {
+        setRegisterFormData((prevState) => ({
+          ...prevState,
+          [key]: {
+            preview: URL.createObjectURL(file),
+            binary: reader.result,
+          },
+        }));
+      };
+    }
+  };
+
   return (
     <div>
       <LoginHeader />
       <div className="flex items-center justify-center bg-slate-50 p-4">
-        <Card className="w-full max-w-[800px]">
+        <Card className="w-full max-w-[900px]">
           <CardContent className="pt-6">
             <div className="flex flex-col items-center space-y-6">
               <div className="text-center">
@@ -83,6 +122,49 @@ export default function RegisterCustomer() {
               </div>
 
               <form onSubmit={handleSubmit} className="w-full space-y-10">
+                <hr />
+
+                <div className="flex justify-center items-center flex-col">
+                  <h3 className="font-semibold  mb-2 text-sm">
+                    Choose Profile Picture{" "}
+                    <span className="text-red-500">*</span>
+                  </h3>
+                  <div className="relative flex justify-center items-center flex-col">
+                    <Avatar className="w-32 h-32 border-4 border-white shadow-light">
+                      {registerFormData.user_img.preview ? (
+                        <AvatarImage
+                          src={registerFormData.user_img.preview}
+                          alt="Profile"
+                        />
+                      ) : (
+                        <AvatarFallback className="bg-purple-100 text-purple-600 text-4xl font-bold">
+                          HC
+                        </AvatarFallback>
+                      )}
+                    </Avatar>
+                    <div className="absolute bottom-0 right-0">
+                      <Input
+                        id="profile-image-upload"
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => handleImageChange(e, "user_img")}
+                      />
+                      <Button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          document
+                            .getElementById("profile-image-upload")
+                            ?.click();
+                        }}
+                        size="icon"
+                        className="rounded-full bg-purple-600 hover:bg-purple-700 text-white shadow-md"
+                      >
+                        <CameraIcon className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
                 <hr />
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -135,7 +217,19 @@ export default function RegisterCustomer() {
                       onChange={handleInputChange}
                     />
                   </div>
-                  <div className="sm:col-span-2">
+                  <div>
+                    <h3 className="font-semibold mb-2 text-sm">
+                      CNIC No <span className="text-red-500 text-lg">*</span>
+                    </h3>
+                    <input
+                      type="text"
+                      name="cnic_no"
+                      placeholder="Enter CNIC Number"
+                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div>
                     <h3 className="font-semibold mb-2 text-sm">
                       Password <span className="text-red-500 text-lg">*</span>
                     </h3>
@@ -146,6 +240,147 @@ export default function RegisterCustomer() {
                       className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
                       onChange={handleInputChange}
                     />
+                  </div>
+                </div>
+
+                <div className="my-6">
+                  <hr />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <h3 className="font-semibold mb-2 text-sm">
+                      Choose CNIC Front Image{" "}
+                      <span className="text-red-500 text-lg">*</span>
+                    </h3>
+                    <div className="flex shadow-light rounded-md p-3 flex-col items-center justify-center space-y-3 py-4">
+                      {registerFormData.cnic_front_img.preview.length >= 1 ? (
+                        <>
+                          <img
+                            src={registerFormData.cnic_front_img.preview}
+                            alt="CNIC Front Img"
+                            className="h-20 object-cover rounded-md"
+                          />
+                          <Button
+                            variant="outline"
+                            className="w-full max-w-[150px] bg-white hover:bg-red-50 text-red-500"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setRegisterFormData((prev) => {
+                                return {
+                                  ...prev,
+                                  cnic_front_img: { preview: "", binary: "" },
+                                };
+                              });
+                            }}
+                          >
+                            Change Image
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">
+                            <ImageIcon className="h-6 w-6 text-purple-600" />
+                          </div>
+                          <div className="text-center">
+                            <p className="text-lg font-semibold text-gray-800">
+                              Choose CNIC Front Image
+                            </p>
+                          </div>
+                          <Input
+                            id="front-image-upload"
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) =>
+                              handleImageChange(e, "cnic_front_img")
+                            }
+                          />
+                          <div className="flex justify-center">
+                            <Button
+                              onClick={(e) => {
+                                document
+                                  .getElementById("front-image-upload")
+                                  ?.click();
+                                e.preventDefault();
+                              }}
+                              variant="outline"
+                              className="w-full max-w-[200px] bg-white hover:bg-purple-50"
+                            >
+                              <Upload className="mr-2 h-4 w-4" />
+                              Choose File
+                            </Button>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold mb-2 text-sm">
+                      Choose CNIC Back Image{" "}
+                      <span className="text-red-500 text-lg">*</span>
+                    </h3>
+                    <div className="flex shadow-light rounded-md p-3 flex-col items-center justify-center space-y-3 py-4">
+                      {registerFormData.cnic_back_img.preview.length >= 1 ? (
+                        <>
+                          <img
+                            src={registerFormData.cnic_back_img.preview}
+                            alt="CNIC Front Img"
+                            className="h-20 object-cover rounded-md"
+                          />
+                          <Button
+                            variant="outline"
+                            className="w-full max-w-[150px] bg-white hover:bg-red-50 text-red-500"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setRegisterFormData((prev) => {
+                                return {
+                                  ...prev,
+                                  cnic_back_img: { preview: "", binary: "" },
+                                };
+                              });
+                            }}
+                          >
+                            Change Image
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">
+                            <ImageIcon className="h-6 w-6 text-purple-600" />
+                          </div>
+                          <div className="text-center">
+                            <p className="text-lg font-semibold text-gray-800">
+                              Choose CNIC Front Image
+                            </p>
+                          </div>
+                          <Input
+                            id="back-image-upload"
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) =>
+                              handleImageChange(e, "cnic_back_img")
+                            }
+                          />
+                          <div className="flex justify-center">
+                            <Button
+                              onClick={(e) => {
+                                document
+                                  .getElementById("back-image-upload")
+                                  ?.click();
+                                e.preventDefault();
+                              }}
+                              variant="outline"
+                              className="w-full max-w-[200px] bg-white hover:bg-purple-50"
+                            >
+                              <Upload className="mr-2 h-4 w-4" />
+                              Choose File
+                            </Button>
+                          </div>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
 

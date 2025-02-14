@@ -1,17 +1,45 @@
 import { NextResponse } from "next/server";
 import bcryptjs from "bcryptjs";
+import sharp from "sharp";
 import prisma from "@/lib/prisma";
 
 export async function POST(request) {
   try {
     const reqBody = await request.json();
-    const { fullname, username, email, pNumber, password, gender, date } =
-      reqBody;
+    const {
+      fullname,
+      username,
+      email,
+      pNumber,
+      password,
+      gender,
+      date,
+      cnic_no,
+      cnic_front_img,
+      cnic_back_img,
+      user_img,
+    } = reqBody;
+
+    async function compressImage(base64Image) {
+      if (!base64Image || !base64Image.binary) return null;
+
+      const buffer = Buffer.from(base64Image.binary.split(",")[1], "base64");
+
+      const compressedBuffer = await sharp(buffer)
+        .resize({ width: 480 })
+        .jpeg({ quality: 80 })
+        .toBuffer();
+
+      return compressedBuffer;
+    }
+
+    // ✅ Compress all images
+    const cnicFrontBuffer = await compressImage(cnic_front_img);
+    const cnicBackBuffer = await compressImage(cnic_back_img);
+    const userImgBuffer = await compressImage(user_img);
 
     const existingUser = await prisma.userInfo.findFirst({
-      where: {
-        OR: [{ username }, { email }],
-      },
+      where: { OR: [{ username }, { email }] },
     });
 
     if (existingUser) {
@@ -38,6 +66,10 @@ export async function POST(request) {
         password: hashedPassword,
         gender,
         date: new Date(date),
+        cnic_front_img: cnicFrontBuffer,
+        cnic_back_img: cnicBackBuffer,
+        user_img: userImgBuffer,
+        cnic_no,
       },
     });
 

@@ -14,6 +14,7 @@ export default function NewUser() {
     email: "",
     pNumber: "",
     password: "",
+    account_number: "",
     gender: "male",
     date: "",
     status: "pending",
@@ -96,6 +97,18 @@ export default function NewUser() {
                   </div>
                   <div>
                     <h3 className="font-semibold  mb-2 text-sm">
+                      Account No <span className="text-red-500">*</span>
+                    </h3>
+                    <input
+                      type="number"
+                      name="account_number"
+                      placeholder="Enter Account No"
+                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold  mb-2 text-sm">
                       Username <span className="text-red-500">*</span>
                     </h3>
                     <input
@@ -119,9 +132,9 @@ export default function NewUser() {
                     />
                   </div>
                   <div>
-                    <h3 className="font-semibold  mb-2 text-sm">
-                      Phone No.
-                      <span className="text-red-500">*</span>
+                    <h3 className="font-semibold mb-2 text-sm">
+                      Phone Number{" "}
+                      <span className="text-red-500 text-lg">*</span>
                     </h3>
                     <input
                       type="text"
@@ -131,7 +144,7 @@ export default function NewUser() {
                       onChange={handleInputChange}
                     />
                   </div>
-                  <div className="sm:col-span-2">
+                  <div>
                     <h3 className="font-semibold mb-2 text-sm">
                       Password <span className="text-red-500 text-lg">*</span>
                     </h3>

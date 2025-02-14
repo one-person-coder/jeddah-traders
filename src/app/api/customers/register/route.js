@@ -3,6 +3,7 @@ import bcryptjs from "bcryptjs";
 import { checkLoginToken } from "../../checker";
 import prisma from "@/lib/prisma";
 import { handleLogout } from "../../handleLogout";
+import sharp from "sharp";
 
 export async function POST(request) {
   try {
@@ -28,12 +29,17 @@ export async function POST(request) {
       gender,
       date,
       status,
+      cnic_no,
+      cnic_front_img,
+      cnic_back_img,
+      user_img,
+      account_no,
     } = reqBody;
+    const ac = parseInt(account_no);
 
-    // Check if user already exists
     const existingUser = await prisma.userInfo.findFirst({
       where: {
-        OR: [{ username }, { email }],
+        OR: [{ username }, { email }, { account_number: ac }],
       },
     });
 
@@ -44,11 +50,30 @@ export async function POST(request) {
           message:
             existingUser.username === username
               ? "Username already exists"
-              : "Email already exists",
+              : existingUser.email == email
+              ? "Email already exists"
+              : "Account No already assing another user.",
         },
         { status: 400 }
       );
     }
+
+    async function compressImage(base64Image) {
+      if (!base64Image || !base64Image.binary) return null;
+
+      const buffer = Buffer.from(base64Image.binary.split(",")[1], "base64");
+
+      const compressedBuffer = await sharp(buffer)
+        .resize({ width: 480 })
+        .jpeg({ quality: 80 })
+        .toBuffer();
+
+      return compressedBuffer;
+    }
+
+    const cnicFrontBuffer = await compressImage(cnic_front_img);
+    const cnicBackBuffer = await compressImage(cnic_back_img);
+    const userImgBuffer = await compressImage(user_img);
 
     // Hash password
     const salt = await bcryptjs.genSalt(10);
@@ -64,7 +89,11 @@ export async function POST(request) {
         gender,
         date: new Date(date),
         status,
-        role: "customer",
+        cnic_front_img: cnicFrontBuffer,
+        cnic_back_img: cnicBackBuffer,
+        user_img: userImgBuffer,
+        cnic_no,
+        account_number: ac,
       },
     });
 
@@ -73,6 +102,8 @@ export async function POST(request) {
       message: "Customer registered successfully",
     });
   } catch (error) {
+    console.log(error);
+
     return NextResponse.json(
       {
         success: false,

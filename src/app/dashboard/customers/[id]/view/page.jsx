@@ -18,6 +18,10 @@ const ViewPage = async ({ params }) => {
       date: true,
       status: true,
       role: true,
+      cnic_no: true,
+      cnic_front_img: true,
+      cnic_back_img: true,
+      user_img: true,
     },
   });
 

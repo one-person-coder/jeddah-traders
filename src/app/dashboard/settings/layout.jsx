@@ -35,8 +35,17 @@ const layout = async ({ children }) => {
       status: true,
       role: true,
       createdAt: true,
+      user_img: true,
     },
   });
+
+  let base64String;
+  let imageSrc;
+
+  if (user.user_img) {
+    base64String = btoa(String.fromCharCode(...user.user_img));
+    imageSrc = `data:image/jpeg;base64,${base64String}`;
+  }
 
   if (!user) {
     return <h3>User Not Found</h3>;
@@ -45,24 +54,28 @@ const layout = async ({ children }) => {
   const date = new Date(user.createdAt);
   const formattedDate = date.toISOString().split("T")[0];
 
-
   return (
     <div>
       <div>
         <div>
           <div>
-            <Image
+            <img
               src={"/profile-banner.png"}
               height={300}
               width={1800}
-              priority={true}
+              priority={"false"}
               alt="image"
             />
           </div>
-          <div className="custom-padding pt-0 justify-between flex items-center lg:items-end rounded-md bg-white shadow-light pb-4 flex-col gap-4 lg:flex-row h-fit mt-[-2.4rem]">
+          <div className="custom-padding pt-0 justify-between flex items-center lg:items-end rounded-md bg-white shadow-light pb-4 flex-col gap-4 lg:flex-row h-fit mt-[-0.8rem]">
             <div className="flex lg:items-end flex-col lg:flex-row items-center">
-              <div className="border-4 rounded-md overflow-hidden z-20 border-white">
-                <Image src={"/1.png"} height={125} width={125} alt="image" />
+              <div className="border-4 rounded-md overflow-hidden z-20 border-zinc-400">
+                <Image
+                  src={imageSrc || "/1.png"}
+                  height={120}
+                  width={120}
+                  alt="image"
+                />
               </div>
               <div className="p-3 ml-3 sm:ml-0">
                 <div className="prose text-center lg:text-start">
