@@ -143,7 +143,6 @@ export default function Sidebar({ children, userType }) {
             md:mt-16
           `}
         >
-          {/* Navigation */}
           <nav className="p-4 flex flex-col gap-2 overflow-y-auto ">
             {navigation.map((item) => (
               <div key={item.title} className="relative group">
