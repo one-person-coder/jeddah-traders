@@ -31,19 +31,19 @@ export async function POST(request) {
       payment,
     } = reqBody;
 
-    console.log("---> start logging....");
-    console.log("customerId", typeof customerId, customerId);
-    console.log("amount", typeof amount, amount);
-    console.log("paidAmount", typeof paidAmount, paidAmount);
-    console.log("description", typeof description, description);
-    console.log("method", typeof method, method);
-    console.log("createdAt", typeof createdAt, createdAt);
-    console.log("total", typeof total, total);
-    console.log("less", typeof less, less);
-    console.log("payment", typeof payment, payment);
-    console.log("items", typeof items, items);
+    // console.log("---> start logging....");
+    // console.log("customerId --> ", typeof customerId, customerId);
+    // console.log("amount --> ", typeof amount, amount);
+    // console.log("paidAmount --> ", typeof paidAmount, paidAmount);
+    // console.log("description --> ", typeof description, description);
+    // console.log("method --> ", typeof method, method);
+    // console.log("createdAt --> ", typeof createdAt, createdAt);
+    // console.log("total --> ", typeof total, total);
+    // console.log("less --> ", typeof less, less);
+    // console.log("payment --> ", typeof payment, payment);
+    // console.log("items --> ", typeof items, items);
 
-    console.log("......end logging ----->");
+    // console.log("......end logging ----->");
 
     const paymentMethod = method ? method : null;
 
@@ -51,8 +51,8 @@ export async function POST(request) {
       data: {
         user_id: parseInt(login.id),
         customer_id: parseInt(customerId),
-        amount: parseFloat(amount) || total ? parseFloat(total) : null,
-        paid_amount: parseFloat(paidAmount) || less ? parseFloat(less) : null,
+        amount: parseFloat(amount) || (total ? parseFloat(total) : null),
+        paid_amount: parseFloat(paidAmount) || (less ? parseFloat(less) : null),
         method: paymentMethod,
         description: description,
         createdAt: new Date(createdAt),

@@ -49,7 +49,10 @@ const inventory = [
 export default function SaleEntry({ username }) {
   const params = useParams();
   const { id: customerId } = params;
-  const [date, setDate] = React.useState();
+  const [date, setDate] = React.useState(() => {
+    const now = new Date();
+    return now.toISOString().slice(0, 16);
+  });
   const [selectedInventory, setSelectedInventory] = React.useState("");
   const [remarks, setRemarks] = React.useState("");
   const [items, setItems] = React.useState([]);
@@ -174,10 +177,11 @@ export default function SaleEntry({ username }) {
                     Birth <span className="text-red-500 text-lg">*</span>
                   </h3>
                   <input
-                    type="date"
-                    name="datetime-local"
+                    type="datetime-local"
+                    name="date"
                     className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[7px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
                     onChange={(e) => setDate(e.target.value)}
+                    value={date}
                   />
                 </div>
 

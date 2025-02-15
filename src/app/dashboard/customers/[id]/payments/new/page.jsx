@@ -42,11 +42,8 @@ export default function NewPayment() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
 
-    if (
-      (!registerFormData.paidAmount && !registerFormData.amount)
-    ) {
+    if (!registerFormData.paidAmount && !registerFormData.amount) {
       ErrorToast("Please fill in all required fields before proceeding.");
       return;
     }
