@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import TopNav from "./TopNavBar";
 import AnchorLink from "@/components/utils/AnchorLink";
+import Link from "next/link";
 
 export default function Sidebar({ children, userType }) {
   let navigation;
@@ -143,7 +144,7 @@ export default function Sidebar({ children, userType }) {
           `}
         >
           {/* Navigation */}
-          <nav className="p-4 flex flex-col gap-2 overflow-y-auto max-h-[calc(100vh-4rem)]">
+          <nav className="p-4 flex flex-col gap-2 overflow-y-auto ">
             {navigation.map((item) => (
               <div key={item.title} className="relative group">
                 {item.items ? (
@@ -188,7 +189,7 @@ export default function Sidebar({ children, userType }) {
                     >
                       <div className="pl-11 pr-2 py-1 space-y-1">
                         {item.items.map((subItem) => (
-                          <a
+                          <Link
                             key={subItem.title}
                             href={subItem.url}
                             className="
@@ -216,13 +217,14 @@ export default function Sidebar({ children, userType }) {
                                 {subItem.badge}
                               </span>
                             )}
-                          </a>
+                          </Link>
                         ))}
                       </div>
                     </div>
                   </>
                 ) : (
                   <AnchorLink
+                    onClick={() => setIsMobileMenuOpen(false)}
                     href={item.url}
                     classes="
                       flex items-center p-3 rounded-lg

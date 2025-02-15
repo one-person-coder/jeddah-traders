@@ -10,6 +10,7 @@ const AnchorLink = ({
   children,
   classes = "",
   style = {},
+  ...props
 }) => {
   const pathname = usePathname();
   const router = useRouter();
@@ -25,6 +26,7 @@ const AnchorLink = ({
         href={href}
         onMouseEnter={() => handleHover(href)}
         prefetch={prefetch}
+        {...props}
         className={
           classes +
           `${
