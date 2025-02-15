@@ -8,6 +8,7 @@ import {
   Users,
   User,
   ChartColumn,
+  Box,
 } from "lucide-react";
 import TopNav from "./TopNavBar";
 import AnchorLink from "@/components/utils/AnchorLink";
@@ -16,8 +17,7 @@ export default function Sidebar({ children, userType }) {
   let navigation;
 
   console.log(userType);
-  
-  
+
   if (userType === "customer") {
     navigation = [
       {
@@ -52,6 +52,11 @@ export default function Sidebar({ children, userType }) {
         title: "Customers",
         icon: Users,
         url: "/dashboard/customers",
+      },
+      {
+        title: "Products",
+        icon: Box,
+        url: "/dashboard/products",
       },
       {
         title: "Settings",
