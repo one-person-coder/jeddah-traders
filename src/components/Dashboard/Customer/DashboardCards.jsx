@@ -21,7 +21,7 @@ export default async function DashboardCards({ data }) {
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">
-                  Total Amount
+                  Total Bill
                 </p>
                 <h2 className="text-3xl font-bold">{totalAmount}</h2>
               </div>

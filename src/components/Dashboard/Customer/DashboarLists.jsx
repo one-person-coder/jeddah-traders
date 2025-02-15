@@ -183,7 +183,18 @@ export default function DashboardLists({ data, customerId }) {
                   runningRemaining -= user.paid_amount || 0;
 
                   return (
-                    <TableRow key={index} className="hover:bg-gray-50/50">
+                    <TableRow
+                      key={index}
+                      className="cursor-pointer hover:bg-gray-200/50 data-[selected=true]:bg-blue-100"
+                      onClick={(e) => {
+                        document
+                          .querySelectorAll("[data-selected]")
+                          .forEach((row) => {
+                            row.removeAttribute("data-selected");
+                          });
+                        e.currentTarget.setAttribute("data-selected", "true");
+                      }}
+                    >
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <span className="font-medium">{index + 1}</span>

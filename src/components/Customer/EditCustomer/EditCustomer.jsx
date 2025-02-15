@@ -91,13 +91,47 @@ export default function EditCustomer({ user }) {
     }
   };
 
+  const deleteUser = async (userId, username) => {
+    let userResponse = confirm(
+      `Are you sure you want to delete customer [ ${username} ]`
+    );
+    if (!userResponse) return;
+
+    const response = await fetch("/api/customers/delete", {
+      method: "POST",
+      body: JSON.stringify({
+        id: userId,
+      }),
+    });
+    const responseJson = await response.json();
+
+    if (!responseJson.success) {
+      ErrorToast(responseJson.message);
+      return;
+    }
+    router.push("/dashboard/customers");
+    SuccessToast("Customer Deleted Successfully!");
+  };
+
   return (
     <div>
       <div className="flex items-center justify-center bg-slate-50 p-4">
         <Card className="w-full">
           <CardContent className="pt-6">
-            <div className="flex flex-col items-center space-y-6">
-              <div className="text-center">
+            <div className="relative flex flex-col items-center space-y-6">
+              <Button
+                onClick={() => {
+                  deleteUser(registerFormData.id, registerFormData.username);
+                }}
+                className="absolute right-0 top-0 h-11 bg-red-600 hover:bg-red-700"
+              >
+                Delete Customer
+              </Button>
+
+              <br />
+              <br />
+
+              <div className="text-center ">
                 <h1 className="text-2xl font-semibold mb-4">Edit Customer </h1>
               </div>
 

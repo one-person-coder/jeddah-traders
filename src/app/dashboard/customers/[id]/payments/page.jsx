@@ -5,8 +5,16 @@ import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
-import { LogOut } from "lucide-react";
+import { LogOut, Mail, Transgender } from "lucide-react";
 import { redirect } from "next/navigation";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export const revalidate = 0;
 
@@ -51,14 +59,15 @@ const Payments = async ({ params }) => {
   return (
     <div className="custom-width">
       <PaymentCards data={payments} />
-      <div className="flex sm:items-end flex-col justify-between sm:flex-row items-center bg-white shadow-light rounded-md p-2">
+      <div className="flex flex-col justify-between sm:flex-row items-center bg-white shadow-light rounded-md p-2 gap-4">
         <div className="flex sm:items-end flex-col sm:flex-row items-center">
-          <div className="border-4 rounded-md overflow-hidden z-20 border-white">
+          <div className="border-4 rounded-md overflow-hidden z-20 border-zinc-300">
             <Image
               src={imageSrc || "/1.png"}
               height={80}
               width={80}
               alt="image"
+              className="min-h-[80px] min-w-[80px]"
             />
           </div>
           <div className="p-3 sm:text-start text-center ml-3 sm:ml-0">
@@ -75,10 +84,38 @@ const Payments = async ({ params }) => {
           </div>
         </div>
 
-        <div>
+        <div className="space-y-2">
+          <div className="flex justify-center items-center flex-wrap">
+            <div className="bg-green-400 rounded-sm p-1 px-2 w-fit">
+              Account No:
+              <span>{currentUser.account_number}</span>
+            </div>
+          </div>
+          <div className="flex gap-2 flex-wrap justify-center mt-2">
+            <div>FullName: {currentUser.fullname}</div>
+            <span className="text-green-500">|</span>
+            <div>Username: {currentUser.username}</div>
+            <span className="text-green-500">|</span>
+            <div>Phone No: {currentUser.pNumber}</div>
+            <span className="text-green-500">|</span>
+            <div>CNIC No: {currentUser.cnic_no}</div>
+            <span className="text-green-500">|</span>
+            <div>Address: Dera Ghazi Khan, Atomic, NMC 1 Colony</div>
+          </div>
+        </div>
+
+        <div className="flex gap-2 flex-col">
           <div>
             <Link
-              className="py-[7px] justify-center rounded-md px-6 text-white duration-150 flex gap-2 items-center no-underline!text-white !bg-[#8C57FF] hover:!bg-purple-600"
+              className="py-[6px] justify-center rounded-md px-6 text-white duration-150 flex gap-2 items-center no-underline!text-white !bg-green-500 hover:!bg-green-600"
+              href={`/dashboard/customers/${currentUser.id}/view`}
+            >
+              Profile
+            </Link>
+          </div>
+          <div>
+            <Link
+              className="py-[6px] justify-center rounded-md px-6 text-white duration-150 flex gap-2 items-center no-underline!text-white !bg-[#8C57FF] hover:!bg-purple-600"
               href={`/dashboard/customers`}
             >
               <LogOut className="h-5 w-5 rotate-180" />

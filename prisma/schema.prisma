@@ -46,20 +46,33 @@ enum Role {
   manager
 }
 
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  price       Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  payments PaymentRecord[]
+}
+
 model PaymentRecord {
-  id          Int           @id @default(autoincrement())
+  id          Int            @id @default(autoincrement())
   user_id     Int
   customer_id Int
   amount      Float?
   paid_amount Float?
   description String?
-  method      PaymentMethod
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  isDelete    Boolean       @default(false)
+  method      PaymentMethod?
+  createdAt   DateTime
+  updatedAt   DateTime       @updatedAt
+  isDelete    Boolean        @default(false)
 
-  user     UserInfo @relation(name: "UserPayments", fields: [user_id], references: [id], onDelete: NoAction)
-  customer UserInfo @relation(name: "CustomerPayments", fields: [customer_id], references: [id], onDelete: NoAction)
+  user       UserInfo @relation(name: "UserPayments", fields: [user_id], references: [id], onDelete: NoAction)
+  customer   UserInfo @relation(name: "CustomerPayments", fields: [customer_id], references: [id], onDelete: NoAction)
+  Product    Product? @relation(fields: [product_id], references: [id], onDelete: SetNull)
+  product_id Int?
 }
 
 enum PaymentMethod {

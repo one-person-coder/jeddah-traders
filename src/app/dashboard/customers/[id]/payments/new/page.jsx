@@ -20,6 +20,7 @@ export default function NewPayment() {
     amount: "",
     paidAmount: "",
     description: "",
+    createdAt: "",
     method: "",
     customerId: id,
   });
@@ -41,9 +42,9 @@ export default function NewPayment() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
 
     if (
-      !registerFormData.method ||
       (!registerFormData.paidAmount && !registerFormData.amount)
     ) {
       ErrorToast("Please fill in all required fields before proceeding.");
@@ -106,7 +107,7 @@ export default function NewPayment() {
                       onChange={handleInputChange}
                     />
                   </div>
-                  <div className="sm:col-span-2">
+                  <div>
                     <h3 className="font-semibold  mb-2 text-sm">
                       Payment Method.
                       <span className="text-red-500">*</span>
@@ -127,6 +128,18 @@ export default function NewPayment() {
                         <SelectItem value="bank">Bank</SelectItem>
                       </SelectContent>
                     </Select>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold  mb-2 text-sm">
+                      Payment Date{" "}
+                      <span className="text-red-500 text-lg">*</span>
+                    </h3>
+                    <input
+                      type="datetime-local"
+                      name="createdAt"
+                      onChange={handleInputChange}
+                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[7px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
+                    />
                   </div>
                   <div className="sm:col-span-2">
                     <h3 className="font-semibold mb-2 text-sm">

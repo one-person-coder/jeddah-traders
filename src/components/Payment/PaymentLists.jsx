@@ -136,10 +136,10 @@ export default function PaymentLists({ data, customerId }) {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-gray-900">
-            Customer Management
+            Payment Management
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Manage and monitor Customer accounts
+            Manage and monitor Customer Payments
           </p>
         </div>
         <Button
@@ -183,7 +183,7 @@ export default function PaymentLists({ data, customerId }) {
                   <TableHead>USER</TableHead>
                   <TableHead>DATE</TableHead>
                   <TableHead>STATUS</TableHead>
-                  <TableHead>AMOUNT</TableHead>
+                  <TableHead>Bill</TableHead>
                   <TableHead>PAID AMOUNT</TableHead>
                   <TableHead>Remaining AMOUNT</TableHead>
                   <TableHead>DESCRIPTION</TableHead>
@@ -198,11 +198,19 @@ export default function PaymentLists({ data, customerId }) {
                   return (
                     <TableRow
                       key={index}
-                      className={`${
+                      className={`cursor-pointer data-[selected=true]:bg-blue-100 ${
                         user.isDelete
                           ? "bg-[#ffd2d2] hover:bg-[#ffd2d2]"
-                          : "hover:bg-gray-50/50"
+                          : "hover:bg-gray-200/50"
                       }`}
+                      onClick={(e) => {
+                        document
+                          .querySelectorAll("[data-selected]")
+                          .forEach((row) => {
+                            row.removeAttribute("data-selected");
+                          });
+                        e.currentTarget.setAttribute("data-selected", "true");
+                      }}
                     >
                       <TableCell>
                         <div className="flex items-center gap-2">

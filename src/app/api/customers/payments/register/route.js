@@ -18,8 +18,10 @@ export async function POST(request) {
     }
 
     const reqBody = await request.json();
-    const { customerId, amount, paidAmount, description, method } =
+    const { customerId, amount, paidAmount, description, method, createdAt } =
       reqBody;
+
+    const paymentMethod = method ? method : null;
 
     await prisma.paymentRecord.create({
       data: {
@@ -27,8 +29,9 @@ export async function POST(request) {
         customer_id: parseInt(customerId),
         amount: parseFloat(amount),
         paid_amount: parseFloat(paidAmount),
-        method: method,
+        method: paymentMethod,
         description: description,
+        createdAt: new Date(createdAt),
       },
     });
 
@@ -37,6 +40,7 @@ export async function POST(request) {
       message: "Payment registered successfully",
     });
   } catch (error) {
+    console.log(error);
     return NextResponse.json(
       {
         success: false,

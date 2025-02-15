@@ -31,7 +31,6 @@ export default function EditPayment({ user }) {
     e.preventDefault();
 
     if (
-      !registerFormData.method ||
       (!registerFormData.paidAmount && !registerFormData.amount)
     ) {
       ErrorToast("Please fill in all required fields before proceeding.");
@@ -65,9 +64,7 @@ export default function EditPayment({ user }) {
           <CardContent className="pt-6">
             <div className="flex flex-col items-center space-y-6">
               <div className="text-center">
-                <h1 className="text-2xl font-semibold mb-4">
-                  Update Payment
-                </h1>
+                <h1 className="text-2xl font-semibold mb-4">Update Payment</h1>
               </div>
 
               <form onSubmit={handleSubmit} className="w-full space-y-10">
@@ -96,7 +93,7 @@ export default function EditPayment({ user }) {
                       value={registerFormData.paid_amount}
                     />
                   </div>
-                  <div className="sm:col-span-2">
+                  <div>
                     <h3 className="font-semibold  mb-2 text-sm">
                       Payment Method.
                       <span className="text-red-500">*</span>
@@ -118,6 +115,21 @@ export default function EditPayment({ user }) {
                         <SelectItem value="bank">Bank</SelectItem>
                       </SelectContent>
                     </Select>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold  mb-2 text-sm">
+                      Payment Date{" "}
+                      <span className="text-red-500 text-lg">*</span>
+                    </h3>
+                    <input
+                      type="datetime-local"
+                      name="createdAt"
+                      onChange={handleInputChange}
+                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[7px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
+                      value={new Date(registerFormData.createdAt)
+                        .toISOString()
+                        .slice(0, 16)}
+                    />
                   </div>
                   <div className="sm:col-span-2">
                     <h3 className="font-semibold mb-2 text-sm">

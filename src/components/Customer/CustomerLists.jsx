@@ -104,28 +104,6 @@ export default function CustomerLists({ data }) {
     setSearchTerm(e.target.value);
   };
 
-  const deleteUser = async (userId, username) => {
-    let userResponse = confirm(
-      `Are you sure you want to delete customer [ ${username} ]`
-    );
-    if (!userResponse) return;
-
-    const response = await fetch("/api/customers/delete", {
-      method: "POST",
-      body: JSON.stringify({
-        id: userId,
-      }),
-    });
-    const responseJson = await response.json();
-
-    if (!responseJson.success) {
-      ErrorToast(responseJson.message);
-      return;
-    }
-    refreshData();
-    SuccessToast("Customer Deleted Successfully!");
-  };
-
   React.useEffect(() => {
     const filteredUsers = storeUsers.filter(
       (user) =>
@@ -223,7 +201,18 @@ export default function CustomerLists({ data }) {
               </TableHeader>
               <TableBody>
                 {users.map((user, index) => (
-                  <TableRow key={index} className="hover:bg-gray-50/50">
+                  <TableRow
+                    key={index}
+                    className="cursor-pointer hover:bg-gray-200/50 data-[selected=true]:bg-blue-100"
+                    onClick={(e) => {
+                      document
+                        .querySelectorAll("[data-selected]")
+                        .forEach((row) => {
+                          row.removeAttribute("data-selected");
+                        });
+                      e.currentTarget.setAttribute("data-selected", "true");
+                    }}
+                  >
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <span className="font-medium">{index + 1}</span>
@@ -239,7 +228,7 @@ export default function CustomerLists({ data }) {
                     <TableCell>
                       <Button asChild variant="outline" className="">
                         <Link href={`/dashboard/customers/${user.id}/payments`}>
-                          View
+                          View Payments
                         </Link>
                       </Button>
                     </TableCell>
@@ -321,16 +310,6 @@ export default function CustomerLists({ data }) {
                           <Link href={`/dashboard/customers/${user.id}/edit`}>
                             <Pencil className="h-4 w-4" />
                           </Link>
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => {
-                            deleteUser(user.id, user.username);
-                          }}
-                          className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
-                        >
-                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </TableCell>

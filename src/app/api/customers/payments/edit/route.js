@@ -18,10 +18,27 @@ export async function POST(request) {
     }
 
     const reqBody = await request.json();
-    const { customerId, amount, paid_amount, description, method } = reqBody;
+    const {
+      id,
+      customer_id,
+      amount,
+      paidAmount,
+      description,
+      method,
+      createdAt,
+    } = reqBody;
+
+    console.log(
+      customer_id,
+      amount,
+      paidAmount,
+      description,
+      method,
+      createdAt
+    );
 
     const user = await prisma.userInfo.findUnique({
-      where: { id: parseInt(customerId) },
+      where: { id: parseInt(customer_id) },
     });
     if (!user) {
       return NextResponse.json(
@@ -30,13 +47,16 @@ export async function POST(request) {
       );
     }
 
+    const paymentMethod = method ? method : null;
+
     await prisma.paymentRecord.update({
-      where: { id: parseInt(customerId) },
+      where: { id: parseInt(id) },
       data: {
         amount: parseFloat(amount),
-        paid_amount: parseFloat(paid_amount),
-        method: method,
+        paid_amount: parseFloat(paidAmount),
+        method: paymentMethod,
         description: description,
+        createdAt: new Date(createdAt),
       },
     });
 
@@ -45,10 +65,12 @@ export async function POST(request) {
       message: "Payment updated successfully",
     });
   } catch (error) {
+    console.log(error);
+
     return NextResponse.json(
       {
         success: false,
-        message: "Failed to updat payment",
+        message: "Failed to update payment",
       },
       { status: 500 }
     );

@@ -132,6 +132,14 @@ export default async function ViewPayment({ params }) {
                       value={user?.paid_amount}
                     />
                   </div>
+                  <div>
+                    <h3 className="font-semibold  mb-2 text-sm">Method</h3>
+                    <input
+                      disabled
+                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
+                      value={user?.method || 'None'}
+                    />
+                  </div>
                   <div className="sm:col-span-2">
                     <h3 className="font-semibold  mb-2 text-sm">Description</h3>
                     <textarea
