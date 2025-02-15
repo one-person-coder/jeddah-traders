@@ -48,6 +48,26 @@ const inventory = [
 
 export default function SaleEntry({ username }) {
   const params = useParams();
+  const [inventory, setInventory] = React.useState([]);
+
+  React.useEffect(() => {
+    const fetchProducts = async () => {
+      const res = await fetch(`/api/products/status`);
+      if (!res.ok) {
+        ErrorToast("Failed to fetch products");
+        return;
+      }
+      const data = await res.json();
+
+      if (!data.success) {
+        ErrorToast("Failed to fetch products");
+        return;
+      }
+      setInventory(data.data);
+    };
+    fetchProducts();
+  }, []);
+
   const { id: customerId } = params;
   const [date, setDate] = React.useState(() => {
     const now = new Date();

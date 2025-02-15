@@ -213,64 +213,69 @@ export default function PaymentLists({ data, customerId }) {
                   </div>
                   <p className="!font-bold text-center text-lg">Bill Details</p>
 
-                  <div className="border border-gray-200 overflow-hidden">
-                    <Table className="border border-gray-400 text-center">
-                      <TableHeader>
-                        <TableRow className="bg-gray-50 border-b border-gray-400">
-                          <TableHead className="w-16 text-center font-semibold border-r border-gray-400">
-                            Sr.
-                          </TableHead>
-                          <TableHead className="font-semibold border-r border-gray-400">
-                            Product
-                          </TableHead>
-                          <TableHead className="w-24 text-center font-semibold border-r border-gray-400">
-                            Qty
-                          </TableHead>
-                          <TableHead className="w-32 text-center font-semibold border-gray-400">
-                            Amount
-                          </TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {visibleData?.items.map((item, index) => {
-                          return (
-                            <TableRow
-                              key={item.id}
-                              className="border-b border-gray-400"
-                            >
-                              <TableCell className="text-blue-600 font-medium border-r border-gray-400">
-                                {index + 1}
-                              </TableCell>
-                              <TableCell className="font-medium border-r border-gray-400">
-                                {item?.name}
-                              </TableCell>
-                              <TableCell className="text-center border-r border-gray-400">
-                                {item?.qty}
-                              </TableCell>
-                              <TableCell className="text-center font-medium border-gray-400">
-                                {item?.amount}
-                              </TableCell>
-                            </TableRow>
-                          );
-                        })}
-                      </TableBody>
-                    </Table>
-                  </div>
+                  {visibleData?.items.length >= 1 ? (
+                    <div className="border border-gray-200 overflow-hidden">
+                      <Table className="border border-gray-400 text-center">
+                        <TableHeader>
+                          <TableRow className="bg-gray-50 border-b border-gray-400">
+                            <TableHead className="w-16 text-center font-semibold border-r border-gray-400">
+                              Sr.
+                            </TableHead>
+                            <TableHead className="font-semibold border-r border-gray-400">
+                              Product
+                            </TableHead>
+                            <TableHead className="w-24 text-center font-semibold border-r border-gray-400">
+                              Qty
+                            </TableHead>
+                            <TableHead className="w-32 text-center font-semibold border-gray-400">
+                              Amount
+                            </TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {visibleData?.items.map((item, index) => {
+                            return (
+                              <TableRow
+                                key={item.id}
+                                className="border-b border-gray-400"
+                              >
+                                <TableCell className="text-blue-600 font-medium border-r border-gray-400">
+                                  {index + 1}
+                                </TableCell>
+                                <TableCell className="font-medium border-r border-gray-400">
+                                  {item?.name}
+                                </TableCell>
+                                <TableCell className="text-center border-r border-gray-400">
+                                  {item?.qty}
+                                </TableCell>
+                                <TableCell className="text-center font-medium border-gray-400">
+                                  {item?.amount}
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  ) : null}
 
                   <div className="mt-2">
                     <Table className="border border-gray-400">
                       <TableBody>
-                        <TableRow className="bg-gray-50 border-b border-gray-400">
-                          <TableHead className="font-semibold border-r border-gray-400">
-                            Total
-                          </TableHead>
-                          <TableCell className="font-bold border-gray-400">
-                            {visibleData?.amount}
-                          </TableCell>
-                        </TableRow>
+                        {visibleData?.items.length >= 1 ? (
+                          <TableRow className="bg-gray-50 border-b border-gray-400">
+                            <TableHead className="font-semibold border-r border-gray-400">
+                              Total
+                            </TableHead>
+                            <TableCell className="font-bold border-gray-400">
+                              {visibleData?.amount}
+                            </TableCell>
+                          </TableRow>
+                        ) : null}
+
                         <TableRow className="border-b border-gray-400">
                           <TableHead className="font-semibold border-r border-gray-400">
-                            Paid
+                            Paid Amount
                           </TableHead>
                           <TableCell className="font-bold border-gray-400">
                             {visibleData?.paid_amount || 0}
