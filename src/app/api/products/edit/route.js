@@ -19,18 +19,9 @@ export async function POST(request) {
 
   try {
     const reqBody = await request.json();
-    const {
-      id,
-      fullname,
-      username,
-      email,
-      pNumber,
-      gender,
-      account_number,
-      date,
-      status,
-      role,
-    } = reqBody;
+    const { id, name, price, description } = reqBody;
+
+    const pr = parseInt(price)
 
     if (!id) {
       return NextResponse.json(
@@ -39,32 +30,21 @@ export async function POST(request) {
       );
     }
 
-    const ac = parseInt(account_number);
+    const ac = parseInt(id);
 
-    if (login.role !== "admin") {
-      return NextResponse.json({
-        success: false,
-        message: "You don't have permisson to edit admin!",
-      });
-    }
-
-    const user = await prisma.userInfo.findUnique({
-      where: { id: parseInt(id) },
+    const user = await prisma.product.findUnique({
+      where: { id: parseInt(ac) },
     });
     if (!user) {
       return NextResponse.json(
-        { success: false, message: "User not found" },
+        { success: false, message: "Product not found" },
         { status: 404 }
       );
     }
 
-    const existingUser = await prisma.userInfo.findFirst({
+    const existingUser = await prisma.product.findFirst({
       where: {
-        OR: [
-          { username: username, NOT: { id: parseInt(id) } },
-          { email: email, NOT: { id: parseInt(id) } },
-          { account_number: ac, NOT: { id: parseInt(id) } },
-        ],
+        OR: [{ name: name, NOT: { id: parseInt(ac) } }],
       },
     });
 
@@ -72,34 +52,28 @@ export async function POST(request) {
       return NextResponse.json(
         {
           success: false,
-          message:
-            "Maybe username, email or account number is already using please change it.",
+          message: "Product name is already used please change it.",
         },
         { status: 400 }
       );
     }
 
-    const updatedUser = await prisma.userInfo.update({
-      where: { id: parseInt(id) },
+    await prisma.product.update({
+      where: { id: parseInt(ac) },
       data: {
-        fullname: fullname || user.fullname,
-        username: username || user.username,
-        email: email || user.email,
-        pNumber: pNumber || user.pNumber,
-        account_number: ac || user.pNumber,
-        gender: gender || user.gender,
-        date: date ? new Date(date) : user.date,
-        status: status || user.status,
-        role: role || user.role,
+        name: name || user.name,
+        price: pr || user.price,
+        description: description || user.description,
       },
     });
 
     return NextResponse.json({
       success: true,
-      message: "User updated successfully",
-      user: updatedUser,
+      message: "Product updated successfully",
     });
   } catch (error) {
+    console.log(error);
+    
     return NextResponse.json(
       { success: false, message: error.message },
       { status: 500 }
