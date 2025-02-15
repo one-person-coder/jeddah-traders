@@ -28,10 +28,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import Link from "next/link";
 import { statusColors } from "@/constant/constant";
 import { ErrorToast, SuccessToast } from "../utils/CustomToasts";
+import { Badge } from "../ui/badge";
 
 export default function PaymentLists({ data, customerId }) {
   let runningRemaining = 0;
@@ -130,210 +131,308 @@ export default function PaymentLists({ data, customerId }) {
     );
     setUsers(filteredUsers);
   }, [searchTerm]);
-
+  const isVisible = true;
   return (
-    <div className="py-8 space-y-8">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900">
-            Payment Management
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Manage and monitor Customer Payments
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button
-            className="bg-orange-600 hover:bg-orange-700 transition-all shadow-lg hover:shadow-purple-200"
-            size="lg"
-            asChild
-          >
-            <Link href={`/dashboard/customers/${customerId}/bill/new`}>
-              <Plus className="h-4 w-4" />
-              Make Bill
-            </Link>
-          </Button>
-          <Button
-            className="bg-purple-600 hover:bg-purple-700 transition-all shadow-lg hover:shadow-purple-200"
-            size="lg"
-            asChild
-          >
-            <Link href={`/dashboard/customers/${customerId}/payments/new`}>
-              <Plus className="h-4 w-4" />
-              Add Payment
-            </Link>
-          </Button>
-        </div>
-      </div>
-
-      <Card className="border-none shadow-lg">
-        <CardContent className="p-6">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
-            <div className="flex flex-wrap items-center gap-3">
-              <Button onClick={refreshData} variant="outline">
-                <RefreshCcw className="mr-2 h-4 w-4 text-purple-600" />
-                Refresh
-              </Button>
+    <div>
+      <div
+        className={`${
+          isVisible
+            ? "bg-black/40 absolute top-0 left-0 h-full w-full z-40"
+            : ""
+        }`}
+      ></div>
+      <div className="fixed z-50 bg-white top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
+        <Card className="min-w-[280px]  mx-auto bg-white shadow-sm">
+          {/* Header Section */}
+          <CardHeader className="text-center space-y-6 pb-6 border-b">
+            <div className="space-y-2">
+              <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
+                Jeddah Traders
+              </h1>
+              <p className="text-sm text-muted-foreground">Invoice Details</p>
             </div>
+          </CardHeader>
 
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                onChange={handleSearchChange}
-                placeholder="Search payment..."
-                className="w-full pl-9 sm:w-[300px] bg-gray-50 border-0 ring-1 ring-gray-200"
-              />
-            </div>
-          </div>
+          <CardContent className="p-0">
+            <div className="px-6 py-4">
+              <p className="text-bold text-center text-muted-foreground">Bill Details</p>
 
-          {/* Table */}
-          <div className="rounded-lg border shadow-sm max-h-[500px] overflow-scroll">
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-gray-50">
-                  <TableHead>Sr.</TableHead>
-                  <TableHead>USER</TableHead>
-                  <TableHead>DATE</TableHead>
-                  <TableHead>STATUS</TableHead>
-                  <TableHead>Bill</TableHead>
-                  <TableHead>PAID AMOUNT</TableHead>
-                  <TableHead>Remaining AMOUNT</TableHead>
-                  <TableHead>DESCRIPTION</TableHead>
-                  <TableHead>ACTIONS</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {users.map((user, index) => {
-                  runningRemaining += user.amount || 0;
-                  runningRemaining -= user.paid_amount || 0;
-
-                  return (
-                    <TableRow
-                      key={index}
-                      className={`cursor-pointer data-[selected=true]:bg-blue-100 ${
-                        user.isDelete
-                          ? "bg-[#ffd2d2] hover:bg-[#ffd2d2]"
-                          : "hover:bg-gray-200/50"
-                      }`}
-                      onClick={(e) => {
-                        document
-                          .querySelectorAll("[data-selected]")
-                          .forEach((row) => {
-                            row.removeAttribute("data-selected");
-                          });
-                        e.currentTarget.setAttribute("data-selected", "true");
-                      }}
-                    >
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium">{index + 1}</span>
-                        </div>
+              <div className="border border-gray-200 overflow-hidden">
+                <Table className="border border-gray-400 text-center">
+                  <TableHeader>
+                    <TableRow className="bg-gray-50 border-b border-gray-400">
+                      <TableHead className="w-16 text-center font-semibold border-r border-gray-400">
+                        Sr.
+                      </TableHead>
+                      <TableHead className="font-semibold border-r border-gray-400">
+                        Product
+                      </TableHead>
+                      <TableHead className="w-24 text-center font-semibold border-r border-gray-400">
+                        Qty
+                      </TableHead>
+                      <TableHead className="w-32 text-center font-semibold border-gray-400">
+                        Amount
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    <TableRow className="border-b border-gray-400">
+                      <TableCell className="text-blue-600 font-medium border-r border-gray-400">
+                        1
                       </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-3">
-                          <div className="relative">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100 text-sm font-medium text-purple-600 ring-2 ring-white">
-                              {user.user.fullname
-                                .split(" ")
-                                .map((word) => word.charAt(0))
-                                .join("")}
+                      <TableCell className="font-medium border-r border-gray-400">
+                        Cloth
+                      </TableCell>
+                      <TableCell className="text-center border-r border-gray-400">
+                        1
+                      </TableCell>
+                      <TableCell className="text-center font-medium border-gray-400">
+                        1,800
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </div>
+
+              <div className="mt-2">
+                <Table className="border border-gray-400">
+                  <TableBody>
+                    <TableRow className="bg-gray-50 border-b border-gray-400">
+                      <TableHead className="font-semibold border-r border-gray-400">
+                        Total
+                      </TableHead>
+                      <TableCell className="text-blue-600 font-medium border-gray-400">
+                        1
+                      </TableCell>
+                    </TableRow>
+                    <TableRow className="border-b border-gray-400">
+                      <TableHead className="font-semibold border-r border-gray-400">
+                        Paid
+                      </TableHead>
+                      <TableCell className="font-medium border-gray-400">
+                        Cloth
+                      </TableCell>
+                    </TableRow>
+                    <TableRow className="border-b border-gray-400">
+                      <TableHead className="font-semibold border-r border-gray-400">
+                        Bill
+                      </TableHead>
+                      <TableCell className="border-gray-400">1</TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </div>
+
+              {/* Footer Note */}
+              <div className="mt-6 text-center text-sm text-gray-500">
+                Thank you for your business!
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+      <div className={`py-8 space-y-8`}>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold text-gray-900">
+              Payment Management
+            </h1>
+            <p className="text-sm text-muted-foreground mt-1">
+              Manage and monitor Customer Payments
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <Button
+              className="bg-orange-600 hover:bg-orange-700 transition-all shadow-lg hover:shadow-purple-200"
+              size="lg"
+              asChild
+            >
+              <Link href={`/dashboard/customers/${customerId}/bill/new`}>
+                <Plus className="h-4 w-4" />
+                Make Bill
+              </Link>
+            </Button>
+            <Button
+              className="bg-purple-600 hover:bg-purple-700 transition-all shadow-lg hover:shadow-purple-200"
+              size="lg"
+              asChild
+            >
+              <Link href={`/dashboard/customers/${customerId}/payments/new`}>
+                <Plus className="h-4 w-4" />
+                Add Payment
+              </Link>
+            </Button>
+          </div>
+        </div>
+
+        <Card className="border-none shadow-lg">
+          <CardContent className="p-6">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
+              <div className="flex flex-wrap items-center gap-3">
+                <Button onClick={refreshData} variant="outline">
+                  <RefreshCcw className="mr-2 h-4 w-4 text-purple-600" />
+                  Refresh
+                </Button>
+              </div>
+
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  onChange={handleSearchChange}
+                  placeholder="Search payment..."
+                  className="w-full pl-9 sm:w-[300px] bg-gray-50 border-0 ring-1 ring-gray-200"
+                />
+              </div>
+            </div>
+
+            {/* Table */}
+            <div className="rounded-lg border shadow-sm max-h-[500px] overflow-scroll">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-gray-50">
+                    <TableHead>Sr.</TableHead>
+                    <TableHead>USER</TableHead>
+                    <TableHead>DATE</TableHead>
+                    <TableHead>STATUS</TableHead>
+                    <TableHead>Bill</TableHead>
+                    <TableHead>PAID AMOUNT</TableHead>
+                    <TableHead>Remaining AMOUNT</TableHead>
+                    <TableHead>DESCRIPTION</TableHead>
+                    <TableHead>ACTIONS</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {users.map((user, index) => {
+                    runningRemaining += user.amount || 0;
+                    runningRemaining -= user.paid_amount || 0;
+
+                    return (
+                      <TableRow
+                        key={index}
+                        className={`cursor-pointer data-[selected=true]:bg-blue-100 ${
+                          user.isDelete
+                            ? "bg-[#ffd2d2] hover:bg-[#ffd2d2]"
+                            : "hover:bg-gray-200/50"
+                        }`}
+                        onClick={(e) => {
+                          document
+                            .querySelectorAll("[data-selected]")
+                            .forEach((row) => {
+                              row.removeAttribute("data-selected");
+                            });
+                          e.currentTarget.setAttribute("data-selected", "true");
+                        }}
+                      >
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium">{index + 1}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-3">
+                            <div className="relative">
+                              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100 text-sm font-medium text-purple-600 ring-2 ring-white">
+                                {user.user.fullname
+                                  .split(" ")
+                                  .map((word) => word.charAt(0))
+                                  .join("")}
+                              </div>
+                              <div
+                                className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white"
+                                style={{
+                                  backgroundColor:
+                                    user.amount && user.paid_amount
+                                      ? "#9333ea"
+                                      : user.amount && !user.paid_amount
+                                      ? "#c5bd00"
+                                      : !user.amount && user.paid_amount
+                                      ? "#00cd0e"
+                                      : null,
+                                }}
+                              />
                             </div>
-                            <div
-                              className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white"
+                            <div>
+                              <div className="font-medium text-gray-900">
+                                {user.customer.fullname}
+                              </div>
+                              <div className="text-sm ml-2 text-[#712fff] text-muted-foreground">
+                                {user.user.fullname}
+                              </div>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <User2 className="h-4 w-4 text-purple-600" />
+                            <span className="font-medium">
+                              {new Date(user.createdAt).toLocaleDateString(
+                                "en-US",
+                                {
+                                  month: "short",
+                                  day: "2-digit",
+                                  year: "numeric",
+                                  timeZone: "UTC",
+                                  hour12: true,
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                  second: "2-digit",
+                                }
+                              )}
+                            </span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <span
+                              className="inline-flex items-center rounded-md text-xs transition-colors font-medium px-2 py-0.5 capitalize"
                               style={{
                                 backgroundColor:
                                   user.amount && user.paid_amount
-                                    ? "#9333ea"
+                                    ? "#f3e8ff"
                                     : user.amount && !user.paid_amount
-                                    ? "#c5bd00"
+                                    ? "#f1f5b2"
                                     : !user.amount && user.paid_amount
-                                    ? "#00cd0e"
+                                    ? "#c8ffc8"
                                     : null,
                               }}
-                            />
-                          </div>
-                          <div>
-                            <div className="font-medium text-gray-900">
-                              {user.customer.fullname}
-                            </div>
-                            <div className="text-sm ml-2 text-[#712fff] text-muted-foreground">
-                              {user.user.fullname}
-                            </div>
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <User2 className="h-4 w-4 text-purple-600" />
-                          <span className="font-medium">
-                            {new Date(user.createdAt).toLocaleDateString(
-                              "en-US",
-                              {
-                                month: "short",
-                                day: "2-digit",
-                                year: "numeric",
-                                timeZone: "UTC",
-                                hour12: true,
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                second: "2-digit",
-                              }
-                            )}
-                          </span>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <span
-                            className="inline-flex items-center rounded-md text-xs transition-colors font-medium px-2 py-0.5 capitalize"
-                            style={{
-                              backgroundColor:
-                                user.amount && user.paid_amount
-                                  ? "#f3e8ff"
-                                  : user.amount && !user.paid_amount
-                                  ? "#f1f5b2"
-                                  : !user.amount && user.paid_amount
-                                  ? "#c8ffc8"
-                                  : null,
-                            }}
-                          >
-                            {user.amount && user.paid_amount ? (
-                              <span>partial</span>
-                            ) : user.amount && !user.paid_amount ? (
-                              <span>pending</span>
-                            ) : !user.amount && user.paid_amount ? (
-                              <span>paid</span>
-                            ) : null}
-                          </span>
-                        </div>
-                      </TableCell>
-                      <TableCell>{user.amount}</TableCell>
-                      <TableCell>
-                        <span className="text-sm text-muted-foreground">
-                          {user.paid_amount}
-                        </span>
-                      </TableCell>
-                      <TableCell>{runningRemaining}</TableCell>
-                      <TableCell>
-                        <span className="text-sm text-muted-foreground">
-                          {user.description}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center justify-end gap-2">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            asChild
-                            className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
-                          >
-                            <Link
-                              href={`/dashboard/customers/${customerId}/payments/${user.id}/view`}
                             >
-                              <Eye className="h-4 w-4" />
-                            </Link>
-                          </Button>
-                          <Button
+                              {user.amount && user.paid_amount ? (
+                                <span>partial</span>
+                              ) : user.amount && !user.paid_amount ? (
+                                <span>pending</span>
+                              ) : !user.amount && user.paid_amount ? (
+                                <span>paid</span>
+                              ) : null}
+                            </span>
+                          </div>
+                        </TableCell>
+                        <TableCell>{user.amount}</TableCell>
+                        <TableCell>
+                          <span className="text-sm text-muted-foreground">
+                            {user.paid_amount}
+                          </span>
+                        </TableCell>
+                        <TableCell>{runningRemaining}</TableCell>
+                        <TableCell>
+                          <span className="text-sm text-muted-foreground">
+                            {user.description}
+                          </span>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center justify-end gap-2">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              asChild
+                              className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
+                            >
+                              <Link
+                                href={`/dashboard/customers/${customerId}/payments/${user.id}/view`}
+                              >
+                                <Eye className="h-4 w-4" />
+                              </Link>
+                            </Button>
+                            {/* <Button
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
@@ -344,27 +443,28 @@ export default function PaymentLists({ data, customerId }) {
                             >
                               <Pencil className="h-4 w-4" />
                             </Link>
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => {
-                              deleteUser(user.id, user.username);
-                            }}
-                            className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
+                          </Button> */}
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => {
+                                deleteUser(user.id, user.username);
+                              }}
+                              className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

@@ -339,7 +339,7 @@ export default function SaleEntry({ username }) {
                   <div className="flex justify-between items-center">
                     <span className="font-medium text-gray-700">Total:</span>
                     <div className="flex items-center gap-2">
-                      <span className="text-gray-600">Less:</span>
+                      <span className="text-gray-600">Paid:</span>
                       <Input
                         type="number"
                         value={less}
