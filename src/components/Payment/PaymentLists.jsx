@@ -131,106 +131,172 @@ export default function PaymentLists({ data, customerId }) {
     );
     setUsers(filteredUsers);
   }, [searchTerm]);
-  const isVisible = true;
+  const [isVisible, setIsVisible] = React.useState(false);
+  const [visibleData, setVisibleData] = React.useState({});
+
+  const handleInvoiceClick = (id) => {
+    const filterData = users.find((user) => user.id === id);
+    const lowerUsers = users.filter((user) => user.id <= id);
+    let remaining = 0;
+
+    lowerUsers.forEach((user) => {
+      remaining += user.amount ? user.amount : 0;
+      remaining -= user.paid_amount ? user.paid_amount : 0;
+    });
+
+    const singleUser = { ...filterData, remaining: remaining };
+
+    setVisibleData(singleUser);
+    setIsVisible(true);
+  };
+
+  const handleClose = () => {
+    setVisibleData({});
+    setIsVisible(false);
+  };
+
   return (
     <div>
-      <div
-        className={`${
-          isVisible
-            ? "bg-black/40 absolute top-0 left-0 h-full w-full z-40"
-            : ""
-        }`}
-      ></div>
-      <div className="fixed z-50 bg-white top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
-        <Card className="min-w-[280px]  mx-auto bg-white shadow-sm">
-          {/* Header Section */}
-          <CardHeader className="text-center space-y-6 pb-6 border-b">
-            <div className="space-y-2">
-              <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
-                Jeddah Traders
-              </h1>
-              <p className="text-sm text-muted-foreground">Invoice Details</p>
-            </div>
-          </CardHeader>
+      {isVisible ? (
+        <div>
+          <div
+            className="bg-black/40 fixed top-0 left-0 h-full w-full z-40"
+            onClick={handleClose}
+          ></div>
+          <div className="fixed z-50 rounded-md bg-white top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
+            <Card className="min-w-[280px]  mx-auto bg-white shadow-sm">
+              {/* Header Section */}
+              <CardHeader className="text-center space-y-6 pb-6 border-b">
+                <div className="space-y-2">
+                  <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
+                    Jeddah Traders
+                  </h1>
+                  <p className="!font-bold text-center text-lg">
+                    Invoice Details
+                  </p>
+                </div>
+              </CardHeader>
 
-          <CardContent className="p-0">
-            <div className="px-6 py-4">
-              <p className="text-bold text-center text-muted-foreground">Bill Details</p>
+              <CardContent className="p-0">
+                <div className="px-6 py-4">
+                  <div className="mb-3">
+                    <Table className="border border-gray-400">
+                      <TableBody>
+                        <TableRow className="bg-gray-50 border-b border-gray-400">
+                          <TableHead className="font-semibold border-r border-gray-400">
+                            Bill No:
+                          </TableHead>
+                          <TableCell className="text-blue-600 font-medium border-gray-400">
+                            {visibleData?.id}
+                          </TableCell>
+                        </TableRow>
+                        <TableRow className="border-b border-gray-400">
+                          <TableHead className="font-semibold border-r border-gray-400">
+                            Customer:
+                          </TableHead>
+                          <TableCell className="font-medium border-gray-400">
+                            <span>{visibleData?.user?.fullname}</span>
+                            <br />
+                            <span>{visibleData?.user?.username}</span>
+                          </TableCell>
+                        </TableRow>
+                        <TableRow className="border-b border-gray-400">
+                          <TableHead className="font-semibold border-r border-gray-400">
+                            Description
+                          </TableHead>
+                          <TableCell className="border-gray-400">
+                            {visibleData?.description || "-"}
+                          </TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </div>
+                  <p className="!font-bold text-center text-lg">Bill Details</p>
 
-              <div className="border border-gray-200 overflow-hidden">
-                <Table className="border border-gray-400 text-center">
-                  <TableHeader>
-                    <TableRow className="bg-gray-50 border-b border-gray-400">
-                      <TableHead className="w-16 text-center font-semibold border-r border-gray-400">
-                        Sr.
-                      </TableHead>
-                      <TableHead className="font-semibold border-r border-gray-400">
-                        Product
-                      </TableHead>
-                      <TableHead className="w-24 text-center font-semibold border-r border-gray-400">
-                        Qty
-                      </TableHead>
-                      <TableHead className="w-32 text-center font-semibold border-gray-400">
-                        Amount
-                      </TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    <TableRow className="border-b border-gray-400">
-                      <TableCell className="text-blue-600 font-medium border-r border-gray-400">
-                        1
-                      </TableCell>
-                      <TableCell className="font-medium border-r border-gray-400">
-                        Cloth
-                      </TableCell>
-                      <TableCell className="text-center border-r border-gray-400">
-                        1
-                      </TableCell>
-                      <TableCell className="text-center font-medium border-gray-400">
-                        1,800
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </div>
+                  <div className="border border-gray-200 overflow-hidden">
+                    <Table className="border border-gray-400 text-center">
+                      <TableHeader>
+                        <TableRow className="bg-gray-50 border-b border-gray-400">
+                          <TableHead className="w-16 text-center font-semibold border-r border-gray-400">
+                            Sr.
+                          </TableHead>
+                          <TableHead className="font-semibold border-r border-gray-400">
+                            Product
+                          </TableHead>
+                          <TableHead className="w-24 text-center font-semibold border-r border-gray-400">
+                            Qty
+                          </TableHead>
+                          <TableHead className="w-32 text-center font-semibold border-gray-400">
+                            Amount
+                          </TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {visibleData?.items.map((item, index) => {
+                          return (
+                            <TableRow
+                              key={item.id}
+                              className="border-b border-gray-400"
+                            >
+                              <TableCell className="text-blue-600 font-medium border-r border-gray-400">
+                                {index + 1}
+                              </TableCell>
+                              <TableCell className="font-medium border-r border-gray-400">
+                                {item?.name}
+                              </TableCell>
+                              <TableCell className="text-center border-r border-gray-400">
+                                {item?.qty}
+                              </TableCell>
+                              <TableCell className="text-center font-medium border-gray-400">
+                                {item?.amount}
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })}
+                      </TableBody>
+                    </Table>
+                  </div>
 
-              <div className="mt-2">
-                <Table className="border border-gray-400">
-                  <TableBody>
-                    <TableRow className="bg-gray-50 border-b border-gray-400">
-                      <TableHead className="font-semibold border-r border-gray-400">
-                        Total
-                      </TableHead>
-                      <TableCell className="text-blue-600 font-medium border-gray-400">
-                        1
-                      </TableCell>
-                    </TableRow>
-                    <TableRow className="border-b border-gray-400">
-                      <TableHead className="font-semibold border-r border-gray-400">
-                        Paid
-                      </TableHead>
-                      <TableCell className="font-medium border-gray-400">
-                        Cloth
-                      </TableCell>
-                    </TableRow>
-                    <TableRow className="border-b border-gray-400">
-                      <TableHead className="font-semibold border-r border-gray-400">
-                        Bill
-                      </TableHead>
-                      <TableCell className="border-gray-400">1</TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </div>
+                  <div className="mt-2">
+                    <Table className="border border-gray-400">
+                      <TableBody>
+                        <TableRow className="bg-gray-50 border-b border-gray-400">
+                          <TableHead className="font-semibold border-r border-gray-400">
+                            Total
+                          </TableHead>
+                          <TableCell className="font-bold border-gray-400">
+                            {visibleData?.amount}
+                          </TableCell>
+                        </TableRow>
+                        <TableRow className="border-b border-gray-400">
+                          <TableHead className="font-semibold border-r border-gray-400">
+                            Paid
+                          </TableHead>
+                          <TableCell className="font-bold border-gray-400">
+                            {visibleData?.paid_amount || 0}
+                          </TableCell>
+                        </TableRow>
+                        <TableRow className="border-b border-gray-400">
+                          <TableHead className="font-semibold border-r border-gray-400">
+                            Bill
+                          </TableHead>
+                          <TableCell className="border-gray-400 font-bold">
+                            {visibleData?.remaining || 0}
+                          </TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </div>
 
-              {/* Footer Note */}
-              <div className="mt-6 text-center text-sm text-gray-500">
+                  {/* <div className="mt-6 text-center text-sm text-gray-500">
                 Thank you for your business!
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+              </div> */}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      ) : null}
       <div className={`py-8 space-y-8`}>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -423,14 +489,18 @@ export default function PaymentLists({ data, customerId }) {
                             <Button
                               variant="ghost"
                               size="icon"
-                              asChild
                               className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
+                              onClick={() => {
+                                handleInvoiceClick(user.id, runningRemaining);
+                              }}
                             >
-                              <Link
+                              <Eye className="h-4 w-4" />
+
+                              {/* <Link
                                 href={`/dashboard/customers/${customerId}/payments/${user.id}/view`}
                               >
                                 <Eye className="h-4 w-4" />
-                              </Link>
+                              </Link> */}
                             </Button>
                             {/* <Button
                             variant="ghost"

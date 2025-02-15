@@ -41,6 +41,7 @@ const Payments = async ({ params }) => {
     include: {
       user: true,
       customer: true,
+      items: true,
     },
   });
 
