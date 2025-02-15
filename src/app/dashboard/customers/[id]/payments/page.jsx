@@ -84,7 +84,7 @@ const Payments = async ({ params }) => {
           </div>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2 self-start text-center">
           <div className="flex justify-center items-center flex-wrap">
             <div className="bg-green-400 rounded-sm p-1 px-2 w-fit">
               Account No:

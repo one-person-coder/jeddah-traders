@@ -54,7 +54,8 @@ model Product {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  payments PaymentRecord[]
+  payments    PaymentRecord[]
+  PaymentItem PaymentItem[]
 }
 
 model PaymentRecord {
@@ -67,12 +68,29 @@ model PaymentRecord {
   method      PaymentMethod?
   createdAt   DateTime
   updatedAt   DateTime       @updatedAt
-  isDelete    Boolean        @default(false)
+  isDelete    Boolean?        @default(false)
+  total       Float?
+  less        Float?
+  payment     Float?
 
-  user       UserInfo @relation(name: "UserPayments", fields: [user_id], references: [id], onDelete: NoAction)
-  customer   UserInfo @relation(name: "CustomerPayments", fields: [customer_id], references: [id], onDelete: NoAction)
-  Product    Product? @relation(fields: [product_id], references: [id], onDelete: SetNull)
+  user       UserInfo      @relation(name: "UserPayments", fields: [user_id], references: [id], onDelete: NoAction)
+  customer   UserInfo      @relation(name: "CustomerPayments", fields: [customer_id], references: [id], onDelete: NoAction)
+  Product    Product?      @relation(fields: [product_id], references: [id], onDelete: SetNull)
   product_id Int?
+  items      PaymentItem[] @relation("PaymentToItems") // One-to-Many relation
+}
+
+model PaymentItem {
+  id         Int     @id @default(autoincrement())
+  payment_id Int // PaymentRecord ka ID
+  product_id Int? // Product ka ID
+  name       String? // Product ka naam
+  qty        Int? // Quantity
+  price      Float? // Single product ki price
+  amount     Float? // Total amount (price * qty)
+
+  paymentRecord PaymentRecord @relation(name: "PaymentToItems", fields: [payment_id], references: [id], onDelete: Cascade)
+  product       Product?      @relation(fields: [product_id], references: [id], onDelete: SetNull)
 }
 
 enum PaymentMethod {
