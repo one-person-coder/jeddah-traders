@@ -142,16 +142,28 @@ export default function PaymentLists({ data, customerId }) {
             Manage and monitor Customer Payments
           </p>
         </div>
-        <Button
-          className="bg-purple-600 hover:bg-purple-700 transition-all shadow-lg hover:shadow-purple-200"
-          size="lg"
-          asChild
-        >
-          <Link href={`/dashboard/customers/${customerId}/payments/new`}>
-            <Plus className="h-4 w-4" />
-            Add New Payment
-          </Link>
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            className="bg-orange-600 hover:bg-orange-700 transition-all shadow-lg hover:shadow-purple-200"
+            size="lg"
+            asChild
+          >
+            <Link href={`/dashboard/customers/${customerId}/bill/new`}>
+              <Plus className="h-4 w-4" />
+              Make Bill
+            </Link>
+          </Button>
+          <Button
+            className="bg-purple-600 hover:bg-purple-700 transition-all shadow-lg hover:shadow-purple-200"
+            size="lg"
+            asChild
+          >
+            <Link href={`/dashboard/customers/${customerId}/payments/new`}>
+              <Plus className="h-4 w-4" />
+              Add Payment
+            </Link>
+          </Button>
+        </div>
       </div>
 
       <Card className="border-none shadow-lg">
