@@ -28,27 +28,20 @@ export async function POST(request) {
       );
     }
 
-    if (login.role !== "admin") {
-      return NextResponse.json({
-        success: false,
-        message: "You don't have permisson to delete admin!",
-      });
-    }
-
-    const deletedUser = await prisma.userInfo.delete({
+    const deletedUser = await prisma.product.delete({
       where: { id: parseInt(id) },
     });
 
     if (!deletedUser) {
       return NextResponse.json(
-        { success: false, message: "User not found" },
+        { success: false, message: "Product not found" },
         { status: 404 }
       );
     }
 
     return NextResponse.json({
       success: true,
-      message: "User deleted successfully",
+      message: "Product deleted successfully",
     });
   } catch (error) {
     return NextResponse.json(

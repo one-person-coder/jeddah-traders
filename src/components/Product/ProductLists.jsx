@@ -286,7 +286,7 @@ export default function ProductLists({ data }) {
                           variant="ghost"
                           size="icon"
                           onClick={() => {
-                            deleteUser(user.id, user.username);
+                            deleteUser(user.id, user.name);
                           }}
                           className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
                         >
