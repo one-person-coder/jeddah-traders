@@ -195,9 +195,9 @@ export default function PaymentLists({ data, customerId }) {
                             Customer:
                           </TableHead>
                           <TableCell className="font-medium border-gray-400">
-                            <span>{visibleData?.user?.fullname}</span>
+                            <span>{visibleData?.customer?.fullname}</span>
                             <br />
-                            <span>{visibleData?.user?.username}</span>
+                            <span>{visibleData?.customer?.username}</span>
                           </TableCell>
                         </TableRow>
                         <TableRow className="border-b border-gray-400">
