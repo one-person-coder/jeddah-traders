@@ -16,6 +16,8 @@ export default function NewUser() {
   const [registerFormData, setRegisterFormData] = useState({
     fullname: "",
     username: "",
+    father_name: "",
+    address: "",
     email: "",
     pNumber: "",
     password: "",
@@ -23,7 +25,7 @@ export default function NewUser() {
     status: "pending",
     date: "",
     cnic_no: "",
-    account_no: "",
+    account_number: "",
     cnic_front_img: {
       preview: "",
       binary: "",
@@ -53,6 +55,8 @@ export default function NewUser() {
 
     if (
       !registerFormData.fullname ||
+      !registerFormData.father_name ||
+      !registerFormData.address ||
       !registerFormData.username ||
       !registerFormData.email ||
       !registerFormData.pNumber ||
@@ -62,7 +66,7 @@ export default function NewUser() {
       !registerFormData.cnic_back_img.preview.length >= 1 ||
       !registerFormData.user_img.preview.length >= 1 ||
       !registerFormData.cnic_no ||
-      !registerFormData.account_no ||
+      !registerFormData.account_number ||
       !registerFormData.date
     ) {
       ErrorToast("Please fill in all required fields before proceeding.");
@@ -180,6 +184,18 @@ export default function NewUser() {
                   </div>
                   <div>
                     <h3 className="font-semibold  mb-2 text-sm">
+                      Father Name <span className="text-red-500">*</span>
+                    </h3>
+                    <input
+                      type="text"
+                      name="father_name"
+                      placeholder="Enter Father Name"
+                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold  mb-2 text-sm">
                       Username <span className="text-red-500">*</span>
                     </h3>
                     <input
@@ -217,7 +233,7 @@ export default function NewUser() {
                   </div>
                   <div>
                     <h3 className="font-semibold mb-2 text-sm">
-                      CNIC No <span className="text-red-500 text-lg">*</span>
+                      CNIC No <span className="text-red-500">*</span>
                     </h3>
                     <input
                       type="text"
@@ -233,7 +249,7 @@ export default function NewUser() {
                     </h3>
                     <input
                       type="text"
-                      name="account_no"
+                      name="account_number"
                       placeholder="Enter Account No"
                       className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
                       onChange={handleInputChange}
@@ -247,6 +263,18 @@ export default function NewUser() {
                       type="text"
                       name="password"
                       placeholder="Enter Password"
+                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold mb-2 text-sm">
+                      Address <span className="text-red-500 text-lg">*</span>
+                    </h3>
+                    <input
+                      type="text"
+                      name="address"
+                      placeholder="Enter Address"
                       className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
                       onChange={handleInputChange}
                     />

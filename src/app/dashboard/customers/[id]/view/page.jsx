@@ -16,6 +16,8 @@ const ViewPage = async ({ params }) => {
     select: {
       id: true,
       fullname: true,
+      address: true,
+      father_name: true,
       username: true,
       email: true,
       pNumber: true,
@@ -127,6 +129,13 @@ const ViewPage = async ({ params }) => {
                 </div>
               </div>
               <div className="text-zinc-600 flex gap-1 items-center">
+                <ProfileSvg />
+                <div>
+                  <span>Father Name:</span>
+                  <span className="text-zinc-500 ml-2">{user.father_name}</span>
+                </div>
+              </div>
+              <div className="text-zinc-600 flex gap-1 items-center">
                 <Mail className="h-5 w-5" />
                 <div>
                   <span>Email:</span>
@@ -172,7 +181,7 @@ const ViewPage = async ({ params }) => {
                 <BookOpenSvg />
                 <div>
                   <span>Address:</span>
-                  <span className="text-zinc-500 ml-2">Dera Ghazi Khan</span>
+                  <span className="text-zinc-500 ml-2">{user.address}</span>
                 </div>
               </div>
             </div>

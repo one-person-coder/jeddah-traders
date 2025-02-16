@@ -101,7 +101,7 @@ const Payments = async ({ params }) => {
             <span className="text-green-500">|</span>
             <div>CNIC No: {currentUser.cnic_no}</div>
             <span className="text-green-500">|</span>
-            <div>Address: Dera Ghazi Khan, Atomic, NMC 1 Colony</div>
+            <div>Address: {currentUser.address}</div>
           </div>
         </div>
 

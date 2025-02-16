@@ -22,6 +22,9 @@ export async function POST(request) {
     const {
       id,
       fullname,
+      father_name,
+      account_number,
+      address,
       username,
       email,
       pNumber,
@@ -57,6 +60,10 @@ export async function POST(request) {
         OR: [
           { username: username, NOT: { id: parseInt(id) } },
           { email: email, NOT: { id: parseInt(id) } },
+          {
+            account_number: parseInt(account_number),
+            NOT: { id: parseInt(id) },
+          }, 
         ],
       },
     });
@@ -83,7 +90,7 @@ export async function POST(request) {
       return NextResponse.json(
         {
           success: false,
-          message: "Username or Email already exists Please choose another",
+          message: "Username, Email or maybe account no already used. ",
         },
         { status: 400 }
       );
@@ -93,6 +100,9 @@ export async function POST(request) {
       where: { id: parseInt(id) },
       data: {
         fullname: fullname || user.fullname,
+        father_name: father_name || user.father_name,
+        address: address || user.address,
+        account_number: parseInt(account_number) || user.account_number,
         username: username || user.username,
         email: email || user.email,
         pNumber: pNumber || user.pNumber,

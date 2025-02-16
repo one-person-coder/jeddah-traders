@@ -18,6 +18,8 @@ export async function POST(request) {
       cnic_front_img,
       cnic_back_img,
       user_img,
+      father_name,
+      address,
     } = reqBody;
 
     async function compressImage(base64Image) {
@@ -60,6 +62,8 @@ export async function POST(request) {
     await prisma.userInfo.create({
       data: {
         fullname,
+        father_name,
+        address,
         username,
         email,
         pNumber,

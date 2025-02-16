@@ -20,6 +20,8 @@ export default function RegisterCustomer() {
     pNumber: "",
     password: "",
     gender: "male",
+    address: "",
+    father_name: "",
     date: "",
     cnic_no: "",
     cnic_front_img: {
@@ -51,6 +53,8 @@ export default function RegisterCustomer() {
 
     if (
       !registerFormData.fullname ||
+      !registerFormData.father_name ||
+      !registerFormData.address ||
       !registerFormData.username ||
       !registerFormData.email ||
       !registerFormData.pNumber ||
@@ -182,6 +186,18 @@ export default function RegisterCustomer() {
                   </div>
                   <div>
                     <h3 className="font-semibold  mb-2 text-sm">
+                      Father Name <span className="text-red-500">*</span>
+                    </h3>
+                    <input
+                      type="text"
+                      name="father_name"
+                      placeholder="Enter Father Name"
+                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold  mb-2 text-sm">
                       Username <span className="text-red-500">*</span>
                     </h3>
                     <input
@@ -219,7 +235,7 @@ export default function RegisterCustomer() {
                   </div>
                   <div>
                     <h3 className="font-semibold mb-2 text-sm">
-                      CNIC No <span className="text-red-500 text-lg">*</span>
+                      CNIC No <span className="text-red-500">*</span>
                     </h3>
                     <input
                       type="text"
@@ -231,7 +247,19 @@ export default function RegisterCustomer() {
                   </div>
                   <div>
                     <h3 className="font-semibold mb-2 text-sm">
-                      Password <span className="text-red-500 text-lg">*</span>
+                      Address <span className="text-red-500">*</span>
+                    </h3>
+                    <input
+                      type="text"
+                      name="address"
+                      placeholder="Enter Address"
+                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold mb-2 text-sm">
+                      Password <span className="text-red-500">*</span>
                     </h3>
                     <input
                       type="text"

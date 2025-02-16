@@ -22,6 +22,8 @@ export async function POST(request) {
     const reqBody = await request.json();
     const {
       fullname,
+      father_name,
+      address,
       username,
       email,
       pNumber,
@@ -33,9 +35,9 @@ export async function POST(request) {
       cnic_front_img,
       cnic_back_img,
       user_img,
-      account_no,
+      account_number,
     } = reqBody;
-    const ac = parseInt(account_no);
+    const ac = parseInt(account_number);
 
     const existingUser = await prisma.userInfo.findFirst({
       where: {
@@ -82,6 +84,8 @@ export async function POST(request) {
     const newUser = await prisma.userInfo.create({
       data: {
         fullname,
+        father_name,
+        address,
         username,
         email,
         pNumber,

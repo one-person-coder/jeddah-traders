@@ -11,13 +11,15 @@ model UserInfo {
   id               Int             @id @default(autoincrement())
   account_number   Int?            @unique
   fullname         String
+  father_name      String?
   username         String          @unique
   email            String          @unique
-  pNumber          String
+  pNumber          String?
   cnic_no          String?
   user_img         Bytes?
   cnic_back_img    Bytes?
   cnic_front_img   Bytes?
+  address          String?
   password         String          @db.VarChar(255)
   gender           Gender          @default(male)
   date             DateTime
@@ -68,7 +70,7 @@ model PaymentRecord {
   method      PaymentMethod?
   createdAt   DateTime
   updatedAt   DateTime       @updatedAt
-  isDelete    Boolean?        @default(false)
+  isDelete    Boolean?       @default(false)
   total       Float?
   less        Float?
   payment     Float?

@@ -42,6 +42,8 @@ export default function EditCustomer({ user }) {
     e.preventDefault();
     if (
       !registerFormData.fullname ||
+      !registerFormData.father_name ||
+      !registerFormData.address ||
       !registerFormData.username ||
       !registerFormData.email ||
       !registerFormData.pNumber ||
@@ -184,6 +186,19 @@ export default function EditCustomer({ user }) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <h3 className="font-semibold  mb-2 text-sm">
+                      Account No <span className="text-red-500">*</span>
+                    </h3>
+                    <input
+                      type="text"
+                      name="account_number"
+                      placeholder="Enter Account No"
+                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
+                      onChange={handleInputChange}
+                      value={registerFormData.account_number}
+                    />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold  mb-2 text-sm">
                       Full Name <span className="text-red-500">*</span>
                     </h3>
                     <input
@@ -193,6 +208,19 @@ export default function EditCustomer({ user }) {
                       className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
                       onChange={handleInputChange}
                       value={registerFormData.fullname}
+                    />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold  mb-2 text-sm">
+                      Father Name <span className="text-red-500">*</span>
+                    </h3>
+                    <input
+                      type="text"
+                      name="father_name"
+                      placeholder="Enter Father Name"
+                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
+                      onChange={handleInputChange}
+                      value={registerFormData.father_name}
                     />
                   </div>
                   <div>
@@ -237,7 +265,7 @@ export default function EditCustomer({ user }) {
                   </div>
                   <div>
                     <h3 className="font-semibold mb-2 text-sm">
-                      CNIC No <span className="text-red-500 text-lg">*</span>
+                      CNIC No <span className="text-red-500">*</span>
                     </h3>
                     <input
                       type="text"
@@ -246,6 +274,19 @@ export default function EditCustomer({ user }) {
                       className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
                       onChange={handleInputChange}
                       value={registerFormData.cnic_no}
+                    />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold mb-2 text-sm">
+                      Address <span className="text-red-500">*</span>
+                    </h3>
+                    <input
+                      type="text"
+                      name="address"
+                      placeholder="Enter Address"
+                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
+                      onChange={handleInputChange}
+                      value={registerFormData.address}
                     />
                   </div>
                 </div>
