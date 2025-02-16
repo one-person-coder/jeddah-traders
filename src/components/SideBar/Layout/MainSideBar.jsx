@@ -9,6 +9,7 @@ import {
   User,
   ChartColumn,
   Box,
+  Trash2,
 } from "lucide-react";
 import TopNav from "./TopNavBar";
 import AnchorLink from "@/components/utils/AnchorLink";
@@ -65,6 +66,13 @@ export default function Sidebar({ children, userType }) {
         url: "/dashboard/settings/profile",
       },
     ];
+    if (userType === "admin") {
+      navigation.splice(5, 0, {
+        title: "Recycle Bin",
+        icon: Trash2,
+        url: "/dashboard/recycle",
+      });
+    }
   }
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [openMenus, setOpenMenus] = useState([]);

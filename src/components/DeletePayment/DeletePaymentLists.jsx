@@ -34,7 +34,7 @@ import { statusColors } from "@/constant/constant";
 import { ErrorToast, SuccessToast } from "../utils/CustomToasts";
 import { Badge } from "../ui/badge";
 
-export default function PaymentLists({ data, customerId }) {
+export default function DeletePaymentLists({ data }) {
   let runningRemaining = 0;
   const [isFiltersVisible, setIsFiltersVisible] = React.useState(true);
 
@@ -46,7 +46,6 @@ export default function PaymentLists({ data, customerId }) {
   const refreshData = async () => {
     const response = await fetch(`/api/customers/payments/status`, {
       method: "POST",
-      body: JSON.stringify({ customerId: customerId }),
     });
     const userStatus = await response.json();
 
@@ -117,17 +116,7 @@ export default function PaymentLists({ data, customerId }) {
         user.customer.pNumber
           .toLowerCase()
           .includes(searchTerm.toLowerCase().trim()) ||
-        user.description
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase().trim()) ||
-        user?.paid_amount
-          ?.toString()
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase().trim()) ||
-        user?.amount
-          ?.toString()
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase().trim())
+        user.description.toLowerCase().includes(searchTerm.toLowerCase().trim())
     );
     setUsers(filteredUsers);
   }, [searchTerm]);
@@ -303,39 +292,6 @@ export default function PaymentLists({ data, customerId }) {
         </div>
       ) : null}
       <div className={`py-8 space-y-8`}>
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold text-gray-900">
-              Payment Management
-            </h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              Manage and monitor Customer Payments
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <Button
-              className="bg-orange-600 hover:bg-orange-700 transition-all shadow-lg hover:shadow-purple-200"
-              size="lg"
-              asChild
-            >
-              <Link href={`/dashboard/customers/${customerId}/bill/new`}>
-                <Plus className="h-4 w-4" />
-                Make Bill
-              </Link>
-            </Button>
-            <Button
-              className="bg-purple-600 hover:bg-purple-700 transition-all shadow-lg hover:shadow-purple-200"
-              size="lg"
-              asChild
-            >
-              <Link href={`/dashboard/customers/${customerId}/payments/new`}>
-                <Plus className="h-4 w-4" />
-                Add Payment
-              </Link>
-            </Button>
-          </div>
-        </div>
-
         <Card className="border-none shadow-lg">
           <CardContent className="p-6">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
@@ -364,7 +320,7 @@ export default function PaymentLists({ data, customerId }) {
                     <TableHead>Sr.</TableHead>
                     <TableHead>USER</TableHead>
                     <TableHead>DATE</TableHead>
-                    <TableHead>STATUS</TableHead>
+                    {/* <TableHead>STATUS</TableHead> */}
                     <TableHead>Bill</TableHead>
                     <TableHead>PAID AMOUNT</TableHead>
                     <TableHead>DESCRIPTION</TableHead>
@@ -376,7 +332,7 @@ export default function PaymentLists({ data, customerId }) {
                     runningRemaining += user.amount || 0;
                     runningRemaining -= user.paid_amount || 0;
 
-                    return !user.isDelete ? (
+                    return user.isDelete ? (
                       <TableRow
                         key={index}
                         className={`cursor-pointer data-[selected=true]:bg-blue-100 ${
@@ -451,7 +407,7 @@ export default function PaymentLists({ data, customerId }) {
                             </span>
                           </div>
                         </TableCell>
-                        <TableCell>
+                        {/* <TableCell>
                           <div className="flex items-center gap-2">
                             <span
                               className="inline-flex items-center rounded-md text-xs transition-colors font-medium px-2 py-0.5 capitalize"
@@ -475,7 +431,7 @@ export default function PaymentLists({ data, customerId }) {
                               ) : null}
                             </span>
                           </div>
-                        </TableCell>
+                        </TableCell> */}
                         <TableCell>{user.amount}</TableCell>
                         <TableCell>
                           <span className="text-muted-foreground flex flex-col gap-2 text-black">
@@ -520,7 +476,7 @@ export default function PaymentLists({ data, customerId }) {
                               <Pencil className="h-4 w-4" />
                             </Link>
                           </Button> */}
-                            <Button
+                            {/* <Button
                               variant="ghost"
                               size="icon"
                               onClick={() => {
@@ -529,7 +485,7 @@ export default function PaymentLists({ data, customerId }) {
                               className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
                             >
                               <Trash2 className="h-4 w-4" />
-                            </Button>
+                            </Button> */}
                           </div>
                         </TableCell>
                       </TableRow>

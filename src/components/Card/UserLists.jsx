@@ -163,7 +163,7 @@ export default function UserLists({ data }) {
       (user) =>
         user.fullname.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.email.toLowerCase().includes(searchTerm) ||
-        user.account_number.toLocaleString() === searchTerm ||
+        user?.account_number?.toLocaleString() === searchTerm ||
         user.username.toLowerCase().includes(searchTerm)
     );
     setUsers(filteredUsers);
