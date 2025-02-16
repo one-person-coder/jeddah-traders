@@ -20,6 +20,14 @@ export async function POST(request) {
       user_img,
       father_name,
       address,
+      
+      family_member_name,
+      family_relation,
+      family_contact_number,
+      family_description,
+      refferal_name,
+      refferal_account_number,
+      refferal_description,
     } = reqBody;
 
     async function compressImage(base64Image) {
@@ -74,6 +82,14 @@ export async function POST(request) {
         cnic_back_img: cnicBackBuffer,
         user_img: userImgBuffer,
         cnic_no,
+
+        family_member_name,
+        family_relation,
+        family_contact_number,
+        family_description,
+        refferal_name,
+        refferal_account_number,
+        refferal_description,
       },
     });
 

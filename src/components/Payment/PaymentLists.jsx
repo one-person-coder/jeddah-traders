@@ -364,10 +364,9 @@ export default function PaymentLists({ data, customerId }) {
                     <TableHead>Sr.</TableHead>
                     <TableHead>USER</TableHead>
                     <TableHead>DATE</TableHead>
-                    <TableHead>STATUS</TableHead>
+                    {/* <TableHead>STATUS</TableHead> */}
                     <TableHead>Bill</TableHead>
                     <TableHead>PAID AMOUNT</TableHead>
-                    <TableHead>Remaining AMOUNT</TableHead>
                     <TableHead>DESCRIPTION</TableHead>
                     <TableHead>ACTIONS</TableHead>
                   </TableRow>
@@ -452,7 +451,7 @@ export default function PaymentLists({ data, customerId }) {
                             </span>
                           </div>
                         </TableCell>
-                        <TableCell>
+                        {/* <TableCell>
                           <div className="flex items-center gap-2">
                             <span
                               className="inline-flex items-center rounded-md text-xs transition-colors font-medium px-2 py-0.5 capitalize"
@@ -476,14 +475,16 @@ export default function PaymentLists({ data, customerId }) {
                               ) : null}
                             </span>
                           </div>
-                        </TableCell>
+                        </TableCell> */}
                         <TableCell>{user.amount}</TableCell>
                         <TableCell>
-                          <span className="text-sm text-muted-foreground">
-                            {user.paid_amount}
+                          <span className="text-muted-foreground flex flex-col gap-2 text-black">
+                            {user.paid_amount ? user.paid_amount : "-"}
+                          </span>
+                          <span className="text-[13px] text-blue-800 ml-2 mt-3">
+                            {runningRemaining}
                           </span>
                         </TableCell>
-                        <TableCell>{runningRemaining}</TableCell>
                         <TableCell>
                           <span className="text-sm text-muted-foreground">
                             {user.description}

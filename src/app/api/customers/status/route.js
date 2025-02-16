@@ -35,6 +35,7 @@ export async function GET(request) {
       account_number: true,
       status: true,
       role: true,
+      customerPayments: true,
     },
   });
 

@@ -24,6 +24,16 @@ export default function RegisterCustomer() {
     father_name: "",
     date: "",
     cnic_no: "",
+
+    family_member_name: "",
+    family_relation: "",
+    family_contact_number: "",
+    family_description: "",
+
+    refferal_name: "",
+    refferal_account_number: "",
+    refferal_description: "",
+
     cnic_front_img: {
       preview: "",
       binary: "",
@@ -54,6 +64,9 @@ export default function RegisterCustomer() {
     if (
       !registerFormData.fullname ||
       !registerFormData.father_name ||
+      !registerFormData.family_member_name ||
+      !registerFormData.family_relation ||
+      !registerFormData.family_contact_number ||
       !registerFormData.address ||
       !registerFormData.username ||
       !registerFormData.email ||
@@ -127,6 +140,10 @@ export default function RegisterCustomer() {
 
               <form onSubmit={handleSubmit} className="w-full space-y-10">
                 <hr />
+
+                <h1 className="text-xl font-semibold mb-4 text-center">
+                  Personal Detail
+                </h1>
 
                 <div className="flex justify-center items-center flex-col">
                   <h3 className="font-semibold  mb-2 text-sm">
@@ -461,6 +478,110 @@ export default function RegisterCustomer() {
                       className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[7px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
                     />
                   </div>
+                </div>
+
+                <div className="my-6">
+                  <hr />
+                </div>
+
+                <h1 className="text-xl font-semibold mb-4 text-center">
+                  Family Detail
+                </h1>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <h3 className="font-semibold mb-2 text-sm">
+                      Member Name <span className="text-red-500">*</span>
+                    </h3>
+                    <input
+                      type="text"
+                      name="family_member_name"
+                      placeholder="Enter Member Name"
+                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold  mb-2 text-sm">
+                      Relation <span className="text-red-500">*</span>
+                    </h3>
+                    <input
+                      type="text"
+                      name="family_relation"
+                      placeholder="Enter Relation"
+                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold  mb-2 text-sm">
+                      Contact No <span className="text-red-500">*</span>
+                    </h3>
+                    <input
+                      type="text"
+                      name="family_contact_number"
+                      placeholder="Enter Contact No"
+                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold  mb-2 text-sm">Description</h3>
+                    <textarea
+                      type="text"
+                      name="family_description"
+                      placeholder="Enter Description"
+                      className="min-h-[48px] max-h-[100px] w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                </div>
+
+                <div className="my-6">
+                  <hr />
+                </div>
+
+                <h1 className="text-xl font-semibold mb-4 text-center">
+                  Referral Info
+                </h1>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <h3 className="font-semibold mb-2 text-sm">
+                      Refferal Name
+                    </h3>
+                    <input
+                      type="text"
+                      name="refferal_name"
+                      placeholder="Enter Name"
+                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold  mb-2 text-sm">Account No</h3>
+                    <input
+                      type="number"
+                      name="refferal_account_number"
+                      placeholder="Enter Refferal Acount No"
+                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold  mb-2 text-sm">Description</h3>
+                    <textarea
+                      type="text"
+                      name="refferal_description"
+                      placeholder="Enter Description"
+                      className="min-h-[48px] max-h-[100px] w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                </div>
+
+                <div className="my-6">
+                  <hr />
                 </div>
 
                 <Button

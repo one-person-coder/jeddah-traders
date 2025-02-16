@@ -117,27 +117,6 @@ export default function CustomerLists({ data }) {
 
   return (
     <div className="py-8 space-y-8">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900">
-            Customer Management
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Manage and monitor Customer accounts
-          </p>
-        </div>
-        <Button
-          className="bg-purple-600 hover:bg-purple-700 transition-all shadow-lg hover:shadow-purple-200"
-          size="lg"
-          asChild
-        >
-          <Link href={"/dashboard/customers/new"}>
-            <Plus className="h-4 w-4" />
-            Add New Customer
-          </Link>
-        </Button>
-      </div>
-
       <Card className="border-none shadow-lg">
         <CardContent className="p-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
@@ -190,12 +169,12 @@ export default function CustomerLists({ data }) {
                 <TableRow className="bg-gray-50">
                   <TableHead>Sr.</TableHead>
                   <TableHead>A/C</TableHead>
-                  <TableHead>PAYMENTS</TableHead>
                   <TableHead>USER</TableHead>
-                  <TableHead>ROLE</TableHead>
-                  <TableHead>STATUS</TableHead>
+                  {/* <TableHead>ROLE</TableHead>
+                  <TableHead>STATUS</TableHead> */}
                   <TableHead>CONTACT</TableHead>
-                  <TableHead>JOIN DATE</TableHead>
+                  <TableHead>LAST</TableHead>
+                  <TableHead>CREDIT</TableHead>
                   <TableHead className="text-right">ACTIONS</TableHead>
                 </TableRow>
               </TableHeader>
@@ -226,13 +205,6 @@ export default function CustomerLists({ data }) {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Button asChild variant="outline" className="">
-                        <Link href={`/dashboard/customers/${user.id}/payments`}>
-                          View Payments
-                        </Link>
-                      </Button>
-                    </TableCell>
-                    <TableCell>
                       <div className="flex items-center gap-3">
                         <div className="relative">
                           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100 text-sm font-medium text-purple-600 ring-2 ring-white">
@@ -259,7 +231,7 @@ export default function CustomerLists({ data }) {
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell>
+                    {/* <TableCell>
                       <div className="flex items-center gap-2">
                         <User2 className="h-4 w-4 text-purple-600" />
                         <span className="font-medium">
@@ -278,19 +250,54 @@ export default function CustomerLists({ data }) {
                           {user.status}
                         </span>
                       </div>
-                    </TableCell>
+                    </TableCell> */}
                     <TableCell>{user.pNumber}</TableCell>
                     <TableCell>
-                      <span className="text-sm text-muted-foreground">
-                        {new Date(user.createdAt).toLocaleDateString("en-US", {
-                          month: "short",
-                          day: "2-digit",
-                          year: "numeric",
-                        })}
-                      </span>
+                      {user.customerPayments.length >= 1 ? (
+                        <div className="flex gap-2">
+                          <span className="text-[16px] font-bold text-blue-700 text-muted-foreground">
+                            {user?.customerPayments.reverse()[0].paid_amount}
+                          </span>
+                          -
+                          <span className="text-sm text-muted-foreground">
+                            {new Date(
+                              user?.customerPayments.reverse()[0].createdAt
+                            ).toLocaleDateString("en-US", {
+                              month: "short",
+                              day: "2-digit",
+                              year: "numeric",
+                            })}
+                          </span>
+                        </div>
+                      ) : "-"}
+                    </TableCell>
+                    <TableCell>
+                      {user.customerPayments.length >= 1 ? (
+                        <div>
+                          <span className="text-sm text-muted-foreground">
+                            {user?.customerPayments.reduce(
+                              (acc, user) =>
+                                user.isDelete ? acc : acc + user.paid_amount,
+                              0
+                            )}
+                          </span>
+                        </div>
+                      ) : "-"}
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center justify-end gap-2">
+                        <Button
+                          asChild
+                          variant="outline"
+                          className="border-2 border-blue-800"
+                        >
+                          <Link
+                            href={`/dashboard/customers/${user.id}/payments`}
+                            className="!py-1 !px-3 rounded-sm !h-[2rem] hover:bg-blue-800 hover:text-white"
+                          >
+                            Account
+                          </Link>
+                        </Button>
                         <Button
                           variant="ghost"
                           size="icon"

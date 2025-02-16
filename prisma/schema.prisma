@@ -8,27 +8,36 @@ datasource db {
 }
 
 model UserInfo {
-  id               Int             @id @default(autoincrement())
-  account_number   Int?            @unique
-  fullname         String
-  father_name      String?
-  username         String          @unique
-  email            String          @unique
-  pNumber          String?
-  cnic_no          String?
-  user_img         Bytes?
-  cnic_back_img    Bytes?
-  cnic_front_img   Bytes?
-  address          String?
-  password         String          @db.VarChar(255)
-  gender           Gender          @default(male)
-  date             DateTime
-  status           Status          @default(pending)
-  role             Role            @default(customer)
-  createdAt        DateTime        @default(now())
-  updatedAt        DateTime        @updatedAt
-  paymentRecords   PaymentRecord[] @relation("UserPayments")
-  customerPayments PaymentRecord[] @relation("CustomerPayments")
+  id                      Int             @id @default(autoincrement())
+  account_number          Int?            @unique
+  fullname                String
+  father_name             String?
+  username                String          @unique
+  email                   String          @unique
+  pNumber                 String?
+  cnic_no                 String?
+  user_img                Bytes?
+  cnic_back_img           Bytes?
+  cnic_front_img          Bytes?
+  address                 String?
+
+  family_member_name      String?
+  family_relation         String?
+  family_contact_number   String?
+  family_description      String?
+  refferal_name           String?
+  refferal_account_number String?
+  refferal_description    String?
+  
+  password                String          @db.VarChar(255)
+  gender                  Gender          @default(male)
+  date                    DateTime
+  status                  Status          @default(pending)
+  role                    Role            @default(customer)
+  createdAt               DateTime        @default(now())
+  updatedAt               DateTime        @updatedAt
+  paymentRecords          PaymentRecord[] @relation("UserPayments")
+  customerPayments        PaymentRecord[] @relation("CustomerPayments")
 }
 
 enum Gender {
