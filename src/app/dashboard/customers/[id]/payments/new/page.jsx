@@ -17,7 +17,6 @@ import { ChevronDown } from "lucide-react";
 export default function NewPayment() {
   const { id } = useParams();
   const [registerFormData, setRegisterFormData] = useState({
-    amount: "",
     paidAmount: "",
     description: "",
     createdAt: "",
@@ -43,7 +42,7 @@ export default function NewPayment() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!registerFormData.paidAmount && !registerFormData.amount) {
+    if (!registerFormData.paidAmount || !registerFormData.createdAt) {
       ErrorToast("Please fill in all required fields before proceeding.");
       return;
     }
@@ -84,16 +83,6 @@ export default function NewPayment() {
                 <hr />
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <h3 className="font-semibold  mb-2 text-sm">Amount</h3>
-                    <input
-                      type="number"
-                      name="amount"
-                      placeholder="Enter Amount"
-                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
-                      onChange={handleInputChange}
-                    />
-                  </div>
                   <div>
                     <h3 className="font-semibold  mb-2 text-sm">Paid Amount</h3>
                     <input

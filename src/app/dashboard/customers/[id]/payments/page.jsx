@@ -59,7 +59,6 @@ const Payments = async ({ params }) => {
 
   return (
     <div className="custom-width">
-      <PaymentCards data={payments} />
       <div className="flex flex-col justify-between sm:flex-row items-center bg-white shadow-light rounded-md p-2 gap-4">
         <div className="flex sm:items-end flex-col sm:flex-row items-center">
           <div className="border-4 rounded-md overflow-hidden z-20 border-zinc-300">
@@ -125,6 +124,7 @@ const Payments = async ({ params }) => {
           </div>
         </div>
       </div>
+      <PaymentCards data={payments} />
       <PaymentLists data={payments} customerId={id} />
     </div>
   );
