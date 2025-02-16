@@ -417,7 +417,11 @@ export default function SaleEntry({ username }) {
             >
               RESET
             </Button>
-            <Button type="submit" className="bg-orange-500 hover:bg-orange-600">
+            <Button
+              disabled={disableBtn}
+              type="submit"
+              className="bg-orange-500 hover:bg-orange-600"
+            >
               ACTION →
             </Button>
           </CardFooter>
