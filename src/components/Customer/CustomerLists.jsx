@@ -293,7 +293,7 @@ export default function CustomerLists({ data }) {
                         >
                           <Link
                             href={`/dashboard/customers/${user.id}/payments`}
-                            className="!py-1 !px-3 rounded-sm !h-[2rem] hover:bg-blue-800 hover:text-white"
+                            className="!py-1 !px-3 rounded-sm !h-[2rem] hover:!bg-blue-800 hover:!text-white"
                           >
                             Account
                           </Link>

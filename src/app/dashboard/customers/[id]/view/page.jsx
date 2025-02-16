@@ -2,7 +2,15 @@ import CalendarSvg from "@/components/utils/SvgJsx/CalendarSvg";
 import ProfileSvg from "@/components/utils/SvgJsx/ProfileSvg";
 import { PrismaClient } from "@prisma/client";
 import Image from "next/image";
-import { Mail, Phone, Transgender } from "lucide-react";
+import {
+  Handshake,
+  Hash,
+  Mail,
+  MessageSquareText,
+  Phone,
+  Transgender,
+  UserCheck,
+} from "lucide-react";
 import CheckSvg from "@/components/utils/SvgJsx/CheckSvg";
 import BookOpenSvg from "@/components/utils/SvgJsx/BookOpenSvg";
 
@@ -31,6 +39,14 @@ const ViewPage = async ({ params }) => {
       user_img: true,
       createdAt: true,
       account_number: true,
+
+      family_member_name: true,
+      family_relation: true,
+      family_contact_number: true,
+      family_description: true,
+      refferal_name: true,
+      refferal_account_number: true,
+      refferal_description: true,
     },
   });
 
@@ -108,7 +124,7 @@ const ViewPage = async ({ params }) => {
         </div>
       </div>
       <div className="mt-2">
-        <div className="prose max-w-[100%] grid gap-4 sm:break-normal break-all">
+        <div className="prose max-w-[100%] sm:grid-cols-2 grid grid-cols-1 gap-4 sm:break-normal break-all">
           <div className="shadow-light p-4 rounded-md bg-white">
             <div>
               <span className="text-zinc-500">About</span>
@@ -182,6 +198,86 @@ const ViewPage = async ({ params }) => {
                 <div>
                   <span>Address:</span>
                   <span className="text-zinc-500 ml-2">{user.address}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="shadow-light p-4 rounded-md bg-white">
+            <div>
+              <div>
+                <span className="text-zinc-500">Family Detail</span>
+              </div>
+              <div className="mt-3 flex flex-col gap-3">
+                <div className="text-zinc-600 flex gap-1 items-center">
+                  <ProfileSvg />
+                  <div>
+                    <span>Member Name:</span>
+                    <span className="text-zinc-500 ml-2">
+                      {user.family_member_name || "-"}
+                    </span>
+                  </div>
+                </div>
+                <div className="text-zinc-600 flex gap-1 items-center">
+                  <Handshake className="h-5 w-5" />
+                  <div>
+                    <span>Relation:</span>
+                    <span className="text-zinc-500 ml-2">
+                      {user.family_relation || "-"}
+                    </span>
+                  </div>
+                </div>
+                <div className="text-zinc-600 flex gap-1 items-center">
+                  <ProfileSvg />
+                  <div>
+                    <span>Contact:</span>
+                    <span className="text-zinc-500 ml-2">
+                      {user.family_contact_number || "-"}
+                    </span>
+                  </div>
+                </div>
+                <div className="text-zinc-600 flex gap-1 items-center">
+                  <MessageSquareText className="h-5 w-5" />
+                  <div>
+                    <span>Description:</span>
+                    <span className="text-zinc-500 ml-2">
+                      {user.family_description || "-"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <hr className="my-4" />
+            <div>
+              <div>
+                <span className="text-zinc-500">Family Detail</span>
+              </div>
+              <div className="mt-3 flex flex-col gap-3">
+                <div className="text-zinc-600 flex gap-1 items-center">
+                  <ProfileSvg />
+                  <div>
+                    <span>Member Name:</span>
+                    <span className="text-zinc-500 ml-2">
+                      {user.refferal_name || "-"}
+                    </span>
+                  </div>
+                </div>
+                <div className="text-zinc-600 flex gap-1 items-center">
+                  <UserCheck className="h-5 w-5" />
+                  <div>
+                    <span>Refferal Account No:</span>
+                    <span className="text-zinc-500 ml-2">
+                      {user.refferal_account_number || "-"}
+                    </span>
+                  </div>
+                </div>
+                <div className="text-zinc-600 flex gap-1 items-center">
+                  <MessageSquareText className="h-5 w-5" />
+                  <div>
+                    <span>Description:</span>
+                    <span className="text-zinc-500 ml-2">
+                      {user.refferal_description || "-"}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>

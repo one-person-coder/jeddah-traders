@@ -36,6 +36,14 @@ export async function POST(request) {
       cnic_front_img_bak,
       cnic_back_img_bak,
       user_img_bak,
+
+      family_member_name,
+      family_relation,
+      family_contact_number,
+      family_description,
+      refferal_name,
+      refferal_account_number,
+      refferal_description,
     } = reqBody;
 
     if (!id) {
@@ -63,7 +71,7 @@ export async function POST(request) {
           {
             account_number: parseInt(account_number),
             NOT: { id: parseInt(id) },
-          }, 
+          },
         ],
       },
     });
@@ -114,6 +122,15 @@ export async function POST(request) {
         cnic_back_img: cnicBackBuffer || user.cnic_back_img,
         user_img: userImgBuffer || user.user_img,
         cnic_no: cnic_no || user.cnic_no,
+        family_member_name: family_member_name || user.family_member_name,
+        family_relation: family_relation || user.family_relation,
+        family_contact_number:
+          family_contact_number || user.family_contact_number,
+        family_description: family_description || user.family_description,
+        refferal_name: refferal_name || user.refferal_name,
+        refferal_account_number:
+          refferal_account_number || user.refferal_account_number,
+        refferal_description: refferal_description || user.refferal_description,
       },
     });
 

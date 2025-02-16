@@ -20,7 +20,7 @@ export async function POST(request) {
       user_img,
       father_name,
       address,
-      
+
       family_member_name,
       family_relation,
       family_contact_number,

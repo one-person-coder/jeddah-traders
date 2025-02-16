@@ -22,6 +22,14 @@ const EditPage = async ({ params }) => {
       status: true,
       role: true,
       cnic_no: true,
+
+      family_member_name: true,
+      family_relation: true,
+      family_contact_number: true,
+      family_description: true,
+      refferal_name: true,
+      refferal_account_number: true,
+      refferal_description: true,
     },
   });
 
@@ -30,6 +38,9 @@ const EditPage = async ({ params }) => {
   }
 
   user.date = user.date.toISOString().split("T")[0];
+
+  console.log("working....", user);
+  
 
   return (
     <div>
