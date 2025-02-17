@@ -34,7 +34,7 @@ import Link from "next/link";
 import { statusColors } from "@/constant/constant";
 import { ErrorToast, SuccessToast } from "../utils/CustomToasts";
 
-export default function ProductLists({ data }) {
+export default function ProductLists({ data, permissions }) {
   const [isFiltersVisible, setIsFiltersVisible] = React.useState(true);
 
   const [storeUsers, setStoreUsers] = React.useState(
@@ -180,16 +180,18 @@ export default function ProductLists({ data }) {
             Manage and monitor your Products
           </p>
         </div>
-        <Button
-          className="bg-purple-600 hover:bg-purple-700 transition-all shadow-lg hover:shadow-purple-200"
-          size="lg"
-          asChild
-        >
-          <Link href={"/dashboard/products/new"}>
-            <Plus className="h-4 w-4" />
-            Add New Product
-          </Link>
-        </Button>
+        {permissions.includes("create product") ? (
+          <Button
+            className="bg-purple-600 hover:bg-purple-700 transition-all shadow-lg hover:shadow-purple-200"
+            size="lg"
+            asChild
+          >
+            <Link href={"/dashboard/products/new"}>
+              <Plus className="h-4 w-4" />
+              Add New Product
+            </Link>
+          </Button>
+        ) : null}
       </div>
 
       <Card className="border-none shadow-lg">
@@ -272,26 +274,30 @@ export default function ProductLists({ data }) {
                             <Eye className="h-4 w-4" />
                           </Link>
                         </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
-                          asChild
-                        >
-                          <Link href={`/dashboard/products/${user.id}/edit`}>
-                            <Pencil className="h-4 w-4" />
-                          </Link>
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => {
-                            deleteUser(user.id, user.name);
-                          }}
-                          className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        {permissions.includes("edit product") ? (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
+                            asChild
+                          >
+                            <Link href={`/dashboard/products/${user.id}/edit`}>
+                              <Pencil className="h-4 w-4" />
+                            </Link>
+                          </Button>
+                        ) : null}
+                        {permissions.includes("delete product") ? (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => {
+                              deleteUser(user.id, user.name);
+                            }}
+                            className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        ) : null}
                       </div>
                     </TableCell>
                   </TableRow>

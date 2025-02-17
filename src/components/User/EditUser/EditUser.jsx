@@ -38,6 +38,10 @@ const permissions = [
   "delete customer payments",
   "print customer payments",
   "make bill",
+  "view product",
+  "create product",
+  "edit product",
+  "delete product",
 ];
 
 export default function EditUser({ user }) {

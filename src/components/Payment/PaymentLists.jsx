@@ -135,8 +135,6 @@ export default function PaymentLists({ data, customerId, permissions }) {
   const [visibleData, setVisibleData] = React.useState({});
 
   const handleInvoiceClick = (id) => {
-    console.log(id);
-
     const filterData = users.find((user) => user.id === id);
     const lowerUsers = users.filter((user) => user.id <= id);
     let remaining = 0;
@@ -145,6 +143,25 @@ export default function PaymentLists({ data, customerId, permissions }) {
       remaining += user.amount ? user.amount : 0;
       remaining -= user.paid_amount ? user.paid_amount : 0;
     });
+
+    console.log(filterData);
+    
+
+    const date = new Date(filterData.createdAt);
+    const options = {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      weekday: "long",
+    };
+
+    const formattedDate = date.toLocaleString("en-GB", options);
+    const [time, day, month, year, weekday] = formattedDate.split(/[\s,]+/);
+    const finalDate = `${time} - ${day}-${month}-${year}, ${weekday}`;
+    filterData.createdAt = finalDate;
 
     const singleUser = { ...filterData, remaining: remaining };
 
@@ -179,7 +196,7 @@ export default function PaymentLists({ data, customerId, permissions }) {
                 </div>
               </CardHeader>
               <p className="!font-bold text-center mt-2">
-                
+                {visibleData?.createdAt}
               </p>
 
               <CardContent className="p-0">

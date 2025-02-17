@@ -61,12 +61,15 @@ export default function Sidebar({ children, userType, permissions }) {
       });
     }
 
-    if (userType === "admin") {
+    if (permissions.includes("view product")) {
       navigation.push({
         title: "Products",
         icon: Box,
         url: "/dashboard/products",
       });
+    }
+
+    if (userType === "admin") {
       navigation.push({
         title: "Recycle Bin",
         icon: Trash2,

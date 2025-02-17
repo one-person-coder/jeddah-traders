@@ -133,6 +133,22 @@ export default function DeletePaymentLists({ data }) {
       remaining -= user.paid_amount ? user.paid_amount : 0;
     });
 
+    const date = new Date(filterData.createdAt);
+    const options = {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      weekday: "long",
+    };
+
+    const formattedDate = date.toLocaleString("en-GB", options);
+    const [time, day, month, year, weekday] = formattedDate.split(/[\s,]+/);
+    const finalDate = `${time} - ${day}-${month}-${year}, ${weekday}`;
+    filterData.createdAt = finalDate;
+
     const singleUser = { ...filterData, remaining: remaining };
 
     setVisibleData(singleUser);
@@ -165,6 +181,9 @@ export default function DeletePaymentLists({ data }) {
                   </p>
                 </div>
               </CardHeader>
+              <p className="!font-bold text-center mt-2">
+                {visibleData?.createdAt}
+              </p>
 
               <CardContent className="p-0">
                 <div className="px-6 py-4">
