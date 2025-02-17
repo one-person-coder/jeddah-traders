@@ -135,6 +135,8 @@ export default function PaymentLists({ data, customerId, permissions }) {
   const [visibleData, setVisibleData] = React.useState({});
 
   const handleInvoiceClick = (id) => {
+    console.log(id);
+    
     const filterData = users.find((user) => user.id === id);
     const lowerUsers = users.filter((user) => user.id <= id);
     let remaining = 0;
@@ -519,7 +521,8 @@ export default function PaymentLists({ data, customerId, permissions }) {
                                 className="border-2 border-blue-800"
                               >
                                 <Link
-                                  href={`/dashboard/customers/${user.id}/payments`}
+                                  target="_blank"
+                                  href={`/printer/${customerId}/${user.id}`}
                                   className="!py-1 !px-3 rounded-sm !h-[2rem] hover:!bg-blue-800 hover:!text-white"
                                 >
                                   Print

@@ -1,8 +1,36 @@
 "use client";
 import Script from "next/script";
-import React from "react";
+import React, { useState } from "react";
 
-const Printer = () => {
+const BillPrint = ({ payments, id }) => {
+  const [users, setUsers] = useState(payments);
+  const filterData = users.find((user) => user.id === parseInt(id));
+  const lowerUsers = users.filter((user) => user.id <= parseInt(id));
+  let remaining = 0;
+
+  lowerUsers.forEach((user) => {
+    remaining += user.amount ? user.amount : 0;
+    remaining -= user.paid_amount ? user.paid_amount : 0;
+  });
+
+  const singleUser = { ...filterData, remaining: remaining };
+  const date = new Date(singleUser?.createdAt);
+
+  const options = {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  };
+
+  const formattedDate = date
+    .toLocaleString("en-US", options)
+    .replace(",", "")
+    .replace(/(\d{2})(?=\d{4})/, "$1-");
+
   return (
     <div className="rec">
       <h2 className="text-[1.5em] font-bold">Jeddah Traders</h2>
@@ -11,22 +39,24 @@ const Printer = () => {
           <tr>
             <td>Bill No:</td>
             <td>
-              <b>24005</b>
+              <b>{singleUser.id || "-"}</b>
             </td>
           </tr>
           <tr>
-            <td>customer:</td>
+            <td>customer: </td>
             <td>
-              <span className="nb">Abdul Rehman </span>
-              <p>Game wala ,Muslim Town DGKhan</p>
+              <span className="nb">
+                {" "}
+                {singleUser?.customer?.fullname || "-"}{" "}
+              </span>
+              <p> {singleUser?.customer?.address || "-"}</p>
             </td>
           </tr>
           <tr>
             <td>remarks:</td>
             <td>
               <p>
-                {" "}
-                <span></span>
+                <span>{singleUser?.description || "-"}</span>
               </p>
             </td>
           </tr>
@@ -34,53 +64,57 @@ const Printer = () => {
       </table>
       <h3 className="text-[1.17em] font-bold">bill details</h3>
       <div>
-        <table className="detail">
-          <tbody>
-            <tr>
-              <th>Sr.</th>
-              <th className="">caption</th>
-              <th className="">qty</th>
-              <th className="">amount</th>
-            </tr>
-            <tr className="">
-              <td className="serialn">1</td>
-              <td className="">
-                <b className="nb"></b> Cloth
-              </td>
-              <td className="">1</td>
-              <td className="">1800</td>
-            </tr>
-          </tbody>
-        </table>
+        {singleUser?.items?.length >= 1 ? (
+          <table className="detail">
+            <tbody>
+              <tr>
+                <th>Sr.</th>
+                <th className="">caption</th>
+                <th className="">qty</th>
+                <th className="">amount</th>
+              </tr>
+              {singleUser?.items.map((item, index) => {
+                return (
+                  <tr key={index} className="">
+                    <td className="serialn">{index + 1}</td>
+                    <td className="">
+                      <b className="nb"></b> {item?.name}
+                    </td>
+                    <td className="">{item?.qty}</td>
+                    <td className="">{item?.amount}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        ) : null}
         <table className="total">
           <tbody>
-            <tr>
-              <th>Total:</th>
-              <td>1800</td>
-            </tr>
-
-            <tr>
-              <th>Bill:</th>
-              <td className="b">
-                <span className="fontSmall"></span>1,800
-              </td>
-            </tr>
+            {singleUser?.items?.length >= 1 ? (
+              <tr>
+                <th>Total:</th>
+                <td>{singleUser?.total || "-"}</td>
+              </tr>
+            ) : null}
             <tr>
               <th>Payment:</th>
               <td className="payment b">
-                <span className="fontSmall"></span>200
+                <span className="fontSmall"></span>
+                {singleUser?.paid_amount || "-"}
               </td>
             </tr>
             <tr>
               <th>Ballance:</th>
-              <td className="b">1600</td>
+              <td className="b">{singleUser?.remaining || "-"}</td>
             </tr>
           </tbody>
         </table>
       </div>
       <p className="stamp tright">
-        12:37:28 AM 07-Mar-2024
-        <br />[ Haroon_Rasheed ]<br />
+        {formattedDate}
+        <br />
+        {/* [ Haroon_Rasheed ] */}
+        <br />
         www.jeddahtraders.com
       </p>
       <style jsx>
@@ -169,13 +203,13 @@ const Printer = () => {
           }
         `}
       </style>
-      <Script strategy="beforeInteractive">
+      <Script strategy="afterInteractive">
         {`
-           setTimeout(()=> {print();}, 600);
+       setTimeout(()=> {print();}, 600);
         `}
       </Script>
     </div>
   );
 };
 
-export default Printer;
+export { BillPrint };
