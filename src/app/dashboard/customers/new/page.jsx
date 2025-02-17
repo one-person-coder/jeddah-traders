@@ -16,7 +16,7 @@ const NewCustomerPage = async () => {
 
   return (
     <>
-      {permissions.includes("create user") ? (
+      {permissions.includes("create customer") ? (
         <NewCustomer />
       ) : (
         <h3 className="text-3xl text-center py-20 font-bold text-red-600">

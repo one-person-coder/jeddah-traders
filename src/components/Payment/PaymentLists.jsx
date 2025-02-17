@@ -136,7 +136,7 @@ export default function PaymentLists({ data, customerId, permissions }) {
 
   const handleInvoiceClick = (id) => {
     console.log(id);
-    
+
     const filterData = users.find((user) => user.id === id);
     const lowerUsers = users.filter((user) => user.id <= id);
     let remaining = 0;
@@ -178,6 +178,9 @@ export default function PaymentLists({ data, customerId, permissions }) {
                   </p>
                 </div>
               </CardHeader>
+              <p className="!font-bold text-center mt-2">
+                {new Date(visibleData?.createdAt)}
+              </p>
 
               <CardContent className="p-0">
                 <div className="px-6 py-4">
