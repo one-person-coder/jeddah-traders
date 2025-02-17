@@ -389,6 +389,7 @@ export default function PaymentLists({ data, customerId, permissions }) {
                   <TableRow className="bg-gray-50">
                     <TableHead>Sr.</TableHead>
                     <TableHead>USER</TableHead>
+                    <TableHead>CUSTOMER</TableHead>
                     <TableHead>DATE</TableHead>
                     <TableHead>STATUS</TableHead>
                     <TableHead>Bill</TableHead>
@@ -426,33 +427,18 @@ export default function PaymentLists({ data, customerId, permissions }) {
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-3">
-                            <div className="relative">
-                              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100 text-sm font-medium text-purple-600 ring-2 ring-white">
-                                {user.user.fullname
-                                  .split(" ")
-                                  .map((word) => word.charAt(0))
-                                  .join("")}
+                            <div>
+                              <div className="font-medium text-gray-900">
+                                {user.user.fullname}
                               </div>
-                              <div
-                                className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white"
-                                style={{
-                                  backgroundColor:
-                                    user.amount && user.paid_amount
-                                      ? "#9333ea"
-                                      : user.amount && !user.paid_amount
-                                      ? "#c5bd00"
-                                      : !user.amount && user.paid_amount
-                                      ? "#00cd0e"
-                                      : null,
-                                }}
-                              />
                             </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-3">
                             <div>
                               <div className="font-medium text-gray-900">
                                 {user.customer.fullname}
-                              </div>
-                              <div className="text-sm ml-2 text-[#712fff] text-muted-foreground">
-                                {user.user.fullname}
                               </div>
                             </div>
                           </div>

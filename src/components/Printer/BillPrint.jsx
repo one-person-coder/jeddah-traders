@@ -1,11 +1,20 @@
 "use client";
 import Script from "next/script";
 import React, { useState } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
-const BillPrint = ({ payments, id }) => {
+export const BillPrint = ({ payments, id }) => {
   const [users, setUsers] = useState(payments);
-  const filterData = users.find((user) => user.id === parseInt(id));
-  const lowerUsers = users.filter((user) => user.id <= parseInt(id));
+  const filterData = users.find((user) => user.id === Number.parseInt(id));
+  const lowerUsers = users.filter((user) => user.id <= Number.parseInt(id));
   let remaining = 0;
 
   lowerUsers.forEach((user) => {
@@ -30,186 +39,181 @@ const BillPrint = ({ payments, id }) => {
     .toLocaleString("en-US", options)
     .replace(",", "")
     .replace(/(\d{2})(?=\d{4})/, "$1-");
+  console.log(singleUser);
 
   return (
-    <div className="rec">
-      <h2 className="text-[1.5em] font-bold">Jeddah Traders</h2>
-      <table>
-        <tbody>
-          <tr>
-            <td>Bill No:</td>
-            <td>
-              <b>{singleUser.id || "-"}</b>
-            </td>
-          </tr>
-          <tr>
-            <td>customer: </td>
-            <td>
-              <span className="nb">
-                {" "}
-                {singleUser?.customer?.fullname || "-"}{" "}
-              </span>
-              <p> {singleUser?.customer?.address || "-"}</p>
-            </td>
-          </tr>
-          <tr>
-            <td>remarks:</td>
-            <td>
-              <p>
-                <span>{singleUser?.description || "-"}</span>
-              </p>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <h3 className="text-[1.17em] font-bold">bill details</h3>
-      <div>
-        {singleUser?.items?.length >= 1 ? (
-          <table className="detail">
-            <tbody>
-              <tr>
-                <th>Sr.</th>
-                <th className="">caption</th>
-                <th className="">qty</th>
-                <th className="">amount</th>
-              </tr>
-              {singleUser?.items.map((item, index) => {
-                return (
-                  <tr key={index} className="">
-                    <td className="serialn">{index + 1}</td>
-                    <td className="">
-                      <b className="nb"></b> {item?.name}
-                    </td>
-                    <td className="">{item?.qty}</td>
-                    <td className="">{item?.amount}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        ) : null}
-        <table className="total">
-          <tbody>
-            {singleUser?.items?.length >= 1 ? (
-              <tr>
-                <th>Total:</th>
-                <td>{singleUser?.total || "-"}</td>
-              </tr>
-            ) : null}
-            <tr>
-              <th>Payment:</th>
-              <td className="payment b">
-                <span className="fontSmall"></span>
-                {singleUser?.paid_amount || "-"}
-              </td>
-            </tr>
-            <tr>
-              <th>Ballance:</th>
-              <td className="b">{singleUser?.remaining || "-"}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <p className="stamp tright">
-        {formattedDate}
-        <br />
-        {/* [ Haroon_Rasheed ] */}
-        <br />
-        www.jeddahtraders.com
-      </p>
-      <style jsx>
-        {`
-          html,
-          body {
-            height: 100%;
-            width: 100%;
-          }
-          @media print {
-            * {
-              -webkit-print-color-adjust: exact;
-              print-color-adjust: exact;
-            }
-            width: 4in;
-            height: 6in;
-          }
-          * {
-            padding: 0;
-            margin: 0;
-            font-family: monospace;
-          }
-          .rec {
-            /* background-color: whitesmoke; */
-            /* border-radius: 8px; */
-            border: 1px solid black;
-            margin: 4px;
-            padding: 11px 6px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-            width: fit-content;
-            /* width: -webkit-fill-available; */
-            height: -webkit-fill-available;
-          }
-          .rec h3 {
-            margin-bottom: 8px;
-          }
-          .detail {
-            background-color: white;
-            border-collapse: collapse;
-            border: 1px dashed;
-          }
-          .detail th,
-          .detail td {
-            padding: 1px 4px;
-          }
-          .detail td {
-            border: 1px solid;
-          }
-          .detail td:nth-last-child(3) {
-            text-align: right;
-          }
-          .detail td:nth-last-child(2) {
-            text-align: center;
-          }
-          .detail td:nth-last-child(1) {
-            text-align: right;
-          }
-          .total {
-            width: -webkit-fill-available;
-            border: 1px dashed;
-            margin: 4px;
-            border-collapse: collapse;
-          }
-          .total th,
-          .total td {
-            text-align: right;
-            padding-right: 10px;
-          }
-          .total td {
-            text-align: right;
-          }
-          .total td,
-          .total th {
-            border: 1px solid black;
-          }
-          .payment {
-            color: white;
-            background-color: #444;
-            font-size: 1.1em;
-          }
-          .b {
-            font-weight: bold;
-          }
-        `}
-      </style>
+    <Card className="min-w-[280px] w-fit !bg-transparent border !rounded-none border-black !shadow-none">
+      {/* Header Section */}
+      <CardHeader className="text-center space-y-6 pb-6 border-b">
+        <div className="space-y-2">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
+            Jeddah Traders
+          </h1>
+          <h2 className="text-xl  font-bold tracking-tight">
+            And Corporations
+          </h2>
+        </div>
+        <div>
+          <h3 className="mb-2 tracking-tight">
+            Mohsin Town, Jampur Road, Pull Dot,
+            <br /> Dera Ghazi Khan
+          </h3>
+          <h4 className="mb-3 tracking-tight">+92 316 8558212</h4>
+        </div>
+      </CardHeader>
+      <p className="!font-bold text-center mt-2">{formattedDate}</p>
+
+      <CardContent className="p-0">
+        <div className="px-6 py-4">
+          <div className="mb-3">
+            <Table className="border border-gray-400">
+              <TableBody>
+                <TableRow className="bg-gray-50 border-b border-gray-400">
+                  {singleUser?.items?.length >= 1 ? (
+                    <TableHead className="font-semibold border-r border-gray-400">
+                      Bill No:
+                    </TableHead>
+                  ) : (
+                    <TableHead className="font-semibold border-r border-gray-400">
+                      Recipt Id:
+                    </TableHead>
+                  )}
+                  <TableCell className="text-blue-600 font-medium border-gray-400">
+                    {singleUser?.id}
+                  </TableCell>
+                </TableRow>
+                <TableRow className="border-b border-gray-400">
+                  <TableHead className="font-semibold border-r border-gray-400">
+                    Customer:
+                  </TableHead>
+                  <TableCell className="font-medium border-gray-400">
+                    <span>{singleUser?.customer?.fullname}</span>
+                  </TableCell>
+                </TableRow>
+                <TableRow className="border-b border-gray-400">
+                  <TableHead className="font-semibold border-r border-gray-400">
+                    Customer ID:
+                  </TableHead>
+                  <TableCell className="font-medium border-gray-400">
+                    <span>{singleUser?.customer?.id}</span>
+                  </TableCell>
+                </TableRow>
+                <TableRow className="border-b border-gray-400">
+                  <TableHead className="font-semibold border-r border-gray-400">
+                    Description
+                  </TableHead>
+                  <TableCell className="border-gray-400">
+                    {singleUser?.description || "-"}
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
+          {singleUser?.items?.length >= 1 ? (
+            <p className="!font-bold text-center text-lg">Bill Details</p>
+          ) : (
+            <p className="!font-bold text-center text-lg">Payment Recipt</p>
+          )}
+
+          {singleUser?.items?.length >= 1 ? (
+            <div className="border border-gray-200 overflow-hidden">
+              <Table className="border border-gray-400 text-center">
+                <TableHeader>
+                  <TableRow className="bg-gray-50 border-b border-gray-400">
+                    <TableHead className="w-16 text-center font-semibold border-r border-gray-400">
+                      Sr.
+                    </TableHead>
+                    <TableHead className="font-semibold border-r border-gray-400">
+                      Product
+                    </TableHead>
+                    <TableHead className="w-24 text-center font-semibold border-r border-gray-400">
+                      Qty
+                    </TableHead>
+                    <TableHead className="w-32 text-center font-semibold border-gray-400">
+                      Amount
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {singleUser.items.map((item, index) => {
+                    return (
+                      <TableRow
+                        key={item.id}
+                        className="border-b border-gray-400"
+                      >
+                        <TableCell className="text-blue-600 font-medium border-r border-gray-400">
+                          {index + 1}
+                        </TableCell>
+                        <TableCell className="font-medium border-r border-gray-400">
+                          {item?.name}
+                        </TableCell>
+                        <TableCell className="text-center border-r border-gray-400">
+                          {item?.qty}
+                        </TableCell>
+                        <TableCell className="text-center font-medium border-gray-400">
+                          {item?.amount}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </div>
+          ) : null}
+
+          <div className="mt-2">
+            <Table className="border border-gray-400">
+              <TableBody>
+                {singleUser?.items?.length >= 1 ? (
+                  <TableRow className="bg-gray-50 border-b border-gray-400">
+                    <TableHead className="font-semibold border-r border-gray-400">
+                      Total
+                    </TableHead>
+                    <TableCell className="font-bold border-gray-400">
+                      {singleUser?.amount}
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+
+                <TableRow className="border-b border-gray-400">
+                  <TableHead className="font-semibold border-r border-gray-400">
+                    Payment
+                  </TableHead>
+                  <TableCell className="font-bold border-gray-400">
+                    {singleUser?.paid_amount || 0}
+                  </TableCell>
+                </TableRow>
+                <TableRow className="border-b border-gray-400">
+                  {singleUser?.items?.length >= 1 ? (
+                    <TableHead className="font-semibold border-r border-gray-400">
+                      Bill
+                    </TableHead>
+                  ) : (
+                    <TableHead className="font-semibold border-r border-gray-400">
+                      Remaining
+                    </TableHead>
+                  )}
+                  <TableCell className="border-gray-400 font-bold">
+                    {singleUser?.remaining || 0}
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
+
+          <div className="mt-6 text-center text-sm">
+            [ {singleUser?.user?.fullname} ]
+          </div>
+
+          <div className="mt-1 text-center text-sm">www.jeddahtraders.com</div>
+        </div>
+      </CardContent>
+
       <Script strategy="afterInteractive">
         {`
-       setTimeout(()=> {print();}, 600);
+        setTimeout(() => { print(); }, 600);
         `}
       </Script>
-    </div>
+    </Card>
   );
 };
-
-export { BillPrint };

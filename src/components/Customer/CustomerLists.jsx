@@ -175,7 +175,7 @@ export default function CustomerLists({ data, permissions, role }) {
                   <TableHead>STATUS</TableHead> */}
                   <TableHead>CONTACT</TableHead>
                   <TableHead>LAST</TableHead>
-                  <TableHead>CREDIT</TableHead>
+                  <TableHead>REMAINING AMOUNT</TableHead>
                   <TableHead className="text-right">ACTIONS</TableHead>
                 </TableRow>
               </TableHeader>
@@ -225,9 +225,6 @@ export default function CustomerLists({ data, permissions, role }) {
                         <div>
                           <div className="font-medium text-gray-900">
                             {user.fullname}
-                          </div>
-                          <div className="text-sm text-muted-foreground">
-                            {user.username}
                           </div>
                         </div>
                       </div>
@@ -294,11 +291,16 @@ export default function CustomerLists({ data, permissions, role }) {
                       {user.customerPayments.length >= 1 ? (
                         <div>
                           <span className="text-sm text-muted-foreground">
-                            {user?.customerPayments.reduce(
+                            {(user?.customerPayments.reduce(
                               (acc, user) =>
-                                user.isDelete ? acc : acc + user.paid_amount,
+                                user.isDelete ? acc : acc + user.amount,
                               0
-                            )}
+                            )) -
+                              (user?.customerPayments?.reduce(
+                                (acc, user) =>
+                                  user.isDelete ? acc : acc + user.paid_amount,
+                                0
+                              ))}
                           </span>
                         </div>
                       ) : (
