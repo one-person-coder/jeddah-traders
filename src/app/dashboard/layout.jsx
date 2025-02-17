@@ -11,7 +11,7 @@ export default async function RootLayout({ children }) {
   const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
   const user = await prisma.userInfo.findUnique({
     where: { id: decoded.id },
-    select: { id: true, status: true, role: true },
+    select: { id: true, status: true, role: true, permissions: true },
   });
 
   if (!user) {
@@ -23,6 +23,8 @@ export default async function RootLayout({ children }) {
   if (user.status === "pending") {
     return redirect("/logout");
   }
+
+  const permissions = user?.permissions ? user.permissions.split(",") : [];
 
   let userType;
 
@@ -36,5 +38,9 @@ export default async function RootLayout({ children }) {
     userType = "manager";
   }
 
-  return <MainSideBar userType={userType}>{children}</MainSideBar>;
+  return (
+    <MainSideBar userType={userType} permissions={permissions}>
+      {children}
+    </MainSideBar>
+  );
 }

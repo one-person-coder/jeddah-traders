@@ -15,10 +15,8 @@ import TopNav from "./TopNavBar";
 import AnchorLink from "@/components/utils/AnchorLink";
 import Link from "next/link";
 
-export default function Sidebar({ children, userType }) {
+export default function Sidebar({ children, userType, permissions }) {
   let navigation;
-
-  console.log(userType);
 
   if (userType === "customer") {
     navigation = [
@@ -34,45 +32,53 @@ export default function Sidebar({ children, userType }) {
       },
     ];
   } else if (userType === "admin" || userType === "manager") {
-    navigation = [
-      {
-        title: "Dashboards",
-        icon: LayoutDashboard,
-        url: "/dashboard",
-      },
-      {
-        title: "Stats",
-        icon: ChartColumn,
-        url: "/dashboard/stats",
-      },
-      {
+    navigation = [];
+
+    navigation.push({
+      title: "Dashboards",
+      icon: LayoutDashboard,
+      url: "/dashboard",
+    });
+    navigation.push({
+      title: "Stats",
+      icon: ChartColumn,
+      url: "/dashboard/stats",
+    });
+
+    if (permissions.includes("view user")) {
+      navigation.push({
         title: "Users",
         icon: User,
         url: "/dashboard/users",
-      },
-      {
+      });
+    }
+
+    if (permissions.includes("view customer")) {
+      navigation.push({
         title: "Customers",
         icon: Users,
         url: "/dashboard/customers",
-      },
-      {
-        title: "Settings",
-        icon: Settings,
-        url: "/dashboard/settings/profile",
-      },
-    ];
+      });
+    }
+
     if (userType === "admin") {
-      navigation.splice(4, 0, {
+      navigation.push({
         title: "Products",
         icon: Box,
         url: "/dashboard/products",
       });
-      navigation.splice(5, 0, {
+      navigation.push({
         title: "Recycle Bin",
         icon: Trash2,
         url: "/dashboard/recycle",
       });
     }
+
+    navigation.push({
+      title: "Settings",
+      icon: Settings,
+      url: "/dashboard/settings/profile",
+    });
   }
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [openMenus, setOpenMenus] = useState([]);

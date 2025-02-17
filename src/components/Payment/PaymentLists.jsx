@@ -34,7 +34,7 @@ import { statusColors } from "@/constant/constant";
 import { ErrorToast, SuccessToast } from "../utils/CustomToasts";
 import { Badge } from "../ui/badge";
 
-export default function PaymentLists({ data, customerId }) {
+export default function PaymentLists({ data, customerId, permissions }) {
   let runningRemaining = 0;
   const [isFiltersVisible, setIsFiltersVisible] = React.useState(true);
 
@@ -313,26 +313,30 @@ export default function PaymentLists({ data, customerId }) {
             </p>
           </div>
           <div className="flex gap-2">
-            <Button
-              className="bg-orange-600 hover:bg-orange-700 transition-all shadow-lg hover:shadow-purple-200"
-              size="lg"
-              asChild
-            >
-              <Link href={`/dashboard/customers/${customerId}/bill/new`}>
-                <Plus className="h-4 w-4" />
-                Make Bill
-              </Link>
-            </Button>
-            <Button
-              className="bg-purple-600 hover:bg-purple-700 transition-all shadow-lg hover:shadow-purple-200"
-              size="lg"
-              asChild
-            >
-              <Link href={`/dashboard/customers/${customerId}/payments/new`}>
-                <Plus className="h-4 w-4" />
-                Add Payment
-              </Link>
-            </Button>
+            {permissions.includes("make bill") ? (
+              <Button
+                className="bg-orange-600 hover:bg-orange-700 transition-all shadow-lg hover:shadow-purple-200"
+                size="lg"
+                asChild
+              >
+                <Link href={`/dashboard/customers/${customerId}/bill/new`}>
+                  <Plus className="h-4 w-4" />
+                  Make Bill
+                </Link>
+              </Button>
+            ) : null}
+            {permissions.includes("create customer payments") ? (
+              <Button
+                className="bg-purple-600 hover:bg-purple-700 transition-all shadow-lg hover:shadow-purple-200"
+                size="lg"
+                asChild
+              >
+                <Link href={`/dashboard/customers/${customerId}/payments/new`}>
+                  <Plus className="h-4 w-4" />
+                  Add Payment
+                </Link>
+              </Button>
+            ) : null}
           </div>
         </div>
 
@@ -508,6 +512,36 @@ export default function PaymentLists({ data, customerId }) {
                                 <Eye className="h-4 w-4" />
                               </Link> */}
                             </Button>
+                            {permissions.includes("print customer payments") ? (
+                              <Button
+                                asChild
+                                variant="outline"
+                                className="border-2 border-blue-800"
+                              >
+                                <Link
+                                  href={`/dashboard/customers/${user.id}/payments`}
+                                  className="!py-1 !px-3 rounded-sm !h-[2rem] hover:!bg-blue-800 hover:!text-white"
+                                >
+                                  Print
+                                </Link>
+                              </Button>
+                            ) : null}
+
+                            {permissions.includes(
+                              "delete customer payments"
+                            ) ? (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => {
+                                  deleteUser(user.id, user.username);
+                                }}
+                                className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            ) : null}
+
                             {/* <Button
                             variant="ghost"
                             size="icon"
@@ -520,16 +554,6 @@ export default function PaymentLists({ data, customerId }) {
                               <Pencil className="h-4 w-4" />
                             </Link>
                           </Button> */}
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => {
-                                deleteUser(user.id, user.username);
-                              }}
-                              className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
                           </div>
                         </TableCell>
                       </TableRow>

@@ -33,7 +33,7 @@ import Link from "next/link";
 import { statusColors } from "@/constant/constant";
 import { ErrorToast, SuccessToast } from "../utils/CustomToasts";
 
-export default function UserLists({ data }) {
+export default function UserLists({ data, permissions, role }) {
   const [isFiltersVisible, setIsFiltersVisible] = React.useState(true);
 
   const [storeUsers, setStoreUsers] = React.useState(
@@ -180,16 +180,18 @@ export default function UserLists({ data }) {
             Manage and monitor admin accounts
           </p>
         </div>
-        <Button
-          className="bg-purple-600 hover:bg-purple-700 transition-all shadow-lg hover:shadow-purple-200"
-          size="lg"
-          asChild
-        >
-          <Link href={"/dashboard/users/new"}>
-            <Plus className="h-4 w-4" />
-            Add New User
-          </Link>
-        </Button>
+        {permissions.includes("create user") ? (
+          <Button
+            className="bg-purple-600 hover:bg-purple-700 transition-all shadow-lg hover:shadow-purple-200"
+            size="lg"
+            asChild
+          >
+            <Link href={"/dashboard/users/new"}>
+              <Plus className="h-4 w-4" />
+              Add New User
+            </Link>
+          </Button>
+        ) : null}
       </div>
 
       <Card className="border-none shadow-lg">
@@ -359,26 +361,31 @@ export default function UserLists({ data }) {
                             <Eye className="h-4 w-4" />
                           </Link>
                         </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
-                          asChild
-                        >
-                          <Link href={`/dashboard/users/${user.id}/edit`}>
-                            <Pencil className="h-4 w-4" />
-                          </Link>
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => {
-                            deleteUser(user.id, user.username);
-                          }}
-                          className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        {permissions.includes("edit user") ? (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
+                            asChild
+                          >
+                            <Link href={`/dashboard/users/${user.id}/edit`}>
+                              <Pencil className="h-4 w-4" />
+                            </Link>
+                          </Button>
+                        ) : null}
+
+                        {permissions.includes("delete user") ? (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => {
+                              deleteUser(user.id, user.username);
+                            }}
+                            className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        ) : null}
                       </div>
                     </TableCell>
                   </TableRow>

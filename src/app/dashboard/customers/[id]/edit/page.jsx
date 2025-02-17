@@ -1,10 +1,28 @@
 import EditCustomer from "@/components/Customer/EditCustomer/EditCustomer";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { cookies } from "next/headers";
+import jwt from "jsonwebtoken";
+import prisma from "@/lib/prisma";
 
 const EditPage = async ({ params }) => {
   const { id } = await params;
+
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token").value;
+  const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
+  const currentUser = await prisma.userInfo.findUnique({
+    where: { id: decoded.id },
+    select: { id: true, status: true, role: true, permissions: true },
+  });
+
+  if (!currentUser) {
+    return redirect("/logout");
+  }
+  if (currentUser.status === "inactive") {
+    return redirect("/logout");
+  }
+  if (currentUser.status === "pending") {
+    return redirect("/logout");
+  }
 
   const user = await prisma.userInfo.findUnique({
     where: { id: parseInt(id) },
@@ -22,6 +40,7 @@ const EditPage = async ({ params }) => {
       status: true,
       role: true,
       cnic_no: true,
+      permissions: true,
 
       family_member_name: true,
       family_relation: true,
@@ -38,13 +57,19 @@ const EditPage = async ({ params }) => {
   }
 
   user.date = user.date.toISOString().split("T")[0];
-
-  console.log("working....", user);
-  
+  const permissions = currentUser?.permissions
+    ? currentUser.permissions.split(",")
+    : [];
 
   return (
     <div>
-      <EditCustomer user={user} />
+      {permissions.includes("edit customer") ? (
+        <EditCustomer user={user} permissions={permissions} />
+      ) : (
+        <h3 className="text-3xl text-center py-20 font-bold text-red-600">
+          Oops Not Found!
+        </h3>
+      )}
     </div>
   );
 };

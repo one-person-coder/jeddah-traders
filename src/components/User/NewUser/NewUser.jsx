@@ -1,12 +1,20 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import * as RadioGroup from "@radix-ui/react-radio-group";
 import { useState } from "react";
 import { ErrorToast, SuccessToast } from "@/components/utils/CustomToasts";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { AvatarFallback } from "@radix-ui/react-avatar";
 import { Input } from "@/components/ui/input";
 import { CameraIcon, Check, ChevronsUpDown } from "lucide-react";
 import {
@@ -40,23 +48,25 @@ const permissions = [
   "make bill",
 ];
 
-export default function EditUser({ user }) {
+export default function NewUser() {
   const [registerFormData, setRegisterFormData] = useState({
-    ...user,
-    user_img_bak: {
+    fullname: "",
+    username: "",
+    email: "",
+    pNumber: "",
+    password: "",
+    account_number: "",
+    gender: "male",
+    date: "",
+    status: "pending",
+    user_img: {
       preview: "",
       binary: "",
     },
   });
 
-  const userPermissions = user?.permissions
-    ?.split(",")
-    .filter((per) => per !== "");
-
   const [open, setOpen] = useState(false);
-  const [selectedPermissions, setSelectedPermissions] = useState([
-    ...userPermissions,
-  ]);
+  const [selectedPermissions, setSelectedPermissions] = useState([]);
 
   const togglePermission = (permission) => {
     setSelectedPermissions((prev) =>
@@ -84,11 +94,13 @@ export default function EditUser({ user }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (
       !registerFormData.fullname ||
       !registerFormData.username ||
       !registerFormData.email ||
       !registerFormData.pNumber ||
+      !registerFormData.password ||
       !registerFormData.gender ||
       !registerFormData.date ||
       !registerFormData.status
@@ -96,10 +108,14 @@ export default function EditUser({ user }) {
       ErrorToast("Please fill in all required fields before proceeding.");
       return;
     }
+    if (selectedPermissions.length === 0) {
+      ErrorToast("Please select at least one permission.");
+      return;
+    }
 
     setDisableBtn(true);
 
-    const response = await fetch("/api/users/edit", {
+    const response = await fetch("/api/users/register", {
       method: "POST",
       body: JSON.stringify({
         ...registerFormData,
@@ -116,7 +132,7 @@ export default function EditUser({ user }) {
       return;
     }
 
-    SuccessToast("User Updated successful!");
+    SuccessToast("User Registered successful!");
     router.push("/dashboard/users");
   };
 
@@ -145,7 +161,9 @@ export default function EditUser({ user }) {
           <CardContent className="pt-6">
             <div className="flex flex-col items-center space-y-6">
               <div className="text-center">
-                <h1 className="text-2xl font-semibold mb-4">Edit User</h1>
+                <h1 className="text-2xl font-semibold mb-4">
+                  Register New User
+                </h1>
               </div>
 
               <form onSubmit={handleSubmit} className="w-full space-y-10">
@@ -158,15 +176,13 @@ export default function EditUser({ user }) {
                   </h3>
                   <div className="relative flex justify-center items-center flex-col">
                     <Avatar className="w-32 h-32 border-4 border-white shadow-light">
-                      {registerFormData.user_img_bak.preview ? (
+                      {registerFormData.user_img.preview ? (
                         <AvatarImage
-                          src={registerFormData.user_img_bak.preview}
+                          src={registerFormData.user_img.preview}
                           alt="Profile"
                         />
                       ) : (
-                        <AvatarFallback className="bg-purple-100 text-purple-600 text-4xl font-bold">
-                          HC
-                        </AvatarFallback>
+                        <AvatarFallback className="bg-purple-100 h-full w-full text-purple-600 text-4xl font-bold"></AvatarFallback>
                       )}
                     </Avatar>
                     <div className="absolute bottom-0 right-0">
@@ -175,7 +191,7 @@ export default function EditUser({ user }) {
                         type="file"
                         accept="image/*"
                         className="hidden"
-                        onChange={(e) => handleImageChange(e, "user_img_bak")}
+                        onChange={(e) => handleImageChange(e, "user_img")}
                       />
                       <Button
                         onClick={(e) => {
@@ -192,6 +208,7 @@ export default function EditUser({ user }) {
                     </div>
                   </div>
                 </div>
+
                 <hr />
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -205,7 +222,6 @@ export default function EditUser({ user }) {
                       placeholder="Enter Full Name"
                       className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
                       onChange={handleInputChange}
-                      value={registerFormData.fullname}
                     />
                   </div>
                   <div>
@@ -213,12 +229,11 @@ export default function EditUser({ user }) {
                       Account No <span className="text-red-500">*</span>
                     </h3>
                     <input
-                      type="text"
+                      type="number"
                       name="account_number"
-                      placeholder="Enter Accout No"
+                      placeholder="Enter Account No"
                       className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
                       onChange={handleInputChange}
-                      value={registerFormData.account_number}
                     />
                   </div>
                   <div>
@@ -231,7 +246,6 @@ export default function EditUser({ user }) {
                       placeholder="Enter Username"
                       className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
                       onChange={handleInputChange}
-                      value={registerFormData.username}
                     />
                   </div>
                   <div>
@@ -244,13 +258,12 @@ export default function EditUser({ user }) {
                       placeholder="Enter Email"
                       className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
                       onChange={handleInputChange}
-                      value={registerFormData.email}
                     />
                   </div>
                   <div>
-                    <h3 className="font-semibold  mb-2 text-sm">
-                      Phone No.
-                      <span className="text-red-500">*</span>
+                    <h3 className="font-semibold mb-2 text-sm">
+                      Phone Number{" "}
+                      <span className="text-red-500 text-lg">*</span>
                     </h3>
                     <input
                       type="text"
@@ -258,7 +271,18 @@ export default function EditUser({ user }) {
                       placeholder="Enter Phone Number"
                       className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
                       onChange={handleInputChange}
-                      value={registerFormData.pNumber}
+                    />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold mb-2 text-sm">
+                      Password <span className="text-red-500 text-lg">*</span>
+                    </h3>
+                    <input
+                      type="text"
+                      name="password"
+                      placeholder="Enter Password"
+                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
+                      onChange={handleInputChange}
                     />
                   </div>
                 </div>
@@ -308,8 +332,6 @@ export default function EditUser({ user }) {
                     <input
                       type="date"
                       name="date"
-                      placeholder="Enter Date of Birth"
-                      value={registerFormData.date}
                       onChange={handleInputChange}
                       className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[7px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
                     />
@@ -449,10 +471,9 @@ export default function EditUser({ user }) {
                   </Button>
                   <Button
                     disabled={disableBtn}
-                    type={"submit"}
                     className="w-full h-11 bg-purple-600 hover:bg-purple-700"
                   >
-                    Save Changes
+                    Register User
                   </Button>
                 </div>
               </form>

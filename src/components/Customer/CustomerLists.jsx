@@ -33,7 +33,7 @@ import Link from "next/link";
 import { statusColors } from "@/constant/constant";
 import { ErrorToast, SuccessToast } from "../utils/CustomToasts";
 
-export default function CustomerLists({ data }) {
+export default function CustomerLists({ data, permissions, role }) {
   const [isFiltersVisible, setIsFiltersVisible] = React.useState(true);
 
   const [storeUsers, setStoreUsers] = React.useState(
@@ -269,7 +269,9 @@ export default function CustomerLists({ data }) {
                             })}
                           </span>
                         </div>
-                      ) : "-"}
+                      ) : (
+                        "-"
+                      )}
                     </TableCell>
                     <TableCell>
                       {user.customerPayments.length >= 1 ? (
@@ -282,22 +284,26 @@ export default function CustomerLists({ data }) {
                             )}
                           </span>
                         </div>
-                      ) : "-"}
+                      ) : (
+                        "-"
+                      )}
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center justify-end gap-2">
-                        <Button
-                          asChild
-                          variant="outline"
-                          className="border-2 border-blue-800"
-                        >
-                          <Link
-                            href={`/dashboard/customers/${user.id}/payments`}
-                            className="!py-1 !px-3 rounded-sm !h-[2rem] hover:!bg-blue-800 hover:!text-white"
+                        {permissions.includes("view customer payments") ? (
+                          <Button
+                            asChild
+                            variant="outline"
+                            className="border-2 border-blue-800"
                           >
-                            Account
-                          </Link>
-                        </Button>
+                            <Link
+                              href={`/dashboard/customers/${user.id}/payments`}
+                              className="!py-1 !px-3 rounded-sm !h-[2rem] hover:!bg-blue-800 hover:!text-white"
+                            >
+                              Account
+                            </Link>
+                          </Button>
+                        ) : null}
                         <Button
                           variant="ghost"
                           size="icon"
@@ -308,16 +314,18 @@ export default function CustomerLists({ data }) {
                             <Eye className="h-4 w-4" />
                           </Link>
                         </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
-                          asChild
-                        >
-                          <Link href={`/dashboard/customers/${user.id}/edit`}>
-                            <Pencil className="h-4 w-4" />
-                          </Link>
-                        </Button>
+                        {permissions.includes("edit customer") ? (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
+                            asChild
+                          >
+                            <Link href={`/dashboard/customers/${user.id}/edit`}>
+                              <Pencil className="h-4 w-4" />
+                            </Link>
+                          </Button>
+                        ) : null}
                       </div>
                     </TableCell>
                   </TableRow>

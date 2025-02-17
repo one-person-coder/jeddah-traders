@@ -32,7 +32,10 @@ export async function POST(request) {
       status,
       role,
       user_img_bak,
+      permissionNames,
     } = reqBody;
+
+    const permissionsString = permissionNames.join(",");
 
     if (!id) {
       return NextResponse.json(
@@ -109,6 +112,7 @@ export async function POST(request) {
         status: status || user.status,
         role: role || user.role,
         user_img: userImgBuffer || user.user_img,
+        permissions: permissionsString || "",
       },
     });
 

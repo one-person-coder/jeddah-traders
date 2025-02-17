@@ -13,7 +13,7 @@ const UsersPage = async () => {
   const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
   const user = await prisma.userInfo.findUnique({
     where: { id: decoded.id },
-    select: { id: true, status: true, role: true },
+    select: { id: true, status: true, role: true, permissions: true },
   });
 
   if (user.role === "customer") {
@@ -41,10 +41,21 @@ const UsersPage = async () => {
     },
   });
 
+  const permissions = user?.permissions ? user.permissions.split(",") : [];
+  const userRole = user?.role
+  
   return (
     <div className="custom-width">
-      <UserCards data={users} />
-      <UserLists data={users} />
+      {permissions.includes("view user") ? (
+        <>
+          <UserCards data={users} />
+          <UserLists data={users} permissions={permissions} role={userRole} />
+        </>
+      ) : (
+        <h3 className="text-3xl text-center py-20 font-bold text-red-600">
+          Oops Not Found!
+        </h3>
+      )}
     </div>
   );
 };

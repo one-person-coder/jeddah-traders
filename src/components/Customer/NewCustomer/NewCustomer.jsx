@@ -2,27 +2,49 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import * as RadioGroup from "@radix-ui/react-radio-group";
-import { useState } from "react";
+import { LoginHeader } from "@/components/LoginHeader/LoginHeader";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 import { ErrorToast, SuccessToast } from "@/components/utils/CustomToasts";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { Camera, CameraIcon, ImageIcon, Upload, X } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { AvatarImage } from "@radix-ui/react-avatar";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Input } from "@/components/ui/input";
-import { Camera, CameraIcon, ImageIcon, Upload, X } from "lucide-react";
 
-export default function EditCustomer({ user, permissions }) {
+export default function NewCustomer() {
   const [registerFormData, setRegisterFormData] = useState({
-    ...user,
-    cnic_front_img_bak: {
+    fullname: "",
+    username: "",
+    father_name: "",
+    address: "",
+    email: "",
+    pNumber: "",
+    password: "",
+    gender: "male",
+    status: "pending",
+    date: "",
+    cnic_no: "",
+
+    family_member_name: "",
+    family_relation: "",
+    family_contact_number: "",
+    family_description: "",
+
+    refferal_name: "",
+    refferal_account_number: "",
+    refferal_description: "",
+
+    account_number: "",
+    cnic_front_img: {
       preview: "",
       binary: "",
     },
-    cnic_back_img_bak: {
+    cnic_back_img: {
       preview: "",
       binary: "",
     },
-    user_img_bak: {
+    user_img: {
       preview: "",
       binary: "",
     },
@@ -40,15 +62,24 @@ export default function EditCustomer({ user, permissions }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (
       !registerFormData.fullname ||
       !registerFormData.father_name ||
+      !registerFormData.family_member_name ||
+      !registerFormData.family_relation ||
+      !registerFormData.family_contact_number ||
       !registerFormData.address ||
       !registerFormData.username ||
       !registerFormData.email ||
       !registerFormData.pNumber ||
+      !registerFormData.password ||
       !registerFormData.gender ||
+      !registerFormData.cnic_front_img.preview.length >= 1 ||
+      !registerFormData.cnic_back_img.preview.length >= 1 ||
+      !registerFormData.user_img.preview.length >= 1 ||
       !registerFormData.cnic_no ||
+      !registerFormData.account_number ||
       !registerFormData.date
     ) {
       ErrorToast("Please fill in all required fields before proceeding.");
@@ -57,7 +88,7 @@ export default function EditCustomer({ user, permissions }) {
 
     setDisableBtn(true);
 
-    const response = await fetch("/api/customers/edit", {
+    const response = await fetch("/api/customers/register", {
       method: "POST",
       body: JSON.stringify(registerFormData),
     });
@@ -71,7 +102,7 @@ export default function EditCustomer({ user, permissions }) {
       return;
     }
 
-    SuccessToast("Customer Updated successful!");
+    SuccessToast("Customer Registration successful!");
     router.push("/dashboard/customers");
   };
 
@@ -93,50 +124,16 @@ export default function EditCustomer({ user, permissions }) {
     }
   };
 
-  const deleteUser = async (userId, username) => {
-    let userResponse = confirm(
-      `Are you sure you want to delete customer [ ${username} ]`
-    );
-    if (!userResponse) return;
-
-    const response = await fetch("/api/customers/delete", {
-      method: "POST",
-      body: JSON.stringify({
-        id: userId,
-      }),
-    });
-    const responseJson = await response.json();
-
-    if (!responseJson.success) {
-      ErrorToast(responseJson.message);
-      return;
-    }
-    router.push("/dashboard/customers");
-    SuccessToast("Customer Deleted Successfully!");
-  };
-
   return (
     <div>
       <div className="flex items-center justify-center bg-slate-50 p-4">
-        <Card className="w-full">
+        <Card className="w-full max-w-full">
           <CardContent className="pt-6">
-            <div className="relative flex flex-col items-center space-y-6">
-              {permissions.includes("delete customer") ? (
-                <Button
-                  onClick={() => {
-                    deleteUser(registerFormData.id, registerFormData.username);
-                  }}
-                  className="absolute right-0 top-0 h-11 bg-red-600 hover:bg-red-700"
-                >
-                  Delete Customer
-                </Button>
-              ) : null}
-
-              <br />
-              <br />
-
-              <div className="text-center ">
-                <h1 className="text-2xl font-semibold mb-4">Edit Customer </h1>
+            <div className="flex flex-col items-center space-y-6">
+              <div className="text-center">
+                <h1 className="text-2xl font-semibold mb-4">
+                  Register New Customer
+                </h1>
               </div>
 
               <form onSubmit={handleSubmit} className="w-full space-y-10">
@@ -149,9 +146,9 @@ export default function EditCustomer({ user, permissions }) {
                   </h3>
                   <div className="relative flex justify-center items-center flex-col">
                     <Avatar className="w-32 h-32 border-4 border-white shadow-light">
-                      {registerFormData.user_img_bak.preview ? (
+                      {registerFormData.user_img.preview ? (
                         <AvatarImage
-                          src={registerFormData.user_img_bak.preview}
+                          src={registerFormData.user_img.preview}
                           alt="Profile"
                         />
                       ) : (
@@ -166,7 +163,7 @@ export default function EditCustomer({ user, permissions }) {
                         type="file"
                         accept="image/*"
                         className="hidden"
-                        onChange={(e) => handleImageChange(e, "user_img_bak")}
+                        onChange={(e) => handleImageChange(e, "user_img")}
                       />
                       <Button
                         onClick={(e) => {
@@ -188,19 +185,6 @@ export default function EditCustomer({ user, permissions }) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <h3 className="font-semibold  mb-2 text-sm">
-                      Account No <span className="text-red-500">*</span>
-                    </h3>
-                    <input
-                      type="text"
-                      name="account_number"
-                      placeholder="Enter Account No"
-                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
-                      onChange={handleInputChange}
-                      value={registerFormData.account_number}
-                    />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold  mb-2 text-sm">
                       Full Name <span className="text-red-500">*</span>
                     </h3>
                     <input
@@ -209,7 +193,6 @@ export default function EditCustomer({ user, permissions }) {
                       placeholder="Enter Full Name"
                       className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
                       onChange={handleInputChange}
-                      value={registerFormData.fullname}
                     />
                   </div>
                   <div>
@@ -222,7 +205,6 @@ export default function EditCustomer({ user, permissions }) {
                       placeholder="Enter Father Name"
                       className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
                       onChange={handleInputChange}
-                      value={registerFormData.father_name}
                     />
                   </div>
                   <div>
@@ -235,7 +217,6 @@ export default function EditCustomer({ user, permissions }) {
                       placeholder="Enter Username"
                       className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
                       onChange={handleInputChange}
-                      value={registerFormData.username}
                     />
                   </div>
                   <div>
@@ -248,7 +229,6 @@ export default function EditCustomer({ user, permissions }) {
                       placeholder="Enter Email"
                       className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
                       onChange={handleInputChange}
-                      value={registerFormData.email}
                     />
                   </div>
                   <div>
@@ -262,7 +242,6 @@ export default function EditCustomer({ user, permissions }) {
                       placeholder="Enter Phone Number"
                       className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
                       onChange={handleInputChange}
-                      value={registerFormData.pNumber}
                     />
                   </div>
                   <div>
@@ -275,12 +254,35 @@ export default function EditCustomer({ user, permissions }) {
                       placeholder="Enter CNIC Number"
                       className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
                       onChange={handleInputChange}
-                      value={registerFormData.cnic_no}
                     />
                   </div>
                   <div>
                     <h3 className="font-semibold mb-2 text-sm">
-                      Address <span className="text-red-500">*</span>
+                      Account No <span className="text-red-500 text-lg">*</span>
+                    </h3>
+                    <input
+                      type="text"
+                      name="account_number"
+                      placeholder="Enter Account No"
+                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold mb-2 text-sm">
+                      Password <span className="text-red-500 text-lg">*</span>
+                    </h3>
+                    <input
+                      type="text"
+                      name="password"
+                      placeholder="Enter Password"
+                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold mb-2 text-sm">
+                      Address <span className="text-red-500 text-lg">*</span>
                     </h3>
                     <input
                       type="text"
@@ -288,7 +290,6 @@ export default function EditCustomer({ user, permissions }) {
                       placeholder="Enter Address"
                       className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
                       onChange={handleInputChange}
-                      value={registerFormData.address}
                     />
                   </div>
                 </div>
@@ -304,11 +305,10 @@ export default function EditCustomer({ user, permissions }) {
                       <span className="text-red-500 text-lg">*</span>
                     </h3>
                     <div className="flex shadow-light rounded-md p-3 flex-col items-center justify-center space-y-3 py-4">
-                      {registerFormData.cnic_front_img_bak.preview.length >=
-                      1 ? (
+                      {registerFormData.cnic_front_img.preview.length >= 1 ? (
                         <>
                           <img
-                            src={registerFormData.cnic_front_img_bak.preview}
+                            src={registerFormData.cnic_front_img.preview}
                             alt="CNIC Front Img"
                             className="h-20 object-cover rounded-md"
                           />
@@ -320,10 +320,7 @@ export default function EditCustomer({ user, permissions }) {
                               setRegisterFormData((prev) => {
                                 return {
                                   ...prev,
-                                  cnic_front_img_bak: {
-                                    preview: "",
-                                    binary: "",
-                                  },
+                                  cnic_front_img: { preview: "", binary: "" },
                                 };
                               });
                             }}
@@ -347,7 +344,7 @@ export default function EditCustomer({ user, permissions }) {
                             accept="image/*"
                             className="hidden"
                             onChange={(e) =>
-                              handleImageChange(e, "cnic_front_img_bak")
+                              handleImageChange(e, "cnic_front_img")
                             }
                           />
                           <div className="flex justify-center">
@@ -375,11 +372,10 @@ export default function EditCustomer({ user, permissions }) {
                       <span className="text-red-500 text-lg">*</span>
                     </h3>
                     <div className="flex shadow-light rounded-md p-3 flex-col items-center justify-center space-y-3 py-4">
-                      {registerFormData.cnic_back_img_bak.preview.length >=
-                      1 ? (
+                      {registerFormData.cnic_back_img.preview.length >= 1 ? (
                         <>
                           <img
-                            src={registerFormData.cnic_back_img_bak.preview}
+                            src={registerFormData.cnic_back_img.preview}
                             alt="CNIC Front Img"
                             className="h-20 object-cover rounded-md"
                           />
@@ -391,10 +387,7 @@ export default function EditCustomer({ user, permissions }) {
                               setRegisterFormData((prev) => {
                                 return {
                                   ...prev,
-                                  cnic_back_img_bak: {
-                                    preview: "",
-                                    binary: "",
-                                  },
+                                  cnic_back_img: { preview: "", binary: "" },
                                 };
                               });
                             }}
@@ -418,7 +411,7 @@ export default function EditCustomer({ user, permissions }) {
                             accept="image/*"
                             className="hidden"
                             onChange={(e) =>
-                              handleImageChange(e, "cnic_back_img_bak")
+                              handleImageChange(e, "cnic_back_img")
                             }
                           />
                           <div className="flex justify-center">
@@ -489,7 +482,6 @@ export default function EditCustomer({ user, permissions }) {
                       name="date"
                       onChange={handleInputChange}
                       className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[7px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
-                      value={registerFormData.date}
                     />
                   </div>
                 </div>
@@ -558,7 +550,6 @@ export default function EditCustomer({ user, permissions }) {
                       placeholder="Enter Member Name"
                       className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
                       onChange={handleInputChange}
-                      value={registerFormData.family_member_name}
                     />
                   </div>
                   <div>
@@ -571,7 +562,6 @@ export default function EditCustomer({ user, permissions }) {
                       placeholder="Enter Relation"
                       className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
                       onChange={handleInputChange}
-                      value={registerFormData.family_relation}
                     />
                   </div>
                   <div>
@@ -584,7 +574,6 @@ export default function EditCustomer({ user, permissions }) {
                       placeholder="Enter Contact No"
                       className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
                       onChange={handleInputChange}
-                      value={registerFormData.family_contact_number}
                     />
                   </div>
                   <div>
@@ -595,7 +584,6 @@ export default function EditCustomer({ user, permissions }) {
                       placeholder="Enter Description"
                       className="min-h-[48px] max-h-[100px] w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
                       onChange={handleInputChange}
-                      value={registerFormData.family_description}
                     />
                   </div>
                 </div>
@@ -619,7 +607,6 @@ export default function EditCustomer({ user, permissions }) {
                       placeholder="Enter Name"
                       className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
                       onChange={handleInputChange}
-                      value={registerFormData.refferal_name}
                     />
                   </div>
                   <div>
@@ -630,7 +617,6 @@ export default function EditCustomer({ user, permissions }) {
                       placeholder="Enter Refferal Acount No"
                       className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
                       onChange={handleInputChange}
-                      value={registerFormData.refferal_account_number}
                     />
                   </div>
                   <div>
@@ -641,7 +627,6 @@ export default function EditCustomer({ user, permissions }) {
                       placeholder="Enter Description"
                       className="min-h-[48px] max-h-[100px] w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
                       onChange={handleInputChange}
-                      value={registerFormData.refferal_description}
                     />
                   </div>
                 </div>
@@ -652,14 +637,13 @@ export default function EditCustomer({ user, permissions }) {
                     className="w-full h-11 bg-red-600 hover:bg-red-700"
                     asChild
                   >
-                    <Link href={`/dashboard/customers`}>Back</Link>
+                    <Link href={"/dashboard/customers"}>Cancel</Link>
                   </Button>
-
                   <Button
                     disabled={disableBtn}
                     className="w-full h-11 bg-purple-600 hover:bg-purple-700"
                   >
-                    Update Customer
+                    Register Customer
                   </Button>
                 </div>
               </form>

@@ -44,32 +44,47 @@ const CustomersPage = async () => {
     },
   });
 
-  console.log("usrs", users);
+  const permissions = user?.permissions ? user.permissions.split(",") : [];
+  const userRole = user?.role;
 
   return (
     <div className="custom-width">
-      <div className="flex mt-3 flex-wrap flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900">
-            Customer Management
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Manage and monitor Customer accounts
-          </p>
-        </div>
-        <Button
-          className="bg-purple-600 hover:bg-purple-700 transition-all shadow-lg hover:shadow-purple-200"
-          size="lg"
-          asChild
-        >
-          <Link href={"/dashboard/customers/new"}>
-            <Plus className="h-4 w-4" />
-            Add New Customer
-          </Link>
-        </Button>
-      </div>
-      <CustomerCards data={users} />
-      <CustomerLists data={users} />
+      {permissions.includes("view customer") ? (
+        <>
+          <div className="flex mt-3 flex-wrap flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h1 className="text-2xl font-semibold text-gray-900">
+                Customer Management
+              </h1>
+              <p className="text-sm text-muted-foreground mt-1">
+                Manage and monitor Customer accounts
+              </p>
+            </div>
+            {permissions.includes("create customer") ? (
+              <Button
+                className="bg-purple-600 hover:bg-purple-700 transition-all shadow-lg hover:shadow-purple-200"
+                size="lg"
+                asChild
+              >
+                <Link href={"/dashboard/customers/new"}>
+                  <Plus className="h-4 w-4" />
+                  Add New Customer
+                </Link>
+              </Button>
+            ) : null}
+          </div>
+          <CustomerCards data={users} />
+          <CustomerLists
+            data={users}
+            permissions={permissions}
+            role={userRole}
+          />{" "}
+        </>
+      ) : (
+        <h3 className="text-3xl text-center py-20 font-bold text-red-600">
+          Oops Not Found!
+        </h3>
+      )}
     </div>
   );
 };

@@ -21,9 +21,17 @@ const MakeBill = async ({ params }) => {
     where: { id: parseInt(id) },
   });
 
+  const permissions = user?.permissions ? user.permissions.split(",") : [];
+
   return (
     <div>
-      <SaleEntry username={currentUser.username} />
+      {permissions.includes("make bill") ? (
+        <SaleEntry username={currentUser.username} />
+      ) : (
+        <h3 className="text-3xl text-center py-20 font-bold text-red-600">
+          Oops Not Found!
+        </h3>
+      )}
     </div>
   );
 };

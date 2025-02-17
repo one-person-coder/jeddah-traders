@@ -32,11 +32,13 @@ export async function POST(request) {
       date,
       status,
       user_img,
+      permissionNames,
     } = reqBody;
+
+    const permissionsString = permissionNames.join(",");
 
     const ac = parseInt(account_number);
 
-    // Check if user already exists
     const existingUser = await prisma.userInfo.findFirst({
       where: {
         OR: [{ username }, { email }, { account_number: ac }],
@@ -90,6 +92,7 @@ export async function POST(request) {
         status,
         role: "manager",
         user_img: userImgBuffer,
+        permissions: permissionsString,
       },
     });
 
