@@ -62,7 +62,7 @@ export async function POST(request) {
               ? "Username already exists"
               : existingUser.email == email
               ? "Email already exists"
-              : "Account No already assing another user.",
+              : "Account No already assign another user.",
         },
         { status: 400 }
       );

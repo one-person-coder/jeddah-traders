@@ -46,6 +46,10 @@ const permissions = [
   "delete customer payments",
   "print customer payments",
   "make bill",
+  "view product",
+  "create product",
+  "edit product",
+  "delete product",
 ];
 
 export default function NewUser() {
@@ -55,7 +59,6 @@ export default function NewUser() {
     email: "",
     pNumber: "",
     password: "",
-    account_number: "",
     gender: "male",
     date: "",
     status: "pending",
@@ -220,18 +223,6 @@ export default function NewUser() {
                       type="text"
                       name="fullname"
                       placeholder="Enter Full Name"
-                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold  mb-2 text-sm">
-                      Account No <span className="text-red-500">*</span>
-                    </h3>
-                    <input
-                      type="number"
-                      name="account_number"
-                      placeholder="Enter Account No"
                       className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
                       onChange={handleInputChange}
                     />

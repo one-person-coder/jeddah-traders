@@ -232,7 +232,7 @@ const ViewPage = async ({ params }) => {
                     <div className="text-zinc-600 flex gap-1 items-center">
                       <ProfileSvg />
                       <div>
-                        <span>Member Name:</span>
+                        <span>Name:</span>
                         <span className="text-zinc-500 ml-2">
                           {user.family_member_name || "-"}
                         </span>
@@ -276,7 +276,7 @@ const ViewPage = async ({ params }) => {
                     <div className="text-zinc-600 flex gap-1 items-center">
                       <ProfileSvg />
                       <div>
-                        <span>Member Name:</span>
+                        <span>Name:</span>
                         <span className="text-zinc-500 ml-2">
                           {user.refferal_name || "-"}
                         </span>

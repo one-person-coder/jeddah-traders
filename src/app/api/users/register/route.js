@@ -27,7 +27,6 @@ export async function POST(request) {
       email,
       pNumber,
       password,
-      account_number,
       gender,
       date,
       status,
@@ -37,11 +36,9 @@ export async function POST(request) {
 
     const permissionsString = permissionNames.join(",");
 
-    const ac = parseInt(account_number);
-
     const existingUser = await prisma.userInfo.findFirst({
       where: {
-        OR: [{ username }, { email }, { account_number: ac }],
+        OR: [{ username }, { email }],
       },
     });
 
@@ -52,9 +49,7 @@ export async function POST(request) {
           message:
             existingUser.username === username
               ? "Username already exists"
-              : existingUser.email === email
-              ? "Email already exists"
-              : "This account number is already used please choose another.",
+              : "Email already exists",
         },
         { status: 400 }
       );
@@ -87,7 +82,6 @@ export async function POST(request) {
         pNumber,
         password: hashedPassword,
         gender,
-        account_number: ac,
         date: new Date(date),
         status,
         role: "manager",

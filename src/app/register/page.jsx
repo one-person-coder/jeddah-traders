@@ -491,12 +491,12 @@ export default function RegisterCustomer() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <h3 className="font-semibold mb-2 text-sm">
-                      Member Name <span className="text-red-500">*</span>
+                      Name <span className="text-red-500">*</span>
                     </h3>
                     <input
                       type="text"
                       name="family_member_name"
-                      placeholder="Enter Member Name"
+                      placeholder="Enter Name"
                       className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
                       onChange={handleInputChange}
                     />

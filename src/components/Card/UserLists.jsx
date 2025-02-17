@@ -10,6 +10,7 @@ import {
   Filter,
   RefreshCcw,
   Trash2,
+  PhoneCall,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -257,7 +258,6 @@ export default function UserLists({ data, permissions, role }) {
               <TableHeader>
                 <TableRow className="bg-gray-50">
                   <TableHead>Sr.</TableHead>
-                  <TableHead>A/C</TableHead>
                   <TableHead>USER</TableHead>
                   <TableHead>ROLE</TableHead>
                   <TableHead>STATUS</TableHead>
@@ -283,13 +283,6 @@ export default function UserLists({ data, permissions, role }) {
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <span className="font-medium">{index + 1}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium">
-                          {user.account_number}
-                        </span>
                       </div>
                     </TableCell>
                     <TableCell>
@@ -339,7 +332,23 @@ export default function UserLists({ data, permissions, role }) {
                         </span>
                       </div>
                     </TableCell>
-                    <TableCell>{user.pNumber}</TableCell>
+                    <TableCell>
+                      {user.pNumber ? (
+                        <div className="flex gap-2 items-center bg-orange-300 overflow-hidden w-fit pr-2 rounded-md">
+                          <div
+                            className="hover:bg-orange-400 py-2 px-2"
+                            onClick={() => {
+                              window.location.href = `tel:${user.pNumber}`;
+                            }}
+                          >
+                            <PhoneCall className="h-4 w-4" />
+                          </div>
+                          <span>{user.pNumber}</span>
+                        </div>
+                      ) : (
+                        "-"
+                      )}
+                    </TableCell>
                     <TableCell>
                       <span className="text-sm text-muted-foreground">
                         {new Date(user.createdAt).toLocaleDateString("en-US", {
