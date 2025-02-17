@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { checkLoginToken } from "../../checker";
 import prisma from "@/lib/prisma";
 import { handleLogout } from "../../handleLogout";
+import sharp from "sharp";
 
 export async function POST(request) {
   const login = await checkLoginToken(request);
@@ -30,6 +31,7 @@ export async function POST(request) {
       date,
       status,
       role,
+      user_img_bak,
     } = reqBody;
 
     if (!id) {
@@ -79,6 +81,21 @@ export async function POST(request) {
       );
     }
 
+    async function compressImage(base64Image) {
+      if (!base64Image || !base64Image.binary) return null;
+
+      const buffer = Buffer.from(base64Image.binary.split(",")[1], "base64");
+
+      const compressedBuffer = await sharp(buffer)
+        .resize({ width: 480 })
+        .jpeg({ quality: 80 })
+        .toBuffer();
+
+      return compressedBuffer;
+    }
+
+    const userImgBuffer = await compressImage(user_img_bak);
+
     const updatedUser = await prisma.userInfo.update({
       where: { id: parseInt(id) },
       data: {
@@ -91,6 +108,7 @@ export async function POST(request) {
         date: date ? new Date(date) : user.date,
         status: status || user.status,
         role: role || user.role,
+        user_img: userImgBuffer || user.user_img,
       },
     });
 

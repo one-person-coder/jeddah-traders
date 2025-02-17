@@ -295,12 +295,12 @@ export default function DeletePaymentLists({ data }) {
         <Card className="border-none shadow-lg">
           <CardContent className="p-6">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
-              <div className="flex flex-wrap items-center gap-3">
+              {/* <div className="flex flex-wrap items-center gap-3">
                 <Button onClick={refreshData} variant="outline">
                   <RefreshCcw className="mr-2 h-4 w-4 text-purple-600" />
                   Refresh
                 </Button>
-              </div>
+              </div> */}
 
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />

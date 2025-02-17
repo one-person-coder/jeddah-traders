@@ -3,6 +3,7 @@ import bcryptjs from "bcryptjs";
 import { checkLoginToken } from "../../checker";
 import prisma from "@/lib/prisma";
 import { handleLogout } from "../../handleLogout";
+import sharp from "sharp";
 
 export async function POST(request) {
   try {
@@ -30,6 +31,7 @@ export async function POST(request) {
       gender,
       date,
       status,
+      user_img,
     } = reqBody;
 
     const ac = parseInt(account_number);
@@ -60,6 +62,21 @@ export async function POST(request) {
     const salt = await bcryptjs.genSalt(10);
     const hashedPassword = await bcryptjs.hash(password, salt);
 
+    async function compressImage(base64Image) {
+      if (!base64Image || !base64Image.binary) return null;
+
+      const buffer = Buffer.from(base64Image.binary.split(",")[1], "base64");
+
+      const compressedBuffer = await sharp(buffer)
+        .resize({ width: 480 })
+        .jpeg({ quality: 80 })
+        .toBuffer();
+
+      return compressedBuffer;
+    }
+
+    const userImgBuffer = await compressImage(user_img);
+
     await prisma.userInfo.create({
       data: {
         fullname,
@@ -72,6 +89,7 @@ export async function POST(request) {
         date: new Date(date),
         status,
         role: "manager",
+        user_img: userImgBuffer,
       },
     });
 

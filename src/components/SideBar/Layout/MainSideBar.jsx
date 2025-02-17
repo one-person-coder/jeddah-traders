@@ -56,17 +56,17 @@ export default function Sidebar({ children, userType }) {
         url: "/dashboard/customers",
       },
       {
-        title: "Products",
-        icon: Box,
-        url: "/dashboard/products",
-      },
-      {
         title: "Settings",
         icon: Settings,
         url: "/dashboard/settings/profile",
       },
     ];
     if (userType === "admin") {
+      navigation.splice(4, 0, {
+        title: "Products",
+        icon: Box,
+        url: "/dashboard/products",
+      });
       navigation.splice(5, 0, {
         title: "Recycle Bin",
         icon: Trash2,
@@ -80,7 +80,6 @@ export default function Sidebar({ children, userType }) {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
-  // Handle window resize
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 768;

@@ -6,10 +6,17 @@ import { useState } from "react";
 import { ErrorToast, SuccessToast } from "@/components/utils/CustomToasts";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Input } from "@/components/ui/input";
+import { CameraIcon } from "lucide-react";
 
 export default function EditUser({ user }) {
   const [registerFormData, setRegisterFormData] = useState({
     ...user,
+    user_img_bak: {
+      preview: "",
+      binary: "",
+    },
   });
 
   const router = useRouter();
@@ -57,6 +64,24 @@ export default function EditUser({ user }) {
     router.push("/dashboard/users");
   };
 
+  const handleImageChange = (e, key) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+
+      reader.onloadend = () => {
+        setRegisterFormData((prevState) => ({
+          ...prevState,
+          [key]: {
+            preview: URL.createObjectURL(file),
+            binary: reader.result,
+          },
+        }));
+      };
+    }
+  };
+
   return (
     <div>
       <div className="flex items-center justify-center">
@@ -68,6 +93,49 @@ export default function EditUser({ user }) {
               </div>
 
               <form onSubmit={handleSubmit} className="w-full space-y-10">
+                <hr />
+
+                <div className="flex justify-center items-center flex-col">
+                  <h3 className="font-semibold  mb-2 text-sm">
+                    Choose Profile Picture{" "}
+                    <span className="text-red-500">*</span>
+                  </h3>
+                  <div className="relative flex justify-center items-center flex-col">
+                    <Avatar className="w-32 h-32 border-4 border-white shadow-light">
+                      {registerFormData.user_img_bak.preview ? (
+                        <AvatarImage
+                          src={registerFormData.user_img_bak.preview}
+                          alt="Profile"
+                        />
+                      ) : (
+                        <AvatarFallback className="bg-purple-100 text-purple-600 text-4xl font-bold">
+                          HC
+                        </AvatarFallback>
+                      )}
+                    </Avatar>
+                    <div className="absolute bottom-0 right-0">
+                      <Input
+                        id="profile-image-upload"
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => handleImageChange(e, "user_img_bak")}
+                      />
+                      <Button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          document
+                            .getElementById("profile-image-upload")
+                            ?.click();
+                        }}
+                        size="icon"
+                        className="rounded-full bg-purple-600 hover:bg-purple-700 text-white shadow-md"
+                      >
+                        <CameraIcon className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
                 <hr />
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
