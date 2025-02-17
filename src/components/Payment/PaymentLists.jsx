@@ -179,7 +179,7 @@ export default function PaymentLists({ data, customerId, permissions }) {
                 </div>
               </CardHeader>
               <p className="!font-bold text-center mt-2">
-                {new Date(visibleData?.createdAt)}
+                
               </p>
 
               <CardContent className="p-0">
