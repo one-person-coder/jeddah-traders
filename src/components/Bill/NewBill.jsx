@@ -166,11 +166,10 @@ export default function SaleEntry({ username }) {
       }),
     });
 
-    setDisableBtn(false);
-
     const rspJson = await response.json();
 
     if (!rspJson.success) {
+      setDisableBtn(false);
       ErrorToast(rspJson.message);
       return;
     }

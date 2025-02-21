@@ -180,56 +180,58 @@ export default function CustomerLists({ data, permissions, role }) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {users.map((user, index) => (
-                  <TableRow
-                    key={index}
-                    className="cursor-pointer hover:bg-gray-200/50 data-[selected=true]:bg-blue-100"
-                    onClick={(e) => {
-                      document
-                        .querySelectorAll("[data-selected]")
-                        .forEach((row) => {
-                          row.removeAttribute("data-selected");
-                        });
-                      e.currentTarget.setAttribute("data-selected", "true");
-                    }}
-                  >
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium">{index + 1}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium">
-                          {user.account_number}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-3">
-                        <div className="relative">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100 text-sm font-medium text-purple-600 ring-2 ring-white">
-                            {user.fullname
-                              .split(" ")
-                              .map((word) => word.charAt(0))
-                              .join("")}
-                          </div>
-                          <div
-                            className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white"
-                            style={{
-                              backgroundColor:
-                                statusColors[`more-${user.status}`],
-                            }}
-                          />
+                {users
+                  .sort((a, b) => a.account_number - b.account_number)
+                  .map((user, index) => (
+                    <TableRow
+                      key={index}
+                      className="cursor-pointer hover:bg-gray-200/50 data-[selected=true]:bg-blue-100"
+                      onClick={(e) => {
+                        document
+                          .querySelectorAll("[data-selected]")
+                          .forEach((row) => {
+                            row.removeAttribute("data-selected");
+                          });
+                        e.currentTarget.setAttribute("data-selected", "true");
+                      }}
+                    >
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium">{index + 1}</span>
                         </div>
-                        <div>
-                          <div className="font-medium text-gray-900">
-                            {user.fullname}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium">
+                            {user.account_number}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <div className="relative">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100 text-sm font-medium text-purple-600 ring-2 ring-white">
+                              {user.fullname
+                                .split(" ")
+                                .map((word) => word.charAt(0))
+                                .join("")}
+                            </div>
+                            <div
+                              className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white"
+                              style={{
+                                backgroundColor:
+                                  statusColors[`more-${user.status}`],
+                              }}
+                            />
+                          </div>
+                          <div>
+                            <div className="font-medium text-gray-900">
+                              {user.fullname}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </TableCell>
-                    {/* <TableCell>
+                      </TableCell>
+                      {/* <TableCell>
                       <div className="flex items-center gap-2">
                         <User2 className="h-4 w-4 text-purple-600" />
                         <span className="font-medium">
@@ -249,106 +251,116 @@ export default function CustomerLists({ data, permissions, role }) {
                         </span>
                       </div>
                     </TableCell> */}
-                    <TableCell>
-                      {user.pNumber ? (
-                        <div className="flex gap-2 items-center bg-orange-300 overflow-hidden w-fit pr-2 rounded-md">
-                          <div
-                            className="hover:bg-orange-400 py-2 px-2"
-                            onClick={() => {
-                              window.location.href = `tel:${user.pNumber}`;
-                            }}
-                          >
-                            <PhoneCall className="h-4 w-4" />
-                          </div>
-                          <span>{user.pNumber}</span>
-                        </div>
-                      ) : (
-                        "-"
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {user.customerPayments.length >= 1 ? (
-                        <div className="flex gap-2">
-                          <span className="text-[16px] font-bold text-blue-700 text-muted-foreground">
-                            {user?.customerPayments.reverse()[0].paid_amount}
-                          </span>
-                          -
-                          <span className="text-sm text-muted-foreground">
-                            {new Date(
-                              user?.customerPayments.reverse()[0].createdAt
-                            ).toLocaleDateString("en-US", {
-                              month: "short",
-                              day: "2-digit",
-                              year: "numeric",
-                            })}
-                          </span>
-                        </div>
-                      ) : (
-                        "-"
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {user.customerPayments.length >= 1 ? (
-                        <div>
-                          <span className="text-sm text-muted-foreground">
-                            {(user?.customerPayments.reduce(
-                              (acc, user) =>
-                                user.isDelete ? acc : acc + user.amount,
-                              0
-                            )) -
-                              (user?.customerPayments?.reduce(
-                                (acc, user) =>
-                                  user.isDelete ? acc : acc + user.paid_amount,
-                                0
-                              ))}
-                          </span>
-                        </div>
-                      ) : (
-                        "-"
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center justify-end gap-2">
-                        {permissions.includes("view customer payments") ? (
-                          <Button
-                            asChild
-                            variant="outline"
-                            className="border-2 border-blue-800"
-                          >
-                            <Link
-                              href={`/dashboard/customers/${user.id}/payments`}
-                              className="!py-1 !px-3 rounded-sm !h-[2rem] hover:!bg-blue-800 hover:!text-white"
+                      <TableCell>
+                        {user.pNumber ? (
+                          <div className="flex gap-2 items-center bg-orange-300 overflow-hidden w-fit pr-2 rounded-md">
+                            <div
+                              className="hover:bg-orange-400 py-2 px-2"
+                              onClick={() => {
+                                window.location.href = `tel:${user.pNumber}`;
+                              }}
                             >
-                              Account
-                            </Link>
-                          </Button>
-                        ) : null}
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          asChild
-                          className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
-                        >
-                          <Link href={`/dashboard/customers/${user.id}/view`}>
-                            <Eye className="h-4 w-4" />
-                          </Link>
-                        </Button>
-                        {permissions.includes("edit customer") ? (
+                              <PhoneCall className="h-4 w-4" />
+                            </div>
+                            <span>{user.pNumber}</span>
+                          </div>
+                        ) : (
+                          "-"
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {user.customerPayments.length >= 1 ? (
+                          <div className="flex gap-2">
+                            <span className="text-[16px] font-bold text-blue-700 text-muted-foreground">
+                              {
+                                user?.customerPayments
+                                  .filter((payment) => !payment.isDelete)
+                                  .reverse()[0]?.paid_amount
+                              }
+                            </span>
+                            -
+                            <span className="text-sm text-muted-foreground">
+                              {new Date(
+                                user?.customerPayments
+                                  .filter((payment) => !payment.isDelete)
+                                  .reverse()[0]?.createdAt
+                              ).toLocaleDateString("en-US", {
+                                month: "short",
+                                day: "2-digit",
+                                year: "numeric",
+                              })}
+                            </span>
+                          </div>
+                        ) : (
+                          "-"
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {user.customerPayments.length >= 1 ? (
+                          <div>
+                            <span className="text-sm text-muted-foreground">
+                              {user?.customerPayments.reduce(
+                                (acc, user) =>
+                                  user.isDelete ? acc : acc + user.amount,
+                                0
+                              ) -
+                                user?.customerPayments?.reduce(
+                                  (acc, user) =>
+                                    user.isDelete
+                                      ? acc
+                                      : acc + user.paid_amount,
+                                  0
+                                )}
+                            </span>
+                          </div>
+                        ) : (
+                          "-"
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center justify-end gap-2">
+                          {permissions.includes("view customer payments") ? (
+                            <Button
+                              asChild
+                              variant="outline"
+                              className="border-2 border-blue-800"
+                            >
+                              <Link
+                                href={`/dashboard/customers/${user.id}/payments`}
+                                className="!py-1 !px-3 rounded-sm !h-[2rem] hover:!bg-blue-800 hover:!text-white"
+                              >
+                                Account
+                              </Link>
+                            </Button>
+                          ) : null}
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
                             asChild
+                            className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
                           >
-                            <Link href={`/dashboard/customers/${user.id}/edit`}>
-                              <Pencil className="h-4 w-4" />
+                            <Link href={`/dashboard/customers/${user.id}/view`}>
+                              <Eye className="h-4 w-4" />
                             </Link>
                           </Button>
-                        ) : null}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                          {permissions.includes("edit customer") ? (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
+                              asChild
+                            >
+                              <Link
+                                href={`/dashboard/customers/${user.id}/edit`}
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </Link>
+                            </Button>
+                          ) : null}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
           </div>

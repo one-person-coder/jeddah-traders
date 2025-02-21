@@ -123,15 +123,8 @@ export default function DeletePaymentLists({ data }) {
   const [isVisible, setIsVisible] = React.useState(false);
   const [visibleData, setVisibleData] = React.useState({});
 
-  const handleInvoiceClick = (id) => {
+  const handleInvoiceClick = (id, remaining) => {
     const filterData = users.find((user) => user.id === id);
-    const lowerUsers = users.filter((user) => user.id <= id);
-    let remaining = 0;
-
-    lowerUsers.forEach((user) => {
-      remaining += user.amount ? user.amount : 0;
-      remaining -= user.paid_amount ? user.paid_amount : 0;
-    });
 
     const date = new Date(filterData.createdAt);
     const options = {
@@ -457,7 +450,7 @@ export default function DeletePaymentLists({ data }) {
                             {user.paid_amount ? user.paid_amount : "-"}
                           </span>
                           <span className="text-[13px] text-blue-800 ml-2 mt-3">
-                            {runningRemaining}
+                            {user?.amount - user?.paid_amount}
                           </span>
                         </TableCell>
                         <TableCell>
@@ -472,7 +465,10 @@ export default function DeletePaymentLists({ data }) {
                               size="icon"
                               className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
                               onClick={() => {
-                                handleInvoiceClick(user.id, runningRemaining);
+                                handleInvoiceClick(
+                                  user.id,
+                                  user?.amount - user?.paid_amount
+                                );
                               }}
                             >
                               <Eye className="h-4 w-4" />

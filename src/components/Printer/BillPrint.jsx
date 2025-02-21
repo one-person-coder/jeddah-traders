@@ -14,15 +14,20 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 export const BillPrint = ({ payments, id }) => {
   const [users, setUsers] = useState(payments);
   const filterData = users.find((user) => user.id === Number.parseInt(id));
-  const lowerUsers = users.filter((user) => user.id <= Number.parseInt(id));
-  let remaining = 0;
 
-  lowerUsers.forEach((user) => {
-    remaining += user.amount ? user.amount : 0;
-    remaining -= user.paid_amount ? user.paid_amount : 0;
-  });
+  const notDeletedPayments = payments.filter((payment) => !payment.isDelete);
 
-  const singleUser = { ...filterData, remaining: remaining };
+  const totalAmount = notDeletedPayments.reduce(
+    (acc, user) => (user.isDelete ? acc : acc + user.amount),
+    0
+  );
+  const totalPaid = notDeletedPayments.reduce(
+    (acc, user) => (user.isDelete ? acc : acc + user.paid_amount),
+    0
+  );
+  const totalPending = totalAmount - totalPaid;
+
+  const singleUser = { ...filterData, totalPending };
   const date = new Date(singleUser?.createdAt);
 
   const options = {
@@ -43,7 +48,6 @@ export const BillPrint = ({ payments, id }) => {
 
   return (
     <Card className="min-w-[280px] w-fit !bg-transparent border !rounded-none border-black !shadow-none">
-      {/* Header Section */}
       <CardHeader className="text-center space-y-6 pb-6 border-b">
         <div className="space-y-2">
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
@@ -185,17 +189,24 @@ export const BillPrint = ({ payments, id }) => {
                 </TableRow>
                 <TableRow className="border-b border-gray-400">
                   {singleUser?.items?.length >= 1 ? (
-                    <TableHead className="font-semibold border-r border-gray-400">
-                      Bill
-                    </TableHead>
+                    <>
+                      <TableHead className="font-semibold border-r border-gray-400">
+                        Bill
+                      </TableHead>
+                      <TableCell className="border-gray-400 font-bold">
+                        {singleUser?.amount - singleUser?.paid_amount || 0}
+                      </TableCell>
+                    </>
                   ) : (
-                    <TableHead className="font-semibold border-r border-gray-400">
-                      Remaining
-                    </TableHead>
+                    <>
+                      <TableHead className="font-semibold border-r border-gray-400">
+                        Remaining
+                      </TableHead>
+                      <TableCell className="border-gray-400 font-bold">
+                        {singleUser?.totalPending || 0}
+                      </TableCell>
+                    </>
                   )}
-                  <TableCell className="border-gray-400 font-bold">
-                    {singleUser?.remaining || 0}
-                  </TableCell>
                 </TableRow>
               </TableBody>
             </Table>

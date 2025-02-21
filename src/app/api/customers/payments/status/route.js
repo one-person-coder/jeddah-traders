@@ -25,6 +25,7 @@ export async function POST(request) {
     include: {
       user: true,
       customer: true,
+      items: true,
     },
   });
 

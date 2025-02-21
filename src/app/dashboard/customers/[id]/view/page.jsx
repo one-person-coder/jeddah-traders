@@ -270,7 +270,7 @@ const ViewPage = async ({ params }) => {
                 <hr className="my-4" />
                 <div>
                   <div>
-                    <span className="text-zinc-500">Family Detail</span>
+                    <span className="text-zinc-500">Refferal Detail</span>
                   </div>
                   <div className="mt-3 flex flex-col gap-3">
                     <div className="text-zinc-600 flex gap-1 items-center">

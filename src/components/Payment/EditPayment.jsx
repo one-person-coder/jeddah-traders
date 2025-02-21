@@ -30,9 +30,7 @@ export default function EditPayment({ user }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (
-      (!registerFormData.paidAmount && !registerFormData.amount)
-    ) {
+    if (!registerFormData.paidAmount && !registerFormData.amount) {
       ErrorToast("Please fill in all required fields before proceeding.");
       return;
     }
@@ -44,11 +42,10 @@ export default function EditPayment({ user }) {
       body: JSON.stringify(registerFormData),
     });
 
-    setDisableBtn(false);
-
     const rspJson = await response.json();
 
     if (!rspJson.success) {
+      setDisableBtn(false);
       ErrorToast(rspJson.message);
       return;
     }

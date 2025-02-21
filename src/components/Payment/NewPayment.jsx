@@ -54,12 +54,12 @@ export default function NewPayment() {
       body: JSON.stringify(registerFormData),
     });
 
-    setDisableBtn(false);
-
     const rspJson = await response.json();
 
     if (!rspJson.success) {
+      setDisableBtn(false);
       ErrorToast(rspJson.message);
+
       return;
     }
 

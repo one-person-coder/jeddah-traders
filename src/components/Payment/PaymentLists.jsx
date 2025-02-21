@@ -134,18 +134,8 @@ export default function PaymentLists({ data, customerId, permissions }) {
   const [isVisible, setIsVisible] = React.useState(false);
   const [visibleData, setVisibleData] = React.useState({});
 
-  const handleInvoiceClick = (id) => {
+  const handleInvoiceClick = (id, remaining, totalRemaining) => {
     const filterData = users.find((user) => user.id === id);
-    const lowerUsers = users.filter((user) => user.id <= id);
-    let remaining = 0;
-
-    lowerUsers.forEach((user) => {
-      remaining += user.amount ? user.amount : 0;
-      remaining -= user.paid_amount ? user.paid_amount : 0;
-    });
-
-    console.log(filterData);
-    
 
     const date = new Date(filterData.createdAt);
     const options = {
@@ -163,7 +153,7 @@ export default function PaymentLists({ data, customerId, permissions }) {
     const finalDate = `${time} - ${day}-${month}-${year}, ${weekday}`;
     filterData.createdAt = finalDate;
 
-    const singleUser = { ...filterData, remaining: remaining };
+    const singleUser = { ...filterData, remaining: remaining, totalRemaining };
 
     setVisibleData(singleUser);
     setIsVisible(true);
@@ -235,7 +225,7 @@ export default function PaymentLists({ data, customerId, permissions }) {
                   </div>
                   <p className="!font-bold text-center text-lg">Bill Details</p>
 
-                  {visibleData?.items.length >= 1 ? (
+                  {visibleData?.items?.length >= 1 ? (
                     <div className="border border-gray-200 overflow-hidden">
                       <Table className="border border-gray-400 text-center">
                         <TableHeader>
@@ -255,7 +245,7 @@ export default function PaymentLists({ data, customerId, permissions }) {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {visibleData?.items.map((item, index) => {
+                          {visibleData?.items?.map((item, index) => {
                             return (
                               <TableRow
                                 key={item.id}
@@ -284,7 +274,7 @@ export default function PaymentLists({ data, customerId, permissions }) {
                   <div className="mt-2">
                     <Table className="border border-gray-400">
                       <TableBody>
-                        {visibleData?.items.length >= 1 ? (
+                        {visibleData?.items?.length >= 1 ? (
                           <TableRow className="bg-gray-50 border-b border-gray-400">
                             <TableHead className="font-semibold border-r border-gray-400">
                               Total
@@ -303,14 +293,26 @@ export default function PaymentLists({ data, customerId, permissions }) {
                             {visibleData?.paid_amount || 0}
                           </TableCell>
                         </TableRow>
-                        <TableRow className="border-b border-gray-400">
-                          <TableHead className="font-semibold border-r border-gray-400">
-                            Bill
-                          </TableHead>
-                          <TableCell className="border-gray-400 font-bold">
-                            {visibleData?.remaining || 0}
-                          </TableCell>
-                        </TableRow>
+
+                        {visibleData?.items?.length >= 1 ? (
+                          <TableRow className="border-b border-gray-400">
+                            <TableHead className="font-semibold border-r border-gray-400">
+                              Bill
+                            </TableHead>
+                            <TableCell className="border-gray-400 font-bold">
+                              {visibleData?.remaining || 0}
+                            </TableCell>
+                          </TableRow>
+                        ) : (
+                          <TableRow className="border-b border-gray-400">
+                            <TableHead className="font-semibold border-r border-gray-400">
+                              Bill
+                            </TableHead>
+                            <TableCell className="border-gray-400 font-bold">
+                              {visibleData?.totalRemaining || "-"}
+                            </TableCell>
+                          </TableRow>
+                        )}
                       </TableBody>
                     </Table>
                   </div>
@@ -399,159 +401,170 @@ export default function PaymentLists({ data, customerId, permissions }) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {users.map((user, index) => {
-                    runningRemaining += user.amount || 0;
-                    runningRemaining -= user.paid_amount || 0;
+                  {users
+                    .filter((user) => !user.isDelete)
+                    .map((user, index) => {
+                      runningRemaining += user.amount || 0;
+                      runningRemaining -= user.paid_amount || 0;
 
-                    return !user.isDelete ? (
-                      <TableRow
-                        key={index}
-                        className={`cursor-pointer data-[selected=true]:bg-blue-100 ${
-                          user.isDelete
-                            ? "bg-[#ffd2d2] hover:bg-[#ffd2d2]"
-                            : "hover:bg-gray-200/50"
-                        }`}
-                        onClick={(e) => {
-                          document
-                            .querySelectorAll("[data-selected]")
-                            .forEach((row) => {
-                              row.removeAttribute("data-selected");
-                            });
-                          e.currentTarget.setAttribute("data-selected", "true");
-                        }}
-                      >
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <span className="font-medium">{index + 1}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-3">
-                            <div>
-                              <div className="font-medium text-gray-900">
-                                {user.user.fullname}
+                      return (
+                        <TableRow
+                          key={index}
+                          className={`cursor-pointer data-[selected=true]:bg-blue-100 ${
+                            user.isDelete
+                              ? "bg-[#ffd2d2] hover:bg-[#ffd2d2]"
+                              : "hover:bg-gray-200/50"
+                          }`}
+                          onClick={(e) => {
+                            document
+                              .querySelectorAll("[data-selected]")
+                              .forEach((row) => {
+                                row.removeAttribute("data-selected");
+                              });
+                            e.currentTarget.setAttribute(
+                              "data-selected",
+                              "true"
+                            );
+                          }}
+                        >
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium">{index + 1}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-3">
+                              <div>
+                                <div className="font-medium text-gray-900">
+                                  {user.user.fullname}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-3">
-                            <div>
-                              <div className="font-medium text-gray-900">
-                                {user.customer.fullname}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-3">
+                              <div>
+                                <div className="font-medium text-gray-900">
+                                  {user.customer.fullname}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <User2 className="h-4 w-4 text-purple-600" />
-                            <span className="font-medium">
-                              {new Date(user.createdAt).toLocaleDateString(
-                                "en-US",
-                                {
-                                  month: "short",
-                                  day: "2-digit",
-                                  year: "numeric",
-                                  timeZone: "UTC",
-                                  hour12: true,
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                  second: "2-digit",
-                                }
-                              )}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <User2 className="h-4 w-4 text-purple-600" />
+                              <span className="font-medium">
+                                {new Date(user.createdAt).toLocaleDateString(
+                                  "en-US",
+                                  {
+                                    month: "short",
+                                    day: "2-digit",
+                                    year: "numeric",
+                                    timeZone: "UTC",
+                                    hour12: true,
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    second: "2-digit",
+                                  }
+                                )}
+                              </span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <span
+                                className="inline-flex items-center rounded-md text-xs transition-colors font-medium px-2 py-0.5 capitalize"
+                                style={{
+                                  backgroundColor:
+                                    user.amount && user.paid_amount
+                                      ? "#f3e8ff"
+                                      : user.amount && !user.paid_amount
+                                      ? "#f1f5b2"
+                                      : !user.amount && user.paid_amount
+                                      ? "#c8ffc8"
+                                      : null,
+                                }}
+                              >
+                                {user.amount && user.paid_amount ? (
+                                  <span>partial</span>
+                                ) : user.amount && !user.paid_amount ? (
+                                  <span>pending</span>
+                                ) : !user.amount && user.paid_amount ? (
+                                  <span>paid</span>
+                                ) : null}
+                              </span>
+                            </div>
+                          </TableCell>
+                          <TableCell>{user.amount || "-"}</TableCell>
+                          <TableCell>
+                            <span className="text-muted-foreground flex flex-col gap-2 text-black">
+                              {user.paid_amount ? user.paid_amount : "-"}
                             </span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <span
-                              className="inline-flex items-center rounded-md text-xs transition-colors font-medium px-2 py-0.5 capitalize"
-                              style={{
-                                backgroundColor:
-                                  user.amount && user.paid_amount
-                                    ? "#f3e8ff"
-                                    : user.amount && !user.paid_amount
-                                    ? "#f1f5b2"
-                                    : !user.amount && user.paid_amount
-                                    ? "#c8ffc8"
-                                    : null,
-                              }}
-                            >
-                              {user.amount && user.paid_amount ? (
-                                <span>partial</span>
-                              ) : user.amount && !user.paid_amount ? (
-                                <span>pending</span>
-                              ) : !user.amount && user.paid_amount ? (
-                                <span>paid</span>
-                              ) : null}
+                            <span className="text-[13px] text-blue-800 ml-2 mt-3">
+                              {runningRemaining}
                             </span>
-                          </div>
-                        </TableCell>
-                        <TableCell>{user.amount}</TableCell>
-                        <TableCell>
-                          <span className="text-muted-foreground flex flex-col gap-2 text-black">
-                            {user.paid_amount ? user.paid_amount : "-"}
-                          </span>
-                          <span className="text-[13px] text-blue-800 ml-2 mt-3">
-                            {runningRemaining}
-                          </span>
-                        </TableCell>
-                        <TableCell>
-                          <span className="text-sm text-muted-foreground">
-                            {user.description}
-                          </span>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center justify-end gap-2">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
-                              onClick={() => {
-                                handleInvoiceClick(user.id, runningRemaining);
-                              }}
-                            >
-                              <Eye className="h-4 w-4" />
+                          </TableCell>
+                          <TableCell>
+                            <span className="text-sm text-muted-foreground">
+                              {user.description}
+                            </span>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center justify-end gap-2">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
+                                onClick={() => {
+                                  handleInvoiceClick(
+                                    user.id,
+                                    user?.amount - user?.paid_amount,
+                                    runningRemaining
+                                  );
+                                }}
+                              >
+                                <Eye className="h-4 w-4" />
 
-                              {/* <Link
+                                {/* <Link
                                 href={`/dashboard/customers/${customerId}/payments/${user.id}/view`}
                               >
                                 <Eye className="h-4 w-4" />
                               </Link> */}
-                            </Button>
-                            {permissions.includes("print customer payments") ? (
-                              <Button
-                                asChild
-                                variant="outline"
-                                className="border-2 border-blue-800"
-                              >
-                                <Link
-                                  target="_blank"
-                                  href={`/printer/${customerId}/${user.id}`}
-                                  className="!py-1 !px-3 rounded-sm !h-[2rem] hover:!bg-blue-800 hover:!text-white"
+                              </Button>
+                              {permissions.includes(
+                                "print customer payments"
+                              ) ? (
+                                <Button
+                                  asChild
+                                  variant="outline"
+                                  className="border-2 border-blue-800"
                                 >
-                                  Print
-                                </Link>
-                              </Button>
-                            ) : null}
+                                  <Link
+                                    target="_blank"
+                                    href={`/printer/${customerId}/${user.id}`}
+                                    className="!py-1 !px-3 rounded-sm !h-[2rem] hover:!bg-blue-800 hover:!text-white"
+                                  >
+                                    Print
+                                  </Link>
+                                </Button>
+                              ) : null}
 
-                            {permissions.includes(
-                              "delete customer payments"
-                            ) ? (
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => {
-                                  deleteUser(user.id, user.username);
-                                }}
-                                className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            ) : null}
+                              {permissions.includes(
+                                "delete customer payments"
+                              ) ? (
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => {
+                                    deleteUser(user.id, user.username);
+                                  }}
+                                  className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              ) : null}
 
-                            {/* <Button
+                              {/* <Button
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
@@ -563,11 +576,11 @@ export default function PaymentLists({ data, customerId, permissions }) {
                               <Pencil className="h-4 w-4" />
                             </Link>
                           </Button> */}
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ) : null;
-                  })}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
                 </TableBody>
               </Table>
             </div>
