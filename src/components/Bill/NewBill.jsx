@@ -177,6 +177,10 @@ export default function SaleEntry({ username }) {
     router.push(`/dashboard/customers/${customerId}/payments`);
   };
 
+  React.useEffect(() => {
+    setPayment(total - less);
+  }, [less, items, total]);
+
   return (
     <div className="min-h-screen bg-gray-50/50 p-6">
       <Card className="mx-auto bg-white">
@@ -376,14 +380,6 @@ export default function SaleEntry({ username }) {
                   <div className="flex justify-between items-center">
                     <span className="font-medium text-gray-700">Payment:</span>
                     <div className="flex items-center gap-2">
-                      <Button
-                        type="button"
-                        size="sm"
-                        className="bg-purple-500 hover:bg-purple-600"
-                        onClick={() => setPayment(total - less)}
-                      >
-                        update
-                      </Button>
                       <Input
                         type="number"
                         value={payment.toFixed(2)}
