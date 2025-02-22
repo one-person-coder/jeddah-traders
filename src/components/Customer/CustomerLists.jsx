@@ -288,6 +288,11 @@ export default function CustomerLists({ data, permissions, role }) {
                                 month: "short",
                                 day: "2-digit",
                                 year: "numeric",
+                                timeZone: "UTC",
+                                hour12: true,
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                second: "2-digit",
                               })}
                             </span>
                           </div>
