@@ -253,17 +253,23 @@ export default function CustomerLists({ data, permissions, role }) {
                     </TableCell> */}
                       <TableCell>
                         {user.pNumber ? (
-                          <div className="flex gap-2 items-center bg-orange-300 overflow-hidden w-fit pr-2 rounded-md">
-                            <div
-                              className="hover:bg-orange-400 py-2 px-2"
-                              onClick={() => {
-                                window.location.href = `tel:${user.pNumber}`;
-                              }}
-                            >
-                              <PhoneCall className="h-4 w-4" />
-                            </div>
-                            <span>{user.pNumber}</span>
-                          </div>
+                          <>
+                            {user.pNumber.split("/").map((num, index) => {
+                              return (
+                                <div key={index} className="mb-1 flex gap-2 items-center bg-orange-300 overflow-hidden w-fit pr-2 rounded-md">
+                                  <div
+                                    className="hover:bg-orange-400 py-2 px-2"
+                                    onClick={() => {
+                                      window.location.href = `tel:${num}`;
+                                    }}
+                                  >
+                                    <PhoneCall className="h-4 w-4" />
+                                  </div>
+                                  <span>{num}</span>
+                                </div>
+                              );
+                            })}
+                          </>
                         ) : (
                           "-"
                         )}
