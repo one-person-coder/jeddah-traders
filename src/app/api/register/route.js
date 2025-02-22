@@ -28,6 +28,7 @@ export async function POST(request) {
       refferal_name,
       refferal_account_number,
       refferal_description,
+      description,
     } = reqBody;
 
     async function compressImage(base64Image) {
@@ -90,6 +91,7 @@ export async function POST(request) {
         refferal_name,
         refferal_account_number,
         refferal_description,
+        description,
       },
     });
 

@@ -16,7 +16,6 @@ import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import prisma from "@/lib/prisma";
 
-
 const ViewPage = async ({ params }) => {
   const { id } = await params;
 
@@ -50,6 +49,7 @@ const ViewPage = async ({ params }) => {
       user_img: true,
       createdAt: true,
       account_number: true,
+      description: true,
 
       family_member_name: true,
       family_relation: true,
@@ -196,7 +196,7 @@ const ViewPage = async ({ params }) => {
                     <div>
                       <span>Birth:</span>
                       <span className="text-zinc-500 ml-2">
-                        {formattedDate}
+                        {new Date(user.date).toISOString().split("T")[0]}
                       </span>
                     </div>
                   </div>
@@ -219,6 +219,15 @@ const ViewPage = async ({ params }) => {
                     <div>
                       <span>Address:</span>
                       <span className="text-zinc-500 ml-2">{user.address}</span>
+                    </div>
+                  </div>
+                  <div className="text-zinc-600 flex gap-1 items-center">
+                    <MessageSquareText className="h-5 w-5" />
+                    <div>
+                      <span>Description:</span>
+                      <span className="text-zinc-500 ml-2">
+                        {user.description || "-"}
+                      </span>
                     </div>
                   </div>
                 </div>

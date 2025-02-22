@@ -25,6 +25,7 @@ export default function NewCustomer() {
     status: "pending",
     date: "",
     cnic_no: "",
+    description: "",
 
     family_member_name: "",
     family_relation: "",
@@ -64,7 +65,6 @@ export default function NewCustomer() {
     e.preventDefault();
 
     console.log(registerFormData);
-    
 
     if (
       !registerFormData.fullname ||
@@ -292,6 +292,16 @@ export default function NewCustomer() {
                       name="address"
                       placeholder="Enter Address"
                       className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold  mb-2 text-sm">Description</h3>
+                    <textarea
+                      type="text"
+                      name="description"
+                      placeholder="Enter Description"
+                      className="min-h-[48px] max-h-[100px] w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
                       onChange={handleInputChange}
                     />
                   </div>

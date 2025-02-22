@@ -41,6 +41,7 @@ const EditPage = async ({ params }) => {
       role: true,
       cnic_no: true,
       permissions: true,
+      description: true,
 
       family_member_name: true,
       family_relation: true,

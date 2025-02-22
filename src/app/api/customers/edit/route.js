@@ -36,6 +36,7 @@ export async function POST(request) {
       cnic_front_img_bak,
       cnic_back_img_bak,
       user_img_bak,
+      description,
 
       family_member_name,
       family_relation,
@@ -122,6 +123,8 @@ export async function POST(request) {
         cnic_back_img: cnicBackBuffer || user.cnic_back_img,
         user_img: userImgBuffer || user.user_img,
         cnic_no: cnic_no || user.cnic_no,
+        description: description || user.description,
+
         family_member_name: family_member_name || user.family_member_name,
         family_relation: family_relation || user.family_relation,
         family_contact_number:
