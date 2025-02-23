@@ -228,7 +228,7 @@ export default function CustomerLists({ data, permissions, role }) {
                             <div className="font-medium text-gray-900">
                               {user.fullname}
                             </div>
-                            <div className="text-[13px]">
+                            <div className="text-[12px]">
                               {user.last_name || "-"}
                             </div>
                           </div>
