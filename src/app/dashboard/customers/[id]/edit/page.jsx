@@ -29,6 +29,7 @@ const EditPage = async ({ params }) => {
     select: {
       id: true,
       fullname: true,
+      last_name: true,
       account_number: true,
       father_name: true,
       address: true,

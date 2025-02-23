@@ -26,6 +26,7 @@ export async function GET(request) {
     select: {
       id: true,
       fullname: true,
+      last_name: true,
       username: true,
       email: true,
       pNumber: true,

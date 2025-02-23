@@ -9,6 +9,7 @@ import {
   Phone,
   Transgender,
   UserCheck,
+  Workflow,
 } from "lucide-react";
 import CheckSvg from "@/components/utils/SvgJsx/CheckSvg";
 import BookOpenSvg from "@/components/utils/SvgJsx/BookOpenSvg";
@@ -35,6 +36,7 @@ const ViewPage = async ({ params }) => {
       id: true,
       fullname: true,
       address: true,
+      last_name: true,
       father_name: true,
       username: true,
       email: true,
@@ -149,6 +151,15 @@ const ViewPage = async ({ params }) => {
                       <span>Full Name:</span>
                       <span className="text-zinc-500 ml-2">
                         {user.fullname}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="text-zinc-600 flex gap-1 items-center">
+                    <Workflow className="h-5 w-5" />
+                    <div>
+                      <span>Last Name:</span>
+                      <span className="text-zinc-500 ml-2">
+                        {user.last_name}
                       </span>
                     </div>
                   </div>

@@ -22,6 +22,7 @@ export async function POST(request) {
     const {
       id,
       fullname,
+      last_name,
       father_name,
       account_number,
       address,
@@ -110,6 +111,7 @@ export async function POST(request) {
       data: {
         fullname: fullname || user.fullname,
         father_name: father_name || user.father_name,
+        last_name: last_name || user.last_name,
         address: address || user.address,
         account_number: parseInt(account_number) || user.account_number,
         username: username || user.username,

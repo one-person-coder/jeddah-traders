@@ -12,6 +12,7 @@ model UserInfo {
   account_number          Int?            @unique
   fullname                String
   father_name             String?
+  last_name               String?
   username                String          @unique
   email                   String          @unique
   pNumber                 String?

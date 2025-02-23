@@ -215,6 +215,19 @@ export default function EditCustomer({ user, permissions }) {
                   </div>
                   <div>
                     <h3 className="font-semibold  mb-2 text-sm">
+                      Last Name
+                    </h3>
+                    <input
+                      type="text"
+                      name="last_name"
+                      placeholder="Enter Last Name"
+                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
+                      onChange={handleInputChange}
+                      value={registerFormData.last_name}
+                    />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold  mb-2 text-sm">
                       Father Name <span className="text-red-500">*</span>
                     </h3>
                     <input

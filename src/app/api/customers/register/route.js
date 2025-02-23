@@ -23,6 +23,7 @@ export async function POST(request) {
     const {
       fullname,
       father_name,
+      last_name,
       address,
       username,
       email,
@@ -93,6 +94,7 @@ export async function POST(request) {
     const newUser = await prisma.userInfo.create({
       data: {
         fullname,
+        last_name,
         father_name,
         address,
         username,

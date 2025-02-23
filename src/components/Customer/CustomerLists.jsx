@@ -228,6 +228,9 @@ export default function CustomerLists({ data, permissions, role }) {
                             <div className="font-medium text-gray-900">
                               {user.fullname}
                             </div>
+                            <div className="text-[13px]">
+                              {user.last_name || "-"}
+                            </div>
                           </div>
                         </div>
                       </TableCell>
@@ -256,7 +259,10 @@ export default function CustomerLists({ data, permissions, role }) {
                           <>
                             {user.pNumber.split("/").map((num, index) => {
                               return (
-                                <div key={index} className="mb-1 flex gap-2 items-center bg-orange-300 overflow-hidden w-fit pr-2 rounded-md">
+                                <div
+                                  key={index}
+                                  className="mb-1 flex gap-2 items-center bg-orange-300 overflow-hidden w-fit pr-2 rounded-md"
+                                >
                                   <div
                                     className="hover:bg-orange-400 py-2 px-2"
                                     onClick={() => {

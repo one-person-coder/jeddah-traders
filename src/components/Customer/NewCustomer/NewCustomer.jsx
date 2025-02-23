@@ -16,6 +16,7 @@ export default function NewCustomer() {
   const [registerFormData, setRegisterFormData] = useState({
     fullname: "",
     username: "",
+    last_name: "",
     father_name: "",
     address: "",
     email: "",
@@ -194,6 +195,18 @@ export default function NewCustomer() {
                       type="text"
                       name="fullname"
                       placeholder="Enter Full Name"
+                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold  mb-2 text-sm">
+                      Last Name
+                    </h3>
+                    <input
+                      type="text"
+                      name="last_name"
+                      placeholder="Enter Last Name"
                       className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
                       onChange={handleInputChange}
                     />

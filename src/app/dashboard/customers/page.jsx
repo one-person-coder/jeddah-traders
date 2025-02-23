@@ -31,6 +31,7 @@ const CustomersPage = async () => {
     select: {
       id: true,
       fullname: true,
+      last_name: true,
       username: true,
       email: true,
       gender: true,
