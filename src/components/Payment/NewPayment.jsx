@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ChevronDown } from "lucide-react";
+import { Checkbox } from "../ui/checkbox";
 
 export default function NewPayment() {
   const { id } = useParams();
@@ -23,6 +24,14 @@ export default function NewPayment() {
     method: "",
     customerId: id,
   });
+
+  const [isChecked, setIsChecked] = useState(true);
+
+  const handleToggle = (e) => {
+    if (e.target.type === "checkbox") return;
+    setIsChecked((prev) => !prev);
+  };
+
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -65,7 +74,11 @@ export default function NewPayment() {
 
     SuccessToast("Payment Registered successful!");
 
-    window.open(`/printer/${rspJson?.paymentRecord?.customer_id}/${rspJson?.paymentRecord?.id}`);
+    if (isChecked) {
+      window.open(
+        `/printer/${rspJson?.paymentRecord?.customer_id}/${rspJson?.paymentRecord?.id}`
+      );
+    }
 
     router.push(`/dashboard/customers/${id}/payments`);
   };
@@ -140,6 +153,29 @@ export default function NewPayment() {
                       className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF] min-h-[100px] max-h-[200px]"
                       onChange={handleInputChange}
                     ></textarea>
+                  </div>
+                  <div>
+                    <div
+                      onClick={handleToggle}
+                      className="bg-[lightblue] group p-4 rounded-lg items-center flex justify-between space-x-3 cursor-pointer"
+                    >
+                      <div className="grid gap-1.5" onClick={handleToggle}>
+                        <label
+                          htmlFor="print"
+                          className="text-xl font-bold leading-none cursor-pointer"
+                        >
+                          Print
+                        </label>
+                      </div>
+                      <Checkbox
+                        id="print"
+                        className={`scale-125 !text-white !w-5 !font-bold !h-5 group-hover:scale-150 duration-200 !border-none ${
+                          isChecked ? "!bg-blue-600" : "!bg-white"
+                        } !rounded-[2px]`}
+                        checked={isChecked}
+                        onClick={() => setIsChecked((prev) => !prev)}
+                      />
+                    </div>
                   </div>
                 </div>
 
