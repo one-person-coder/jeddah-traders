@@ -36,9 +36,6 @@ const ViewPage = async ({ params }) => {
     user.date = user.date.toISOString().split("T")[0];
   }
 
-  console.log(permissions);
-  
-
   return (
     <>
       {permissions.includes("view user") ? (

@@ -65,8 +65,6 @@ export default function NewCustomer() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log(registerFormData);
-
     if (
       !registerFormData.fullname ||
       !registerFormData.father_name ||

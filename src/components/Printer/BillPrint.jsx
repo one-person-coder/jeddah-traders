@@ -17,11 +17,14 @@ export const BillPrint = ({ payments, id }) => {
 
   const notDeletedPayments = payments.filter((payment) => !payment.isDelete);
 
-  const totalAmount = notDeletedPayments.reduce(
+  const filterPayments = notDeletedPayments.filter(
+    (user) => !user.isDelete && user.id <= id
+  );
+  const totalAmount = filterPayments.reduce(
     (acc, user) => (user.isDelete ? acc : acc + user.amount),
     0
   );
-  const totalPaid = notDeletedPayments.reduce(
+  const totalPaid = filterPayments.reduce(
     (acc, user) => (user.isDelete ? acc : acc + user.paid_amount),
     0
   );
@@ -44,9 +47,9 @@ export const BillPrint = ({ payments, id }) => {
     .toLocaleString("en-US", options)
     .replace(",", "")
     .replace(/(\d{2})(?=\d{4})/, "$1-");
-  console.log(singleUser);
 
   return (
+    <div className="print-area">
     <Card className="min-w-[280px] w-fit !bg-transparent border !rounded-none border-black !shadow-none">
       <CardHeader className="text-center space-y-6 pb-6 border-b">
         <div className="space-y-2">
@@ -99,7 +102,7 @@ export const BillPrint = ({ payments, id }) => {
                     Customer ID:
                   </TableHead>
                   <TableCell className="font-medium border-gray-400">
-                    <span>{singleUser?.customer?.id}</span>
+                    <span>{singleUser?.customer?.account_number}</span>
                   </TableCell>
                 </TableRow>
                 <TableRow className="border-b border-gray-400">
@@ -226,5 +229,6 @@ export const BillPrint = ({ payments, id }) => {
         `}
       </Script>
     </Card>
+    </div>
   );
 };

@@ -78,6 +78,7 @@ export async function POST(request) {
     }
 
     return NextResponse.json({
+      paymentRecord,
       success: true,
       message: "Payment registered successfully",
     });

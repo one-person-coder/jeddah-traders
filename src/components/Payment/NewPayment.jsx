@@ -64,6 +64,9 @@ export default function NewPayment() {
     }
 
     SuccessToast("Payment Registered successful!");
+
+    window.open(`/printer/${rspJson?.paymentRecord?.customer_id}/${rspJson?.paymentRecord?.id}`);
+
     router.push(`/dashboard/customers/${id}/payments`);
   };
 

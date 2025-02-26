@@ -136,6 +136,18 @@ export default function PaymentLists({ data, customerId, permissions }) {
 
   const handleInvoiceClick = (id, remaining, totalRemaining) => {
     const filterData = users.find((user) => user.id === id);
+    const filterPayments = users.filter(
+      (user) => !user.isDelete && user.id <= id
+    );
+    const totalAmount = filterPayments.reduce(
+      (acc, user) => (user.isDelete ? acc : acc + user.amount),
+      0
+    );
+    const totalPaid = filterPayments.reduce(
+      (acc, user) => (user.isDelete ? acc : acc + user.paid_amount),
+      0
+    );
+    const totalPending = totalAmount - totalPaid;
 
     const date = new Date(filterData.createdAt);
     const options = {
@@ -153,7 +165,7 @@ export default function PaymentLists({ data, customerId, permissions }) {
     const finalDate = `${time} - ${day}-${month}-${year}, ${weekday}`;
     filterData.createdAt = finalDate;
 
-    const singleUser = { ...filterData, remaining: remaining, totalRemaining };
+    const singleUser = { ...filterData, remaining: remaining, totalRemaining: totalPending };
 
     setVisibleData(singleUser);
     setIsVisible(true);
@@ -306,7 +318,7 @@ export default function PaymentLists({ data, customerId, permissions }) {
                         ) : (
                           <TableRow className="border-b border-gray-400">
                             <TableHead className="font-semibold border-r border-gray-400">
-                              Bill
+                              Remaining
                             </TableHead>
                             <TableCell className="border-gray-400 font-bold">
                               {visibleData?.totalRemaining || "-"}
