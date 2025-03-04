@@ -103,7 +103,7 @@ export async function POST(request) {
         email: email || user.email,
         pNumber: pNumber || user.pNumber,
         gender: gender || user.gender,
-        date: date ? new Date(date) : user.date,
+        date: date ? new Date(createdAt + "Z").toISOString() : user.date,
         status: status || user.status,
         role: role || user.role,
         user_img: userImgBuffer || user.user_img,

@@ -472,7 +472,7 @@ export default function PaymentLists({ data, customerId, permissions }) {
                                     month: "short",
                                     day: "2-digit",
                                     year: "numeric",
-                                    timeZone: "UTC",
+                                    timeZone: "Asia/Karachi",
                                     hour12: true,
                                     hour: "2-digit",
                                     minute: "2-digit",

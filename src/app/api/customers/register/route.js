@@ -104,7 +104,7 @@ export async function POST(request) {
         pNumber,
         password: hashedPassword,
         gender,
-        date: new Date(date),
+        date: new Date(createdAt + "Z").toISOString(),
         status,
         cnic_front_img: cnicFrontBuffer,
         cnic_back_img: cnicBackBuffer,

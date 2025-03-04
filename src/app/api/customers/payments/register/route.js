@@ -55,7 +55,7 @@ export async function POST(request) {
         paid_amount: parseFloat(paidAmount) || (less ? parseFloat(less) : null),
         method: paymentMethod,
         description: description,
-        createdAt: new Date(createdAt),
+        createdAt: new Date(createdAt + "Z").toISOString(),
         total: total ? parseFloat(total) : null,
         less: less ? parseFloat(less) : null,
         payment: payment ? parseFloat(payment) : null,

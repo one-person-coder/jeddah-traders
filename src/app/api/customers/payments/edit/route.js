@@ -56,7 +56,7 @@ export async function POST(request) {
         paid_amount: parseFloat(paidAmount),
         method: paymentMethod,
         description: description,
-        createdAt: new Date(createdAt),
+        createdAt: new Date(createdAt + "Z").toISOString(),
       },
     });
 

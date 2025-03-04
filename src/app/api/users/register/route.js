@@ -82,7 +82,7 @@ export async function POST(request) {
         pNumber,
         password: hashedPassword,
         gender,
-        date: new Date(date),
+        date: new Date(createdAt + "Z").toISOString(),
         status,
         role: "manager",
         user_img: userImgBuffer,

@@ -118,7 +118,7 @@ export async function POST(request) {
         email: email || user.email,
         pNumber: pNumber || user.pNumber,
         gender: gender || user.gender,
-        date: date ? new Date(date) : user.date,
+        date: date ? new Date(createdAt + "Z").toISOString() : user.date,
         status: status || user.status,
         role: role || user.role,
         cnic_front_img: cnicFrontBuffer || user.cnic_front_img,

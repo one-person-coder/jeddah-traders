@@ -107,7 +107,7 @@ export default async function ViewPayment({ params }) {
                           month: "short",
                           day: "2-digit",
                           year: "numeric",
-                          timeZone: "UTC",
+                          timeZone: "Asia/Karachi",
                           hour12: true,
                           hour: "2-digit",
                           minute: "2-digit",
@@ -137,7 +137,7 @@ export default async function ViewPayment({ params }) {
                     <input
                       disabled
                       className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[9px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
-                      value={user?.method || 'None'}
+                      value={user?.method || "None"}
                     />
                   </div>
                   <div className="sm:col-span-2">

@@ -82,12 +82,32 @@ function filterUsersByPaymentDate(userData, targetDate) {
       return false;
 
     return user.customerPayments.some((payment) => {
-      if (!payment.createdAt) return false;
+      if (!payment.createdAt || payment.isDelete) return false;
 
       const paymentDate = new Date(payment.createdAt);
       const paymentYear = paymentDate.getFullYear();
       const paymentMonth = paymentDate.getMonth() + 1; // Convert to 1-12
       const paymentDay = paymentDate.getDate();
+
+      // if (
+      //   paymentYear === parseInt(targetYear) &&
+      //   paymentMonth === targetMonth &&
+      //   paymentDay === parseInt(targetDay)
+      // ) {
+      //   console.log(
+      //     "Year",
+      //     paymentYear,
+      //     parseInt(targetYear),
+      //     payment.description
+      //   );
+      //   console.log("Month", paymentMonth, targetMonth, payment.description);
+      //   console.log(
+      //     "Day",
+      //     paymentDay,
+      //     parseInt(targetDay),
+      //     payment.description
+      //   );
+      // }
 
       return (
         paymentYear === parseInt(targetYear) &&
@@ -110,6 +130,8 @@ const ReportPage = ({ userData }) => {
     setFormattedDate(formattedDate);
 
     const filteredUsers = filterUsersByPaymentDate(mainUsers, formattedDate);
+    console.log("Filter", filteredUsers);
+
     setUsers(filteredUsers || []);
 
     const isoDate = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
@@ -128,30 +150,15 @@ const ReportPage = ({ userData }) => {
       <div className="py-8 space-y-8">
         <Card className="border-none shadow-lg">
           <CardContent className="p-6">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
-              <div className="flex flex-wrap items-center gap-3">
-                <Button
-                  variant="outline"
-                  className="border-dashed"
-                  onClick={() => setIsFiltersVisible(!isFiltersVisible)}
-                >
-                  <Filter className="mr-2 h-4 w-4 text-purple-600" />
-                  Filters
-                </Button>
-              </div>
-            </div>
-
             {/* Filters */}
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 mb-6 p-4 bg-gray-50 rounded-lg border border-dashed">
               <Select>
                 <SelectTrigger className="bg-white">
-                  <SelectValue placeholder="Status: All" />
+                  <SelectValue placeholder="Reports" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="inactive">Inactive</SelectItem>
+                  <SelectItem value="reports">Reports</SelectItem>
+                  <SelectItem value="users">Users</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -293,7 +300,7 @@ const ReportPage = ({ userData }) => {
                                   month: "short",
                                   day: "2-digit",
                                   year: "numeric",
-                                  timeZone: "UTC",
+                                  timeZone: "Asia/Karachi",
                                   hour12: true,
                                   hour: "2-digit",
                                   minute: "2-digit",
