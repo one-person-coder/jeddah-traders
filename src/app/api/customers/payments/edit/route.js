@@ -28,14 +28,6 @@ export async function POST(request) {
       createdAt,
     } = reqBody;
 
-    console.log(
-      customer_id,
-      amount,
-      paidAmount,
-      description,
-      method,
-      createdAt
-    );
 
     const user = await prisma.userInfo.findUnique({
       where: { id: parseInt(customer_id) },

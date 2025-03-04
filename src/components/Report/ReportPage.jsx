@@ -114,9 +114,6 @@ function filterUsersByPaymentDate(payments, startDate, endDate) {
   let start = parseDate(startDate, true); // Start date (beginning of the day)
   let end = parseDate(endDate, false); // End date (end of the day)
 
-  console.log("Start Date:", start.getTime(), startDate);
-  console.log("End Date:", end.getTime(), endDate);
-
   if (isNaN(start.getTime()) || isNaN(end.getTime())) {
     console.error("Error: Invalid start or end date format!");
     return [];
@@ -124,8 +121,6 @@ function filterUsersByPaymentDate(payments, startDate, endDate) {
 
   return payments.filter((payment) => {
     const paymentDate = new Date(payment.createdAt);
-    console.log("real", paymentDate.getTime(), start.getTime());
-
 
     return (
       paymentDate.getTime() >= start.getTime() &&
@@ -167,8 +162,6 @@ const ReportPage = ({ userData }) => {
   const [endDate, setEndDate] = useState("");
 
   useEffect(() => {
-    console.log(userData);
-
     const formattedDate = getCurrentFormattedDate();
     // setFormattedDate(formattedDate);
     setStartDate(convertToDateInputFormat(formattedDate));
@@ -176,8 +169,8 @@ const ReportPage = ({ userData }) => {
 
     const filteredUsers = filterUsersByPaymentDate(
       mainUsers,
-      formattedDate,
-      formatSpecificDate(endDate)
+      formatSpecificDate(convertToDateInputFormat(formattedDate)),
+      formatSpecificDate(convertToDateInputFormat(formattedDate))
     );
 
     setUsers(filteredUsers || []);
@@ -193,10 +186,6 @@ const ReportPage = ({ userData }) => {
       formatSpecificDate(startDate),
       formatSpecificDate(endDate)
     );
-
-    console.log("logging end", formatSpecificDate(endDate));
-
-    console.log(filteredUsers);
 
     setUsers(filteredUsers || []);
   };
