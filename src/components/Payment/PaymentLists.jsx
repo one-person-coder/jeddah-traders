@@ -403,9 +403,9 @@ export default function PaymentLists({ data, customerId, permissions }) {
                   <TableRow className="bg-gray-50">
                     <TableHead>Sr.</TableHead>
                     <TableHead>USER</TableHead>
-                    <TableHead>CUSTOMER</TableHead>
+                    {/* <TableHead>CUSTOMER</TableHead> */}
                     <TableHead>DATE</TableHead>
-                    <TableHead>STATUS</TableHead>
+                    {/* <TableHead>STATUS</TableHead> */}
                     <TableHead>Bill</TableHead>
                     <TableHead>PAID AMOUNT</TableHead>
                     <TableHead>DESCRIPTION</TableHead>
@@ -453,7 +453,7 @@ export default function PaymentLists({ data, customerId, permissions }) {
                               </div>
                             </div>
                           </TableCell>
-                          <TableCell>
+                          {/* <TableCell>
                             <div className="flex items-center gap-3">
                               <div>
                                 <div className="font-medium text-gray-900">
@@ -461,7 +461,7 @@ export default function PaymentLists({ data, customerId, permissions }) {
                                 </div>
                               </div>
                             </div>
-                          </TableCell>
+                          </TableCell> */}
                           <TableCell>
                             <div className="flex items-center gap-2">
                               <User2 className="h-4 w-4 text-purple-600" />
@@ -482,7 +482,7 @@ export default function PaymentLists({ data, customerId, permissions }) {
                               </span>
                             </div>
                           </TableCell>
-                          <TableCell>
+                          {/* <TableCell>
                             <div className="flex items-center gap-2">
                               <span
                                 className="inline-flex items-center rounded-md text-xs transition-colors font-medium px-2 py-0.5 capitalize"
@@ -506,7 +506,7 @@ export default function PaymentLists({ data, customerId, permissions }) {
                                 ) : null}
                               </span>
                             </div>
-                          </TableCell>
+                          </TableCell> */}
                           <TableCell>{user.amount || "-"}</TableCell>
                           <TableCell>
                             <span className="text-muted-foreground flex flex-col gap-2 text-black">

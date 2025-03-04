@@ -56,7 +56,7 @@ export default async function DashboardCards({ data }) {
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">
-                  Pending Amount
+                  Remaining Amount
                 </p>
                 <h2 className="text-3xl font-bold">{totalPending}</h2>
               </div>

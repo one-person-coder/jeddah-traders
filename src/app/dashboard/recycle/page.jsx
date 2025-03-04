@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import prisma from "@/lib/prisma";
 import { Card, CardContent } from "@/components/ui/card";
-import { Trash, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import DeletePaymentLists from "@/components/DeletePayment/DeletePaymentLists";
 
 export const revalidate = 0;
@@ -19,6 +19,7 @@ const RecycleBin = async () => {
   }
 
   const deletedPayments = await prisma.paymentRecord.findMany({
+    where: { isDelete: true },
     include: {
       user: true,
       customer: true,

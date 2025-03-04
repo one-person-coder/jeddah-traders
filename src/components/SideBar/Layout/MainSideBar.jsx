@@ -10,6 +10,7 @@ import {
   ChartColumn,
   Box,
   Trash2,
+  NotebookText,
 } from "lucide-react";
 import TopNav from "./TopNavBar";
 import AnchorLink from "@/components/utils/AnchorLink";
@@ -70,6 +71,11 @@ export default function Sidebar({ children, userType, permissions }) {
     }
 
     if (userType === "admin") {
+      navigation.push({
+        title: "Reports",
+        icon: NotebookText,
+        url: "/dashboard/reports",
+      });
       navigation.push({
         title: "Recycle Bin",
         icon: Trash2,
@@ -138,7 +144,6 @@ export default function Sidebar({ children, userType, permissions }) {
           isDarkMode={isDarkMode}
           toggleDarkMode={() => setIsDarkMode(!isDarkMode)}
         />
-
         {/* Sidebar Backdrop */}
         {isMobileMenuOpen && (
           <div

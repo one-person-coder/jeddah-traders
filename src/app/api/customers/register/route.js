@@ -62,9 +62,11 @@ export async function POST(request) {
           message:
             existingUser.username === username
               ? "Username already exists"
-              : existingUser.email == email
+              : existingUser.email === email
               ? "Email already exists"
-              : "Account No already assign another user.",
+              : existingUser.account_number === ac
+              ? "Account No already assign another user."
+              : "Another issue!",
         },
         { status: 400 }
       );
@@ -91,7 +93,7 @@ export async function POST(request) {
     const salt = await bcryptjs.genSalt(10);
     const hashedPassword = await bcryptjs.hash(password, salt);
 
-    const newUser = await prisma.userInfo.create({
+    await prisma.userInfo.create({
       data: {
         fullname,
         last_name,
