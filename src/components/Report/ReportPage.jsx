@@ -1,21 +1,15 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 function calculateDaysAgo(selectedDate) {
   const today = new Date();
   today.setUTCHours(0, 0, 0, 0); // Normalize today to UTC midnight
 
-  // Parse selectedDate correctly as UTC
-  const inputDate = new Date(selectedDate + "T00:00:00.000Z"); // Force UTC
-
-  console.log("Today (UTC):", today.toISOString());
-  console.log("Selected Date (UTC):", inputDate.toISOString());
+  const inputDate = new Date(selectedDate);
+  inputDate.setUTCHours(0, 0, 0, 0); // Normalize selectedDate to UTC
 
   const diffTime = today.getTime() - inputDate.getTime();
-  const daysAgo = Math.floor(diffTime / (1000 * 60 * 60 * 24)); // Use Math.floor
-
-  console.log("Days Ago:", daysAgo);
-  return daysAgo;
+  return Math.floor(diffTime / (1000 * 60 * 60 * 24));
 }
 
 function getStatsHeading(daysAgo) {
@@ -27,51 +21,37 @@ function getStatsHeading(daysAgo) {
   return `Yearly Stats`;
 }
 
-function getStatsHeadingFromDate(selectedDate) {
-  const daysAgo = calculateDaysAgo(selectedDate);
-  return getStatsHeading(daysAgo);
+// ✅ Function to format date as "3-Mar-2025, Monday"
+function formatCurrentUTCDate() {
+  const now = new Date();
+  now.setUTCHours(0, 0, 0, 0); // Ensure consistency
+
+  const day = now.getUTCDate();
+  const month = now.toLocaleString("en-GB", { month: "short", timeZone: "UTC" }); // "Mar"
+  const year = now.getUTCFullYear();
+  const weekday = now.toLocaleString("en-GB", { weekday: "long", timeZone: "UTC" }); // "Monday"
+
+  return `${day}-${month}-${year}, ${weekday}`;
 }
 
-function convertToISODate(formattedDate) {
-  const datePart = formattedDate.split(",")[0]; // "3-Mar-2025"
-  const [day, month, year] = datePart.split("-");
+const ReportPage = () => {
+  const [statsHeading, setStatsHeading] = useState("Loading Stats...");
+  const [formattedDate, setFormattedDate] = useState("");
 
-  const months = {
-    Jan: "01",
-    Feb: "02",
-    Mar: "03",
-    Apr: "04",
-    May: "05",
-    Jun: "06",
-    Jul: "07",
-    Aug: "08",
-    Sep: "09",
-    Oct: "10",
-    Nov: "11",
-    Dec: "12",
-  };
-
-  // Ensure day is properly formatted
-  const formattedDay = String(day).padStart(2, "0");
-
-  const isoDate = `${year}-${months[month]}-${formattedDay}`;
-  console.log("Converted ISO Date:", isoDate);
-
-  return isoDate;
-}
-
-const ReportPage = ({ formattedDate }) => {
-  const [formatDate, setFormatDate] = useState(formattedDate);
-
-  const [statsHeading, setStatsHeading] = useState(() => {
-    return getStatsHeadingFromDate(convertToISODate(formatDate));
-  });
+  useEffect(() => {
+    const formattedUTCDate = formatCurrentUTCDate();
+    setFormattedDate(formattedUTCDate);
+    
+    const isoDate = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
+    const daysAgo = calculateDaysAgo(isoDate);
+    setStatsHeading(getStatsHeading(daysAgo));
+  }, []);
 
   return (
     <div>
       <h2 className="text-2xl font-semibold text-gray-900">
         {statsHeading} [
-        <span className="font-semibold text-blue-700"> {formatDate} </span>]
+        <span className="font-semibold text-blue-700">{formattedDate}</span>]
       </h2>
     </div>
   );
