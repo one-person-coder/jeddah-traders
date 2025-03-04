@@ -1,12 +1,25 @@
 "use client";
 import React, { useState, useEffect } from "react";
 
+// ✅ Function to get current **Pakistan time** (or local time)
+function getCurrentFormattedDate() {
+  const now = new Date();
+
+  const day = now.getDate(); // Get local day
+  const month = now.toLocaleString("en-GB", { month: "short" }); // "Mar"
+  const year = now.getFullYear();
+  const weekday = now.toLocaleString("en-GB", { weekday: "long" }); // "Monday"
+
+  return `${day}-${month}-${year}, ${weekday}`;
+}
+
+// ✅ Function to calculate days ago correctly based on local time
 function calculateDaysAgo(selectedDate) {
   const today = new Date();
-  today.setUTCHours(0, 0, 0, 0); // Normalize today to UTC midnight
+  today.setHours(0, 0, 0, 0); // Normalize to local midnight
 
   const inputDate = new Date(selectedDate);
-  inputDate.setUTCHours(0, 0, 0, 0); // Normalize selectedDate to UTC
+  inputDate.setHours(0, 0, 0, 0); // Normalize selectedDate to local midnight
 
   const diffTime = today.getTime() - inputDate.getTime();
   return Math.floor(diffTime / (1000 * 60 * 60 * 24));
@@ -21,27 +34,16 @@ function getStatsHeading(daysAgo) {
   return `Yearly Stats`;
 }
 
-// ✅ Function to format date as "3-Mar-2025, Monday"
-function formatCurrentUTCDate() {
-  const now = new Date();
-  now.setUTCHours(0, 0, 0, 0); // Ensure consistency
-
-  const day = now.getUTCDate();
-  const month = now.toLocaleString("en-GB", { month: "short", timeZone: "UTC" }); // "Mar"
-  const year = now.getUTCFullYear();
-  const weekday = now.toLocaleString("en-GB", { weekday: "long", timeZone: "UTC" }); // "Monday"
-
-  return `${day}-${month}-${year}, ${weekday}`;
-}
-
 const ReportPage = () => {
   const [statsHeading, setStatsHeading] = useState("Loading Stats...");
   const [formattedDate, setFormattedDate] = useState("");
 
   useEffect(() => {
-    const formattedUTCDate = formatCurrentUTCDate();
-    setFormattedDate(formattedUTCDate);
-    
+    // ✅ Get correctly formatted **local** date
+    const formattedDate = getCurrentFormattedDate();
+    setFormattedDate(formattedDate);
+
+    // ✅ Use local time instead of UTC
     const isoDate = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
     const daysAgo = calculateDaysAgo(isoDate);
     setStatsHeading(getStatsHeading(daysAgo));
