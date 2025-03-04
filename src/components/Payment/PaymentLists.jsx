@@ -158,6 +158,7 @@ export default function PaymentLists({ data, customerId, permissions }) {
       month: "short",
       year: "numeric",
       weekday: "long",
+      timeZone: "UTC",
     };
 
     const formattedDate = date.toLocaleString("en-GB", options);
@@ -165,7 +166,11 @@ export default function PaymentLists({ data, customerId, permissions }) {
     const finalDate = `${time} - ${day}-${month}-${year}, ${weekday}`;
     filterData.createdAt = finalDate;
 
-    const singleUser = { ...filterData, remaining: remaining, totalRemaining: totalPending };
+    const singleUser = {
+      ...filterData,
+      remaining: remaining,
+      totalRemaining: totalPending,
+    };
 
     setVisibleData(singleUser);
     setIsVisible(true);
@@ -472,7 +477,7 @@ export default function PaymentLists({ data, customerId, permissions }) {
                                     month: "short",
                                     day: "2-digit",
                                     year: "numeric",
-                                    timeZone: "Asia/Karachi",
+                                    timeZone: "UTC",
                                     hour12: true,
                                     hour: "2-digit",
                                     minute: "2-digit",

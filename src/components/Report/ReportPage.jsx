@@ -70,11 +70,14 @@ function getStatsHeading(daysAgo) {
   return `Yearly Stats`;
 }
 
-function filterUsersByPaymentDate(userData, targetDate) {
-  // Extract day, month, and year from targetDate format "3-Mar-2025, Monday"
-  const [targetDay, targetMonthStr, targetYear] = targetDate
+function filterUsersByPaymentDate(userData, startDate, endDate) {
+  const [startDay, startMonthStr, startYear] = startDate
     .split(",")[0]
     .split("-");
+  const [endDay, endMonthStr, endYear] = endDate.split(",")[0].split("-");
+
+  console.log(startDay, startMonthStr, startYear);
+  console.log(endDay, endMonthStr, endYear);
 
   // Convert month string (e.g., "Mar") to month number (1-12)
   const monthMap = {
@@ -91,32 +94,34 @@ function filterUsersByPaymentDate(userData, targetDate) {
     Nov: 11,
     Dec: 12,
   };
-  const targetMonth = monthMap[targetMonthStr];
+
+  const startMonth = monthMap[startMonthStr];
+  const endMonth = monthMap[endMonthStr];
+
+  // Convert to Date objects for comparison
+  const startDateObj = new Date(`${startYear}-${startMonth}-${startDay}`);
+  const endDateObj = new Date(`${endYear}-${endMonth}-${endDay}`);
 
   return userData
     .map((user) => {
       if (!user.customerPayments || !Array.isArray(user.customerPayments))
         return null;
 
-      // Find the first matching payment
-      const matchedPayment = user.customerPayments.find((payment) => {
+      // Find payments within the range
+      const matchedPayments = user.customerPayments.filter((payment) => {
         if (!payment.createdAt || payment.isDelete) return false;
 
         const paymentDate = new Date(payment.createdAt);
-        return (
-          paymentDate.getFullYear() === parseInt(targetYear) &&
-          paymentDate.getMonth() + 1 === targetMonth &&
-          paymentDate.getDate() === parseInt(targetDay)
-        );
+        return paymentDate >= startDateObj && paymentDate <= endDateObj;
       });
 
-      // If no match found, ignore this user
-      if (!matchedPayment) return null;
+      // If no matching payments found, ignore this user
+      if (matchedPayments.length === 0) return null;
 
-      // Return user with all customerPayments + matched one in new key `bill`
+      // Return user with all customerPayments + matched ones in new key `bills`
       return {
         ...user,
-        bill: matchedPayment,
+        bills: matchedPayments, // Changed from single `bill` to `bills` array
       };
     })
     .filter(Boolean); // Remove null users
@@ -150,17 +155,22 @@ const ReportPage = ({ userData }) => {
   const [users, setUsers] = useState([]);
 
   const [statsHeading, setStatsHeading] = useState("Today Stats");
-  const [formattedDate, setFormattedDate] = useState("");
+  // const [formattedDate, setFormattedDate] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
   useEffect(() => {
     const formattedDate = getCurrentFormattedDate();
-    setFormattedDate(formattedDate);
+    // setFormattedDate(formattedDate);
     setStartDate(convertToDateInputFormat(formattedDate));
     setEndDate(convertToDateInputFormat(formattedDate));
 
-    const filteredUsers = filterUsersByPaymentDate(mainUsers, formattedDate);
+    const filteredUsers = filterUsersByPaymentDate(
+      mainUsers,
+      formattedDate,
+      formatSpecificDate(endDate)
+    );
+
     setUsers(filteredUsers || []);
 
     const isoDate = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
@@ -168,14 +178,28 @@ const ReportPage = ({ userData }) => {
     setStatsHeading(getStatsHeading(daysAgo));
   }, []);
 
+  const filterDateRangeData = () => {
+    const filteredUsers = filterUsersByPaymentDate(
+      mainUsers,
+      formatSpecificDate(startDate),
+      formatSpecificDate(endDate)
+    );
+
+    console.log("logging end", formatSpecificDate(endDate));
+
+    console.log(filteredUsers);
+
+    setUsers(filteredUsers || []);
+  };
+
   return (
     <div>
       <h2 className="text-xl font-semibold text-center text-gray-900">
-        {statsHeading} [
+        Date [
         <span className="font-semibold text-purple-700 text-lg">
           {" "}
-          {formattedDate}
-          {formatSpecificDate(endDate) !== formattedDate
+          {formatSpecificDate(startDate)}
+          {formatSpecificDate(endDate) !== formatSpecificDate(startDate)
             ? ` --> ${formatSpecificDate(endDate)}`
             : ""}{" "}
         </span>
@@ -218,7 +242,10 @@ const ReportPage = ({ userData }) => {
                   />
                 </div>
                 <div className="lg:justify-self-end">
-                  <Button className="bg-purple-500 hover:bg-purple-600">
+                  <Button
+                    onClick={filterDateRangeData}
+                    className="bg-purple-500 hover:bg-purple-600"
+                  >
                     Search
                   </Button>
                 </div>

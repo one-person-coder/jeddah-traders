@@ -300,7 +300,7 @@ export default function CustomerLists({ data, permissions, role }) {
                                 month: "short",
                                 day: "2-digit",
                                 year: "numeric",
-                                timeZone: "Asia/Karachi",
+                                timeZone: "UTC",
                                 hour12: true,
                                 hour: "2-digit",
                                 minute: "2-digit",
