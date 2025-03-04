@@ -3,16 +3,21 @@ import React, { useState } from "react";
 
 function calculateDaysAgo(selectedDate) {
   const today = new Date();
-  today.setUTCHours(0, 0, 0, 0); // Normalize to UTC midnight
+  today.setUTCHours(0, 0, 0, 0); // Normalize today to UTC midnight
 
   const inputDate = new Date(selectedDate);
-  inputDate.setUTCHours(0, 0, 0, 0); // Normalize to UTC midnight
+  inputDate.setUTCHours(0, 0, 0, 0); // Ensure selectedDate is also at UTC midnight
+
+  console.log("Today (UTC):", today.toISOString());
+  console.log("Selected Date (UTC):", inputDate.toISOString());
 
   const diffTime = today.getTime() - inputDate.getTime();
-  const daysAgo = Math.floor(diffTime / (1000 * 60 * 60 * 24)); // Convert ms to days
+  const daysAgo = Math.round(diffTime / (1000 * 60 * 60 * 24)); // Use `Math.round` instead of `Math.floor`
 
+  console.log("Days Ago:", daysAgo);
   return daysAgo;
 }
+
 
 function getStatsHeading(daysAgo) {
   if (daysAgo === 0) return `Today Stats`;
@@ -31,27 +36,24 @@ function getStatsHeadingFromDate(selectedDate) {
 function convertToISODate(formattedDate) {
   const datePart = formattedDate.split(",")[0]; // "3-Mar-2025"
   const [day, month, year] = datePart.split("-");
+
   const months = {
-    Jan: "01",
-    Feb: "02",
-    Mar: "03",
-    Apr: "04",
-    May: "05",
-    Jun: "06",
-    Jul: "07",
-    Aug: "08",
-    Sep: "09",
-    Oct: "10",
-    Nov: "11",
-    Dec: "12",
+    Jan: "01", Feb: "02", Mar: "03", Apr: "04", May: "05", Jun: "06",
+    Jul: "07", Aug: "08", Sep: "09", Oct: "10", Nov: "11", Dec: "12",
   };
 
-  // Format: YYYY-MM-DD
-  return `${year}-${months[month]}-${day.padStart(2, "0")}`;
+  // Ensure day is properly formatted
+  const formattedDay = String(day).padStart(2, "0");
+
+  const isoDate = `${year}-${months[month]}-${formattedDay}`;
+  console.log("Converted ISO Date:", isoDate);
+  
+  return isoDate;
 }
 
 const ReportPage = ({ formattedDate }) => {
   const [formatDate, setFormatDate] = useState(formattedDate);
+  
   const [statsHeading, setStatsHeading] = useState(() => {
     return getStatsHeadingFromDate(convertToISODate(formatDate));
   });
