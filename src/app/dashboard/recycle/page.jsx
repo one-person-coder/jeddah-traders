@@ -21,8 +21,36 @@ const RecycleBin = async () => {
   const deletedPayments = await prisma.paymentRecord.findMany({
     where: { isDelete: true },
     include: {
-      user: true,
-      customer: true,
+      user: {
+        select: {
+          id: true,
+          fullname: true,
+          username: true,
+          email: true,
+          pNumber: true,
+          gender: true,
+          date: true,
+          status: true,
+          role: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      },
+      customer: {
+        select: {
+          id: true,
+          fullname: true,
+          username: true,
+          email: true,
+          pNumber: true,
+          gender: true,
+          date: true,
+          status: true,
+          role: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      },
       items: true,
     },
   });

@@ -32,6 +32,22 @@ function getCurrentFormattedDate() {
 
   return `${day}-${month}-${year}, ${weekday}`;
 }
+function formatSpecificDate(currentDate) {
+  const now = new Date(currentDate + "Z");
+
+  const day = now.getUTCDate(); // Get local day
+  const month = now.toLocaleString("en-GB", {
+    month: "short",
+    timeZone: "UTC",
+  }); // "Mar"
+  const year = now.getUTCFullYear();
+  const weekday = now.toLocaleString("en-GB", {
+    weekday: "long",
+    timeZone: "UTC",
+  }); // "Monday"
+
+  return `${day}-${month}-${year}, ${weekday}`;
+}
 
 // ✅ Function to calculate days ago correctly based on local time
 function calculateDaysAgo(selectedDate) {
@@ -77,45 +93,56 @@ function filterUsersByPaymentDate(userData, targetDate) {
   };
   const targetMonth = monthMap[targetMonthStr];
 
-  return userData.filter((user) => {
-    if (!user.customerPayments || !Array.isArray(user.customerPayments))
-      return false;
+  return userData
+    .map((user) => {
+      if (!user.customerPayments || !Array.isArray(user.customerPayments))
+        return null;
 
-    return user.customerPayments.some((payment) => {
-      if (!payment.createdAt || payment.isDelete) return false;
+      // Find the first matching payment
+      const matchedPayment = user.customerPayments.find((payment) => {
+        if (!payment.createdAt || payment.isDelete) return false;
 
-      const paymentDate = new Date(payment.createdAt);
-      const paymentYear = paymentDate.getFullYear();
-      const paymentMonth = paymentDate.getMonth() + 1; // Convert to 1-12
-      const paymentDay = paymentDate.getDate();
+        const paymentDate = new Date(payment.createdAt);
+        return (
+          paymentDate.getFullYear() === parseInt(targetYear) &&
+          paymentDate.getMonth() + 1 === targetMonth &&
+          paymentDate.getDate() === parseInt(targetDay)
+        );
+      });
 
-      // if (
-      //   paymentYear === parseInt(targetYear) &&
-      //   paymentMonth === targetMonth &&
-      //   paymentDay === parseInt(targetDay)
-      // ) {
-      //   console.log(
-      //     "Year",
-      //     paymentYear,
-      //     parseInt(targetYear),
-      //     payment.description
-      //   );
-      //   console.log("Month", paymentMonth, targetMonth, payment.description);
-      //   console.log(
-      //     "Day",
-      //     paymentDay,
-      //     parseInt(targetDay),
-      //     payment.description
-      //   );
-      // }
+      // If no match found, ignore this user
+      if (!matchedPayment) return null;
 
-      return (
-        paymentYear === parseInt(targetYear) &&
-        paymentMonth === targetMonth &&
-        paymentDay === parseInt(targetDay)
-      );
-    });
-  });
+      // Return user with all customerPayments + matched one in new key `bill`
+      return {
+        ...user,
+        bill: matchedPayment,
+      };
+    })
+    .filter(Boolean); // Remove null users
+}
+
+function convertToDateInputFormat(dateStr) {
+  let parts = dateStr.split(", ")[0].split("-"); // ["3", "Mar", "2025"]
+
+  let day = parts[0].padStart(2, "0"); // Ensure two-digit day
+  let month = {
+    Jan: "01",
+    Feb: "02",
+    Mar: "03",
+    Apr: "04",
+    May: "05",
+    Jun: "06",
+    Jul: "07",
+    Aug: "08",
+    Sep: "09",
+    Oct: "10",
+    Nov: "11",
+    Dec: "12",
+  }[parts[1]]; // Convert month to number
+  let year = parts[2];
+
+  return `${year}-${month}-${day}`;
 }
 
 const ReportPage = ({ userData }) => {
@@ -124,14 +151,16 @@ const ReportPage = ({ userData }) => {
 
   const [statsHeading, setStatsHeading] = useState("Today Stats");
   const [formattedDate, setFormattedDate] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
   useEffect(() => {
     const formattedDate = getCurrentFormattedDate();
     setFormattedDate(formattedDate);
+    setStartDate(convertToDateInputFormat(formattedDate));
+    setEndDate(convertToDateInputFormat(formattedDate));
 
     const filteredUsers = filterUsersByPaymentDate(mainUsers, formattedDate);
-    console.log("Filter", filteredUsers);
-
     setUsers(filteredUsers || []);
 
     const isoDate = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
@@ -141,26 +170,59 @@ const ReportPage = ({ userData }) => {
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold text-center text-gray-900">
+      <h2 className="text-xl font-semibold text-center text-gray-900">
         {statsHeading} [
-        <span className="font-semibold text-purple-700"> {formattedDate} </span>
+        <span className="font-semibold text-purple-700 text-lg">
+          {" "}
+          {formattedDate}
+          {formatSpecificDate(endDate) !== formattedDate
+            ? ` --> ${formatSpecificDate(endDate)}`
+            : ""}{" "}
+        </span>
         ]
       </h2>
 
       <div className="py-8 space-y-8">
         <Card className="border-none shadow-lg">
           <CardContent className="p-6">
-            {/* Filters */}
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 mb-6 p-4 bg-gray-50 rounded-lg border border-dashed">
-              <Select>
-                <SelectTrigger className="bg-white">
-                  <SelectValue placeholder="Reports" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="reports">Reports</SelectItem>
-                  <SelectItem value="users">Users</SelectItem>
-                </SelectContent>
-              </Select>
+            <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-dashed">
+              <h3 className="text-lg font-semibold mb-4 text-center text-gray-900">
+                Date Closing Report Filter
+              </h3>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 ">
+                <Select>
+                  <SelectTrigger className="bg-white">
+                    <SelectValue placeholder="Reports" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="reports">Reports</SelectItem>
+                    <SelectItem value="users">Users</SelectItem>
+                  </SelectContent>
+                </Select>
+                <div>
+                  <input
+                    type="date"
+                    name="startDate"
+                    onChange={(e) => setStartDate(e.target.value)}
+                    value={startDate}
+                    className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[3px] px-3 !bg-white"
+                  />
+                </div>
+                <div>
+                  <input
+                    type="date"
+                    name="endDate"
+                    onChange={(e) => setEndDate(e.target.value)}
+                    value={endDate}
+                    className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[3px] px-3 !bg-white"
+                  />
+                </div>
+                <div className="lg:justify-self-end">
+                  <Button className="bg-purple-500 hover:bg-purple-600">
+                    Search
+                  </Button>
+                </div>
+              </div>
             </div>
 
             {/* Table */}
@@ -170,12 +232,13 @@ const ReportPage = ({ userData }) => {
                   <TableRow className="bg-gray-50">
                     <TableHead>Sr.</TableHead>
                     <TableHead>A/C</TableHead>
-                    <TableHead>USER</TableHead>
+                    <TableHead>Customer</TableHead>
                     {/* <TableHead>ROLE</TableHead>
                   <TableHead>STATUS</TableHead> */}
-                    <TableHead>CONTACT</TableHead>
-                    <TableHead>LAST</TableHead>
-                    <TableHead>REMAINING AMOUNT</TableHead>
+                    {/* <TableHead>CONTACT</TableHead> */}
+                    <TableHead>Bill</TableHead>
+                    <TableHead>Paid Amount</TableHead>
+                    <TableHead>Stamp</TableHead>
                     <TableHead className="text-right">ACTIONS</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -207,6 +270,7 @@ const ReportPage = ({ userData }) => {
                             </span>
                           </div>
                         </TableCell>
+
                         <TableCell>
                           <div className="flex items-center gap-3">
                             <div className="relative">
@@ -234,27 +298,28 @@ const ReportPage = ({ userData }) => {
                             </div>
                           </div>
                         </TableCell>
+
                         {/* <TableCell>
-                      <div className="flex items-center gap-2">
-                        <User2 className="h-4 w-4 text-purple-600" />
-                        <span className="font-medium">
-                          {user.role.toUpperCase()}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <span
-                          className="inline-flex items-center rounded-md text-xs transition-colors font-medium px-2 py-0.5 capitalize"
-                          style={{
-                            backgroundColor: statusColors[user.status],
-                          }}
-                        >
-                          {user.status}
-                        </span>
-                      </div>
-                    </TableCell> */}
-                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <User2 className="h-4 w-4 text-purple-600" />
+                            <span className="font-medium">
+                              {user.role.toUpperCase()}
+                            </span>
+                          </div>
+                        </TableCell> */}
+                        {/* <TableCell>
+                          <div className="flex items-center gap-2">
+                            <span
+                              className="inline-flex items-center rounded-md text-xs transition-colors font-medium px-2 py-0.5 capitalize"
+                              style={{
+                                backgroundColor: statusColors[user.status],
+                              }}
+                            >
+                              {user.status}
+                            </span>
+                          </div>
+                        </TableCell> */}
+                        {/* <TableCell>
                           {user.pNumber ? (
                             <>
                               {user.pNumber.split("/").map((num, index) => {
@@ -279,40 +344,35 @@ const ReportPage = ({ userData }) => {
                           ) : (
                             "-"
                           )}
-                        </TableCell>
+                        </TableCell> */}
+
+                        <TableCell>{user.bill.amount || "-"}</TableCell>
+                        <TableCell>{user.bill.paid_amount || "-"}</TableCell>
                         <TableCell>
-                          {user.customerPayments.length >= 1 ? (
-                            <div className="flex gap-2">
-                              <span className="text-[16px] font-bold text-blue-700 text-muted-foreground">
-                                {
-                                  user?.customerPayments
-                                    .filter((payment) => !payment.isDelete)
-                                    .reverse()[0]?.paid_amount
-                                }
-                              </span>
-                              -
-                              <span className="text-sm text-muted-foreground">
-                                {new Date(
-                                  user?.customerPayments
-                                    .filter((payment) => !payment.isDelete)
-                                    .reverse()[0]?.createdAt
-                                ).toLocaleDateString("en-US", {
-                                  month: "short",
-                                  day: "2-digit",
-                                  year: "numeric",
-                                  timeZone: "Asia/Karachi",
-                                  hour12: true,
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                  second: "2-digit",
-                                })}
-                              </span>
-                            </div>
-                          ) : (
-                            "-"
-                          )}
+                          <div className="flex flex-col justify-center">
+                            <span className="text-[16px]">
+                              {user.bill.createdAt
+                                ? new Date(user.bill.createdAt).toLocaleString(
+                                    "en-GB",
+                                    {
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                      hour12: true,
+                                      day: "numeric",
+                                      month: "short",
+                                      year: "numeric",
+                                      weekday: "long",
+                                    }
+                                  )
+                                : null}
+                            </span>
+                            <span className="text-[12px] text-purple-700 font-semibold">
+                              {user.bill.user.username || "-"}
+                            </span>
+                          </div>
                         </TableCell>
-                        <TableCell>
+
+                        {/* <TableCell>
                           {user.customerPayments.length >= 1 ? (
                             <div>
                               <span className="text-sm text-muted-foreground">
@@ -333,7 +393,8 @@ const ReportPage = ({ userData }) => {
                           ) : (
                             "-"
                           )}
-                        </TableCell>
+                        </TableCell> */}
+
                         <TableCell>
                           <div className="flex items-center justify-end gap-2">
                             <Button
@@ -348,7 +409,7 @@ const ReportPage = ({ userData }) => {
                                 Account
                               </Link>
                             </Button>
-                            <Button
+                            {/* <Button
                               variant="ghost"
                               size="icon"
                               asChild
@@ -371,7 +432,7 @@ const ReportPage = ({ userData }) => {
                               >
                                 <Pencil className="h-4 w-4" />
                               </Link>
-                            </Button>
+                            </Button> */}
                           </div>
                         </TableCell>
                       </TableRow>
