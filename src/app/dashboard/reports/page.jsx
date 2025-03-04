@@ -25,38 +25,34 @@ const ReportsPage = async () => {
     return redirect("/dashboard");
   }
 
-  const userData = await prisma.userInfo.findMany({
-    where: {
-      role: {
-        in: ["customer"],
-      },
+  const paymentData = await prisma.PaymentRecord.findMany({
+    where: { isDelete: false },
+    orderBy: {
+      createdAt: "asc", // "asc" for oldest to newest, "desc" for newest to oldest
     },
     select: {
       id: true,
-      fullname: true,
-      last_name: true,
-      username: true,
-      email: true,
-      gender: true,
-      date: true,
-      status: true,
-      pNumber: true,
-      account_number: true,
-      role: true,
+      amount: true,
+      isDelete: true,
+      description: true,
+      paid_amount: true,
       createdAt: true,
-      customerPayments: {
+      user: {
         select: {
-          amount: true,
-          isDelete: true,
-          description: true,
-          paid_amount: true,
+          id: true,
+          fullname: true,
+          username: true,
+        },
+      },
+      customer: {
+        select: {
+          id: true,
+          fullname: true,
+          last_name: true,
+          username: true,
+          pNumber: true,
+          account_number: true,
           createdAt: true,
-          user: {
-            select: {
-              fullname: true,
-              username: true
-            },
-          },
         },
       },
     },
@@ -76,7 +72,7 @@ const ReportsPage = async () => {
           </div> */}
 
           <div className="py-6 mt-3">
-            <ReportPage userData={userData} />
+            <ReportPage userData={paymentData} />
           </div>
         </>
       ) : (

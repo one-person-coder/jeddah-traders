@@ -70,61 +70,68 @@ function getStatsHeading(daysAgo) {
   return `Yearly Stats`;
 }
 
-function filterUsersByPaymentDate(userData, startDate, endDate) {
-  const [startDay, startMonthStr, startYear] = startDate
-    .split(",")[0]
-    .split("-");
-  const [endDay, endMonthStr, endYear] = endDate.split(",")[0].split("-");
-
-  console.log(startDay, startMonthStr, startYear);
-  console.log(endDay, endMonthStr, endYear);
-
-  // Convert month string (e.g., "Mar") to month number (1-12)
+function filterUsersByPaymentDate(payments, startDate, endDate) {
   const monthMap = {
-    Jan: 1,
-    Feb: 2,
-    Mar: 3,
-    Apr: 4,
-    May: 5,
-    Jun: 6,
-    Jul: 7,
-    Aug: 8,
-    Sep: 9,
-    Oct: 10,
-    Nov: 11,
-    Dec: 12,
+    Jan: "01",
+    Feb: "02",
+    Mar: "03",
+    Apr: "04",
+    May: "05",
+    Jun: "06",
+    Jul: "07",
+    Aug: "08",
+    Sep: "09",
+    Oct: "10",
+    Nov: "11",
+    Dec: "12",
   };
 
-  const startMonth = monthMap[startMonthStr];
-  const endMonth = monthMap[endMonthStr];
+  // Function to convert "3-Mar-2025, Monday" to Date object
+  function parseDate(dateStr, isStartDate) {
+    let cleanDateStr = dateStr.split(",")[0]; // "3-Mar-2025"
+    let [day, monthStr, year] = cleanDateStr.split("-");
 
-  // Convert to Date objects for comparison
-  const startDateObj = new Date(`${startYear}-${startMonth}-${startDay}`);
-  const endDateObj = new Date(`${endYear}-${endMonth}-${endDay}`);
+    if (!monthMap[monthStr]) {
+      console.error("Invalid month:", monthStr);
+      return new Date("Invalid Date");
+    }
 
-  return userData
-    .map((user) => {
-      if (!user.customerPayments || !Array.isArray(user.customerPayments))
-        return null;
+    // Create the date in local time (without timezone shifts)
+    let date = new Date(year, monthMap[monthStr] - 1, day);
 
-      // Find payments within the range
-      const matchedPayments = user.customerPayments.filter((payment) => {
-        if (!payment.createdAt || payment.isDelete) return false;
+    // Set time to the beginning of the day (00:00:00.000) for start date
+    // Set time to the end of the day (23:59:59.999) for end date
+    if (isStartDate) {
+      date.setUTCHours(0, 0, 0, 0); // Start of the day
+    } else {
+      date.setUTCHours(23, 59, 59, 999); // End of the day
+    }
 
-        const paymentDate = new Date(payment.createdAt);
-        return paymentDate >= startDateObj && paymentDate <= endDateObj;
-      });
+    return date;
+  }
 
-      // If no matching payments found, ignore this user
-      if (matchedPayments.length === 0) return null;
+  // Parse Start & End Dates
+  let start = parseDate(startDate, true); // Start date (beginning of the day)
+  let end = parseDate(endDate, false); // End date (end of the day)
 
-      // Return user with all customerPayments + matched ones in new key `bills`
-      return {
-        ...user,
-        bills: matchedPayments, // Changed from single `bill` to `bills` array
-      };
-    })
-    .filter(Boolean); // Remove null users
+  console.log("Start Date:", start.getTime(), startDate);
+  console.log("End Date:", end.getTime(), endDate);
+
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+    console.error("Error: Invalid start or end date format!");
+    return [];
+  }
+
+  return payments.filter((payment) => {
+    const paymentDate = new Date(payment.createdAt);
+    console.log("real", paymentDate.getTime(), start.getTime());
+
+
+    return (
+      paymentDate.getTime() >= start.getTime() &&
+      paymentDate.getTime() <= end.getTime()
+    );
+  });
 }
 
 function convertToDateInputFormat(dateStr) {
@@ -160,6 +167,8 @@ const ReportPage = ({ userData }) => {
   const [endDate, setEndDate] = useState("");
 
   useEffect(() => {
+    console.log(userData);
+
     const formattedDate = getCurrentFormattedDate();
     // setFormattedDate(formattedDate);
     setStartDate(convertToDateInputFormat(formattedDate));
@@ -270,63 +279,61 @@ const ReportPage = ({ userData }) => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {users
-                    .sort((a, b) => a.account_number - b.account_number)
-                    .map((user, index) => (
-                      <TableRow
-                        key={index}
-                        className="cursor-pointer hover:bg-gray-200/50 data-[selected=true]:bg-blue-100"
-                        onClick={(e) => {
-                          document
-                            .querySelectorAll("[data-selected]")
-                            .forEach((row) => {
-                              row.removeAttribute("data-selected");
-                            });
-                          e.currentTarget.setAttribute("data-selected", "true");
-                        }}
-                      >
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <span className="font-medium">{index + 1}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <span className="font-medium">
-                              {user.account_number}
-                            </span>
-                          </div>
-                        </TableCell>
+                  {users.map((user, index) => (
+                    <TableRow
+                      key={index}
+                      className="cursor-pointer hover:bg-gray-200/50 data-[selected=true]:bg-blue-100"
+                      onClick={(e) => {
+                        document
+                          .querySelectorAll("[data-selected]")
+                          .forEach((row) => {
+                            row.removeAttribute("data-selected");
+                          });
+                        e.currentTarget.setAttribute("data-selected", "true");
+                      }}
+                    >
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium">{index + 1}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium">
+                            {user.customer.account_number}
+                          </span>
+                        </div>
+                      </TableCell>
 
-                        <TableCell>
-                          <div className="flex items-center gap-3">
-                            <div className="relative">
-                              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100 text-sm font-medium text-purple-600 ring-2 ring-white">
-                                {user.fullname
-                                  .split(" ")
-                                  .map((word) => word.charAt(0))
-                                  .join("")}
-                              </div>
-                              <div
-                                className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white"
-                                style={{
-                                  backgroundColor:
-                                    statusColors[`more-${user.status}`],
-                                }}
-                              />
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <div className="relative">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100 text-sm font-medium text-purple-600 ring-2 ring-white">
+                              {user.customer.fullname
+                                .split(" ")
+                                .map((word) => word.charAt(0))
+                                .join("")}
                             </div>
-                            <div>
-                              <div className="font-medium text-gray-900">
-                                {user.fullname}
-                              </div>
-                              <div className="text-[12px]">
-                                {user.last_name || "-"}
-                              </div>
+                            <div
+                              className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white"
+                              style={{
+                                backgroundColor:
+                                  statusColors[`more-${user.status}`],
+                              }}
+                            />
+                          </div>
+                          <div>
+                            <div className="font-medium text-gray-900">
+                              {user.customer.fullname}
+                            </div>
+                            <div className="text-[12px]">
+                              {user.customer.last_name || "-"}
                             </div>
                           </div>
-                        </TableCell>
+                        </div>
+                      </TableCell>
 
-                        {/* <TableCell>
+                      {/* <TableCell>
                           <div className="flex items-center gap-2">
                             <User2 className="h-4 w-4 text-purple-600" />
                             <span className="font-medium">
@@ -334,7 +341,7 @@ const ReportPage = ({ userData }) => {
                             </span>
                           </div>
                         </TableCell> */}
-                        {/* <TableCell>
+                      {/* <TableCell>
                           <div className="flex items-center gap-2">
                             <span
                               className="inline-flex items-center rounded-md text-xs transition-colors font-medium px-2 py-0.5 capitalize"
@@ -346,7 +353,7 @@ const ReportPage = ({ userData }) => {
                             </span>
                           </div>
                         </TableCell> */}
-                        {/* <TableCell>
+                      {/* <TableCell>
                           {user.pNumber ? (
                             <>
                               {user.pNumber.split("/").map((num, index) => {
@@ -373,33 +380,34 @@ const ReportPage = ({ userData }) => {
                           )}
                         </TableCell> */}
 
-                        <TableCell>{user.bill.amount || "-"}</TableCell>
-                        <TableCell>{user.bill.paid_amount || "-"}</TableCell>
-                        <TableCell>
-                          <div className="flex flex-col justify-center">
-                            <span className="text-[16px]">
-                              {user.bill.createdAt
-                                ? new Date(user.bill.createdAt).toLocaleString(
-                                    "en-GB",
-                                    {
-                                      hour: "2-digit",
-                                      minute: "2-digit",
-                                      hour12: true,
-                                      day: "numeric",
-                                      month: "short",
-                                      year: "numeric",
-                                      weekday: "long",
-                                    }
-                                  )
-                                : null}
-                            </span>
-                            <span className="text-[12px] text-purple-700 font-semibold">
-                              {user.bill.user.username || "-"}
-                            </span>
-                          </div>
-                        </TableCell>
+                      <TableCell>{user.amount || "-"}</TableCell>
+                      <TableCell>{user.paid_amount || "-"}</TableCell>
+                      <TableCell>
+                        <div className="flex flex-col justify-center">
+                          <span className="text-[16px]">
+                            {user.createdAt
+                              ? new Date(user.createdAt).toLocaleString(
+                                  "en-GB",
+                                  {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    timeZone: "UTC",
+                                    hour12: true,
+                                    day: "numeric",
+                                    month: "short",
+                                    year: "numeric",
+                                    weekday: "long",
+                                  }
+                                )
+                              : null}
+                          </span>
+                          <span className="text-[12px] text-purple-700 font-semibold">
+                            {user.user.username || "-"}
+                          </span>
+                        </div>
+                      </TableCell>
 
-                        {/* <TableCell>
+                      {/* <TableCell>
                           {user.customerPayments.length >= 1 ? (
                             <div>
                               <span className="text-sm text-muted-foreground">
@@ -422,21 +430,21 @@ const ReportPage = ({ userData }) => {
                           )}
                         </TableCell> */}
 
-                        <TableCell>
-                          <div className="flex items-center justify-end gap-2">
-                            <Button
-                              asChild
-                              variant="outline"
-                              className="border-2 border-blue-800"
+                      <TableCell>
+                        <div className="flex items-center justify-end gap-2">
+                          <Button
+                            asChild
+                            variant="outline"
+                            className="border-2 border-blue-800"
+                          >
+                            <Link
+                              href={`/dashboard/customers/${user.customer.id}/payments`}
+                              className="!py-1 !px-3 rounded-sm !h-[2rem] hover:!bg-blue-800 hover:!text-white"
                             >
-                              <Link
-                                href={`/dashboard/customers/${user.id}/payments`}
-                                className="!py-1 !px-3 rounded-sm !h-[2rem] hover:!bg-blue-800 hover:!text-white"
-                              >
-                                Account
-                              </Link>
-                            </Button>
-                            {/* <Button
+                              Account
+                            </Link>
+                          </Button>
+                          {/* <Button
                               variant="ghost"
                               size="icon"
                               asChild
@@ -460,10 +468,10 @@ const ReportPage = ({ userData }) => {
                                 <Pencil className="h-4 w-4" />
                               </Link>
                             </Button> */}
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
                 </TableBody>
               </Table>
             </div>
