@@ -28,7 +28,7 @@ const ReportsPage = async () => {
   const paymentData = await prisma.PaymentRecord.findMany({
     where: { isDelete: false },
     orderBy: {
-      createdAt: "asc", // "asc" for oldest to newest, "desc" for newest to oldest
+      createdAt: "asc",
     },
     select: {
       id: true,

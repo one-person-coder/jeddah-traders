@@ -152,14 +152,56 @@ function convertToDateInputFormat(dateStr) {
   return `${year}-${month}-${day}`;
 }
 
+function aggregateUserData(dataList) {
+  let userSummary = {};
+
+  dataList.forEach((obj) => {
+    if (obj.user && obj.user.username) {
+      let username = obj.user.username;
+      let fullname = obj.user.fullname || "";
+
+      if (!userSummary[username]) {
+        userSummary[username] = {
+          fullname: fullname,
+          username: username,
+          amount: 0,
+          paid_amount: 0,
+          count: 0,
+          items: [],
+        };
+      }
+
+      userSummary[username].count += 1;
+
+      userSummary[username].amount += obj.amount || 0;
+      userSummary[username].paid_amount += obj.paid_amount || 0;
+
+      userSummary[username].items.push(obj);
+    }
+  });
+
+  return Object.values(userSummary);
+}
+
 const ReportPage = ({ userData }) => {
   const [mainUsers, MainSetUsers] = useState([...userData]);
+  const [statusFilter, setStatusFilter] = useState("reports");
   const [users, setUsers] = useState([]);
   const [total, setTotal] = useState({
     totalAmount: 0,
     paidAmount: 0,
     remainingAmount: 0,
   });
+
+  useEffect(() => {
+    if (statusFilter === "users") {
+      const filterData = aggregateUserData(users);
+      setUsers(filterData);
+      console.log("Effect Users", filterData);
+    } else if (statusFilter === "reports") {
+      filterDateRangeData();
+    }
+  }, [statusFilter]);
 
   useEffect(() => {
     const totalAmount = users.reduce(
@@ -200,13 +242,21 @@ const ReportPage = ({ userData }) => {
   }, []);
 
   const filterDateRangeData = () => {
-    const filteredUsers = filterUsersByPaymentDate(
-      mainUsers,
-      formatSpecificDate(startDate),
-      formatSpecificDate(endDate)
-    );
+    if (startDate && endDate) {
+      const filteredUsers = filterUsersByPaymentDate(
+        mainUsers,
+        formatSpecificDate(startDate),
+        formatSpecificDate(endDate)
+      );
+      setUsers(filteredUsers || []);
 
-    setUsers(filteredUsers || []);
+      if (statusFilter === "users") {
+        const filterData = aggregateUserData(filteredUsers);
+        console.log(filterData);
+
+        setUsers(filterData);
+      }
+    }
   };
 
   return (
@@ -248,7 +298,7 @@ const ReportPage = ({ userData }) => {
             </CardContent>
           </Card>
           {/* Pending Users Card */}
-          <Card className="relative overflow-hidden transition-all hover:shadow-lg">
+          {/* <Card className="relative overflow-hidden transition-all hover:shadow-lg">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
@@ -265,12 +315,12 @@ const ReportPage = ({ userData }) => {
               </div>
               <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-amber-500 to-amber-700" />
             </CardContent>
-          </Card>
+          </Card> */}
         </div>
       </div>
 
       <h2 className="text-xl font-semibold text-center text-gray-900">
-        Date [
+        Stats Date [
         <span className="font-semibold text-purple-700 text-lg">
           {" "}
           {formatSpecificDate(startDate)}
@@ -289,7 +339,7 @@ const ReportPage = ({ userData }) => {
                 Date Closing Report Filter
               </h3>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 ">
-                <Select>
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
                   <SelectTrigger className="bg-white">
                     <SelectValue placeholder="Reports" />
                   </SelectTrigger>
@@ -329,78 +379,79 @@ const ReportPage = ({ userData }) => {
 
             {/* Table */}
             <div className="rounded-lg border shadow-sm max-h-[500px] overflow-scroll">
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-gray-50">
-                    <TableHead>Sr.</TableHead>
-                    <TableHead>A/C</TableHead>
-                    <TableHead>Customer</TableHead>
-                    {/* <TableHead>ROLE</TableHead>
+              {statusFilter === "reports" ? (
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-gray-50">
+                      <TableHead>Sr.</TableHead>
+                      <TableHead>A/C</TableHead>
+                      <TableHead>Customer</TableHead>
+                      {/* <TableHead>ROLE</TableHead>
                   <TableHead>STATUS</TableHead> */}
-                    {/* <TableHead>CONTACT</TableHead> */}
-                    <TableHead>Bill</TableHead>
-                    <TableHead>Paid Amount</TableHead>
-                    <TableHead>Stamp</TableHead>
-                    <TableHead>Description</TableHead>
-                    <TableHead className="text-right">ACTIONS</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {users.map((user, index) => (
-                    <TableRow
-                      key={index}
-                      className="cursor-pointer hover:bg-gray-200/50 data-[selected=true]:bg-blue-100"
-                      onClick={(e) => {
-                        document
-                          .querySelectorAll("[data-selected]")
-                          .forEach((row) => {
-                            row.removeAttribute("data-selected");
-                          });
-                        e.currentTarget.setAttribute("data-selected", "true");
-                      }}
-                    >
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium">{index + 1}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium">
-                            {user.customer.account_number}
-                          </span>
-                        </div>
-                      </TableCell>
-
-                      <TableCell>
-                        <div className="flex items-center gap-3">
-                          <div className="relative">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100 text-sm font-medium text-purple-600 ring-2 ring-white">
-                              {user.customer.fullname
-                                .split(" ")
-                                .map((word) => word.charAt(0))
-                                .join("")}
-                            </div>
-                            <div
-                              className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white"
-                              style={{
-                                backgroundColor:
-                                  statusColors[`more-${user.status}`],
-                              }}
-                            />
+                      {/* <TableHead>CONTACT</TableHead> */}
+                      <TableHead>Bill</TableHead>
+                      <TableHead>Paid Amount</TableHead>
+                      <TableHead>Stamp</TableHead>
+                      <TableHead>Description</TableHead>
+                      <TableHead className="text-right">ACTIONS</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {users?.map((user, index) => (
+                      <TableRow
+                        key={index}
+                        className="cursor-pointer hover:bg-gray-200/50 data-[selected=true]:bg-blue-100"
+                        onClick={(e) => {
+                          document
+                            .querySelectorAll("[data-selected]")
+                            .forEach((row) => {
+                              row.removeAttribute("data-selected");
+                            });
+                          e.currentTarget.setAttribute("data-selected", "true");
+                        }}
+                      >
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium">{index + 1}</span>
                           </div>
-                          <div>
-                            <div className="font-medium text-gray-900">
-                              {user.customer.fullname}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium">
+                              {user?.customer?.account_number}
+                            </span>
+                          </div>
+                        </TableCell>
+
+                        <TableCell>
+                          <div className="flex items-center gap-3">
+                            <div className="relative">
+                              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100 text-sm font-medium text-purple-600 ring-2 ring-white">
+                                {user?.customer?.fullname
+                                  .split(" ")
+                                  .map((word) => word.charAt(0))
+                                  .join("")}
+                              </div>
+                              <div
+                                className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white"
+                                style={{
+                                  backgroundColor:
+                                    statusColors[`more-${user.status}`],
+                                }}
+                              />
                             </div>
-                            <div className="text-[12px]">
-                              {user.customer.last_name || "-"}
+                            <div>
+                              <div className="font-medium text-gray-900">
+                                {user?.customer?.fullname}
+                              </div>
+                              <div className="text-[12px]">
+                                {user?.customer?.last_name || "-"}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </TableCell>
+                        </TableCell>
 
-                      {/* <TableCell>
+                        {/* <TableCell>
                           <div className="flex items-center gap-2">
                             <User2 className="h-4 w-4 text-purple-600" />
                             <span className="font-medium">
@@ -408,7 +459,7 @@ const ReportPage = ({ userData }) => {
                             </span>
                           </div>
                         </TableCell> */}
-                      {/* <TableCell>
+                        {/* <TableCell>
                           <div className="flex items-center gap-2">
                             <span
                               className="inline-flex items-center rounded-md text-xs transition-colors font-medium px-2 py-0.5 capitalize"
@@ -420,7 +471,7 @@ const ReportPage = ({ userData }) => {
                             </span>
                           </div>
                         </TableCell> */}
-                      {/* <TableCell>
+                        {/* <TableCell>
                           {user.pNumber ? (
                             <>
                               {user.pNumber.split("/").map((num, index) => {
@@ -447,34 +498,34 @@ const ReportPage = ({ userData }) => {
                           )}
                         </TableCell> */}
 
-                      <TableCell>{user.amount || "-"}</TableCell>
-                      <TableCell>{user.paid_amount || "-"}</TableCell>
-                      <TableCell>
-                        <div className="flex flex-col justify-center">
-                          <span className="text-[16px]">
-                            {user.createdAt
-                              ? new Date(user.createdAt).toLocaleString(
-                                  "en-GB",
-                                  {
-                                    hour: "2-digit",
-                                    minute: "2-digit",
-                                    timeZone: "UTC",
-                                    hour12: true,
-                                    day: "numeric",
-                                    month: "short",
-                                    year: "numeric",
-                                    weekday: "long",
-                                  }
-                                )
-                              : null}
-                          </span>
-                          <span className="text-[12px] text-purple-700 font-semibold">
-                            {user.user.username || "-"}
-                          </span>
-                        </div>
-                      </TableCell>
+                        <TableCell>{user.amount || "-"}</TableCell>
+                        <TableCell>{user.paid_amount || "-"}</TableCell>
+                        <TableCell>
+                          <div className="flex flex-col justify-center">
+                            <span className="text-[16px]">
+                              {user.createdAt
+                                ? new Date(user.createdAt).toLocaleString(
+                                    "en-GB",
+                                    {
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                      timeZone: "UTC",
+                                      hour12: true,
+                                      day: "numeric",
+                                      month: "short",
+                                      year: "numeric",
+                                      weekday: "long",
+                                    }
+                                  )
+                                : null}
+                            </span>
+                            <span className="text-[12px] text-purple-700 font-semibold">
+                              {user?.user?.username || "-"}
+                            </span>
+                          </div>
+                        </TableCell>
 
-                      {/* <TableCell>
+                        {/* <TableCell>
                           {user.customerPayments.length >= 1 ? (
                             <div>
                               <span className="text-sm text-muted-foreground">
@@ -496,23 +547,23 @@ const ReportPage = ({ userData }) => {
                             "-"
                           )}
                         </TableCell> */}
-                      <TableCell>{user.description || "-"}</TableCell>
+                        <TableCell>{user.description || "-"}</TableCell>
 
-                      <TableCell>
-                        <div className="flex items-center justify-end gap-2">
-                          <Button
-                            asChild
-                            variant="outline"
-                            className="border-2 border-blue-800"
-                          >
-                            <Link
-                              href={`/dashboard/customers/${user.customer.id}/payments`}
-                              className="!py-1 !px-3 rounded-sm !h-[2rem] hover:!bg-blue-800 hover:!text-white"
+                        <TableCell>
+                          <div className="flex items-center justify-end gap-2">
+                            <Button
+                              asChild
+                              variant="outline"
+                              className="border-2 border-blue-800"
                             >
-                              Account
-                            </Link>
-                          </Button>
-                          {/* <Button
+                              <Link
+                                href={`/dashboard/customers/${user?.customer?.id}/payments`}
+                                className="!py-1 !px-3 rounded-sm !h-[2rem] hover:!bg-blue-800 hover:!text-white"
+                              >
+                                Account
+                              </Link>
+                            </Button>
+                            {/* <Button
                               variant="ghost"
                               size="icon"
                               asChild
@@ -536,12 +587,17 @@ const ReportPage = ({ userData }) => {
                                 <Pencil className="h-4 w-4" />
                               </Link>
                             </Button> */}
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              ) : (
+                <h3 className="text-xl font-semibold my-5 text-center text-gray-900">
+                  Comming Soon!
+                </h3>
+              )}
             </div>
           </CardContent>
         </Card>
