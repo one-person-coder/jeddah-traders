@@ -1,7 +1,7 @@
 "use client";
+import { DollarSign, HandCoins } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { statusColors } from "@/constant/constant";
-import { Pencil, Eye, Filter, PhoneCall } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -155,6 +155,25 @@ function convertToDateInputFormat(dateStr) {
 const ReportPage = ({ userData }) => {
   const [mainUsers, MainSetUsers] = useState([...userData]);
   const [users, setUsers] = useState([]);
+  const [total, setTotal] = useState({
+    totalAmount: 0,
+    paidAmount: 0,
+    remainingAmount: 0,
+  });
+
+  useEffect(() => {
+    const totalAmount = users.reduce(
+      (acc, user) => (user.isDelete ? acc : acc + user.amount),
+      0
+    );
+    const paidAmount = users.reduce(
+      (acc, user) => (user.isDelete ? acc : acc + user.paid_amount),
+      0
+    );
+    const remainingAmount = totalAmount - paidAmount;
+
+    setTotal({ totalAmount, paidAmount, remainingAmount });
+  }, [users]);
 
   const [statsHeading, setStatsHeading] = useState("Today Stats");
   // const [formattedDate, setFormattedDate] = useState("");
@@ -192,6 +211,64 @@ const ReportPage = ({ userData }) => {
 
   return (
     <div>
+      <div className="pb-6">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <Card className="relative overflow-hidden transition-all hover:shadow-lg">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-muted-foreground">
+                    Total Bill
+                  </p>
+                  <h2 className="text-3xl font-bold">{total.totalAmount}</h2>
+                </div>
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-purple-100">
+                  <DollarSign className="h-6 w-6 text-purple-600" />
+                </div>
+              </div>
+              <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-purple-500 to-purple-700" />
+            </CardContent>
+          </Card>
+
+          {/* Active Users Card */}
+          <Card className="relative overflow-hidden transition-all hover:shadow-lg">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-muted-foreground">
+                    Paid Amount
+                  </p>
+                  <h2 className="text-3xl font-bold">{total.paidAmount}</h2>
+                </div>
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
+                  <HandCoins className="h-6 w-6 text-green-600" />
+                </div>
+              </div>
+              <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-green-500 to-green-700" />
+            </CardContent>
+          </Card>
+          {/* Pending Users Card */}
+          <Card className="relative overflow-hidden transition-all hover:shadow-lg">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-muted-foreground">
+                    Remaining Amount
+                  </p>
+                  <h2 className="text-3xl font-bold">
+                    {total.remainingAmount >= 0 ? total.remainingAmount : 0}
+                  </h2>
+                </div>
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-100">
+                  <DollarSign className="h-6 w-6 text-amber-600" />
+                </div>
+              </div>
+              <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-amber-500 to-amber-700" />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
       <h2 className="text-xl font-semibold text-center text-gray-900">
         Date [
         <span className="font-semibold text-purple-700 text-lg">
@@ -264,6 +341,7 @@ const ReportPage = ({ userData }) => {
                     <TableHead>Bill</TableHead>
                     <TableHead>Paid Amount</TableHead>
                     <TableHead>Stamp</TableHead>
+                    <TableHead>Description</TableHead>
                     <TableHead className="text-right">ACTIONS</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -418,6 +496,7 @@ const ReportPage = ({ userData }) => {
                             "-"
                           )}
                         </TableCell> */}
+                      <TableCell>{user.description || "-"}</TableCell>
 
                       <TableCell>
                         <div className="flex items-center justify-end gap-2">

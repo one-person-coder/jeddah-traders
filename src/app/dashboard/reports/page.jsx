@@ -62,15 +62,6 @@ const ReportsPage = async () => {
     <div className="custom-width">
       {user.role === "admin" ? (
         <>
-          {/* <div className="mt-8 text-center">
-            <h1 className="text-2xl font-semibold text-gray-900">
-              Reports Management
-            </h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              Manage and monitor Reports
-            </p>
-          </div> */}
-
           <div className="py-6 mt-3">
             <ReportPage userData={paymentData} />
           </div>
