@@ -200,7 +200,6 @@ const ReportPage = ({ userData }) => {
     if (statusFilter === "users") {
       const filterData = aggregateUserData(users);
       setUsers(filterData);
-      console.log("Effect Users", filterData);
     } else if (statusFilter === "reports") {
       filterDateRangeData();
     }
@@ -255,7 +254,6 @@ const ReportPage = ({ userData }) => {
 
       if (statusFilter === "users") {
         const filterData = aggregateUserData(filteredUsers);
-        console.log(filterData);
 
         setUsers(filterData);
       }
