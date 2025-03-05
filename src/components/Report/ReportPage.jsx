@@ -186,12 +186,15 @@ function aggregateUserData(dataList) {
 const ReportPage = ({ userData }) => {
   const [mainUsers, MainSetUsers] = useState([...userData]);
   const [statusFilter, setStatusFilter] = useState("reports");
+  const [itemsData, setItemsData] = useState();
   const [users, setUsers] = useState([]);
   const [total, setTotal] = useState({
     totalAmount: 0,
     paidAmount: 0,
     remainingAmount: 0,
   });
+
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     if (statusFilter === "users") {
@@ -257,6 +260,16 @@ const ReportPage = ({ userData }) => {
         setUsers(filterData);
       }
     }
+  };
+
+  const handleClose = () => {
+    setItemsData([]);
+    setIsVisible(false);
+  };
+
+  const showDetail = (items) => {
+    setItemsData(items);
+    setIsVisible(true);
   };
 
   return (
@@ -377,7 +390,6 @@ const ReportPage = ({ userData }) => {
               </div>
             </div>
 
-            {/* Table */}
             <div className="rounded-lg border shadow-sm max-h-[500px] overflow-scroll">
               {statusFilter === "reports" ? (
                 <Table>
@@ -594,14 +606,330 @@ const ReportPage = ({ userData }) => {
                   </TableBody>
                 </Table>
               ) : (
-                <h3 className="text-xl font-semibold my-5 text-center text-gray-900">
-                  Comming Soon!
-                </h3>
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-gray-50">
+                      <TableHead>Sr.</TableHead>
+                      <TableHead>Username</TableHead>
+                      <TableHead>Count</TableHead>
+                      <TableHead>Bill</TableHead>
+                      <TableHead>Paid Amount</TableHead>
+                      <TableHead className="text-right">ACTIONS</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {users?.map((user, index) => (
+                      <TableRow
+                        key={index}
+                        className="cursor-pointer hover:bg-gray-200/50 data-[selected=true]:bg-blue-100"
+                        onClick={(e) => {
+                          document
+                            .querySelectorAll("[data-selected]")
+                            .forEach((row) => {
+                              row.removeAttribute("data-selected");
+                            });
+                          e.currentTarget.setAttribute("data-selected", "true");
+                        }}
+                      >
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium">{index + 1}</span>
+                          </div>
+                        </TableCell>
+
+                        <TableCell>
+                          <div className="flex items-center gap-3">
+                            <div className="relative">
+                              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100 text-sm font-medium text-purple-600 ring-2 ring-white">
+                                {user?.fullname
+                                  ?.split(" ")
+                                  .map((word) => word.charAt(0))
+                                  .join("")}
+                              </div>
+                              <div
+                                className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white"
+                                style={{
+                                  backgroundColor:
+                                    statusColors[`more-${user.status}`],
+                                }}
+                              />
+                            </div>
+                            <div>
+                              <div className="font-medium text-gray-900">
+                                {user?.fullname}
+                              </div>
+                              <div className="text-[12px]">
+                                {user?.username || "-"}
+                              </div>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>{user.count || "-"}</TableCell>
+                        <TableCell>{user.amount || "-"}</TableCell>
+                        <TableCell>{user.paid_amount || "-"}</TableCell>
+
+                        <TableCell>
+                          <div className="flex items-center justify-end gap-2">
+                            <Button
+                              variant="outline"
+                              className="border-2 border-blue-800 hover:bg-blue-800 hover:text-white"
+                              onClick={() => showDetail(user)}
+                            >
+                              Details
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               )}
             </div>
           </CardContent>
         </Card>
       </div>
+
+      {isVisible ? (
+        <>
+          <div className="fixed top-0 z-[600] w-full sm:w-[80%] left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%]">
+            <Card className="border-none shadow-light">
+              <CardContent className="p-6">
+                <div>
+                  <h3 className="text-lg font-semibold mb-4 text-center text-gray-900">
+                    {itemsData?.fullname} -&gt; [{" "}
+                    <span className="text-purple-700">
+                      {itemsData?.username}
+                    </span>{" "}
+                    ]
+                  </h3>
+                </div>
+                <div className="rounded-lg border shadow-sm max-h-[500px] overflow-scroll">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-gray-50">
+                        <TableHead>Sr.</TableHead>
+                        <TableHead>A/C</TableHead>
+                        <TableHead>Customer</TableHead>
+                        {/* <TableHead>ROLE</TableHead>
+                  <TableHead>STATUS</TableHead> */}
+                        {/* <TableHead>CONTACT</TableHead> */}
+                        <TableHead>Bill</TableHead>
+                        <TableHead>Paid Amount</TableHead>
+                        <TableHead>Stamp</TableHead>
+                        <TableHead>Description</TableHead>
+                        <TableHead className="text-right">ACTIONS</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {itemsData?.items?.map((user, index) => (
+                        <TableRow
+                          key={index}
+                          className="cursor-pointer hover:bg-gray-200/50 data-[selected=true]:bg-blue-100"
+                          onClick={(e) => {
+                            document
+                              .querySelectorAll("[data-selected]")
+                              .forEach((row) => {
+                                row.removeAttribute("data-selected");
+                              });
+                            e.currentTarget.setAttribute(
+                              "data-selected",
+                              "true"
+                            );
+                          }}
+                        >
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium">{index + 1}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium">
+                                {user?.customer?.account_number}
+                              </span>
+                            </div>
+                          </TableCell>
+
+                          <TableCell>
+                            <div className="flex items-center gap-3">
+                              <div className="relative">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100 text-sm font-medium text-purple-600 ring-2 ring-white">
+                                  {user?.customer?.fullname
+                                    .split(" ")
+                                    .map((word) => word.charAt(0))
+                                    .join("")}
+                                </div>
+                                <div
+                                  className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white"
+                                  style={{
+                                    backgroundColor:
+                                      statusColors[`more-${user.status}`],
+                                  }}
+                                />
+                              </div>
+                              <div>
+                                <div className="font-medium text-gray-900">
+                                  {user?.customer?.fullname}
+                                </div>
+                                <div className="text-[12px]">
+                                  {user?.customer?.last_name || "-"}
+                                </div>
+                              </div>
+                            </div>
+                          </TableCell>
+
+                          {/* <TableCell>
+                          <div className="flex items-center gap-2">
+                            <User2 className="h-4 w-4 text-purple-600" />
+                            <span className="font-medium">
+                              {user.role.toUpperCase()}
+                            </span>
+                          </div>
+                        </TableCell> */}
+                          {/* <TableCell>
+                          <div className="flex items-center gap-2">
+                            <span
+                              className="inline-flex items-center rounded-md text-xs transition-colors font-medium px-2 py-0.5 capitalize"
+                              style={{
+                                backgroundColor: statusColors[user.status],
+                              }}
+                            >
+                              {user.status}
+                            </span>
+                          </div>
+                        </TableCell> */}
+                          {/* <TableCell>
+                          {user.pNumber ? (
+                            <>
+                              {user.pNumber.split("/").map((num, index) => {
+                                return (
+                                  <div
+                                    key={index}
+                                    className="mb-1 flex gap-2 items-center bg-orange-300 overflow-hidden w-fit pr-2 rounded-md"
+                                  >
+                                    <div
+                                      className="hover:bg-orange-400 py-2 px-2"
+                                      onClick={() => {
+                                        window.location.href = `tel:${num}`;
+                                      }}
+                                    >
+                                      <PhoneCall className="h-4 w-4" />
+                                    </div>
+                                    <span>{num}</span>
+                                  </div>
+                                );
+                              })}
+                            </>
+                          ) : (
+                            "-"
+                          )}
+                        </TableCell> */}
+
+                          <TableCell>{user.amount || "-"}</TableCell>
+                          <TableCell>{user.paid_amount || "-"}</TableCell>
+                          <TableCell>
+                            <div className="flex flex-col justify-center">
+                              <span className="text-[16px]">
+                                {user.createdAt
+                                  ? new Date(user.createdAt).toLocaleString(
+                                      "en-GB",
+                                      {
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                        timeZone: "UTC",
+                                        hour12: true,
+                                        day: "numeric",
+                                        month: "short",
+                                        year: "numeric",
+                                        weekday: "long",
+                                      }
+                                    )
+                                  : null}
+                              </span>
+                              <span className="text-[12px] text-purple-700 font-semibold">
+                                {user?.user?.username || "-"}
+                              </span>
+                            </div>
+                          </TableCell>
+
+                          {/* <TableCell>
+                          {user.customerPayments.length >= 1 ? (
+                            <div>
+                              <span className="text-sm text-muted-foreground">
+                                {user?.customerPayments.reduce(
+                                  (acc, user) =>
+                                    user.isDelete ? acc : acc + user.amount,
+                                  0
+                                ) -
+                                  user?.customerPayments?.reduce(
+                                    (acc, user) =>
+                                      user.isDelete
+                                        ? acc
+                                        : acc + user.paid_amount,
+                                    0
+                                  )}
+                              </span>
+                            </div>
+                          ) : (
+                            "-"
+                          )}
+                        </TableCell> */}
+                          <TableCell>{user.description || "-"}</TableCell>
+
+                          <TableCell>
+                            <div className="flex items-center justify-end gap-2">
+                              <Button
+                                asChild
+                                variant="outline"
+                                className="border-2 border-blue-800"
+                              >
+                                <Link
+                                  href={`/dashboard/customers/${user?.customer?.id}/payments`}
+                                  className="!py-1 !px-3 rounded-sm !h-[2rem] hover:!bg-blue-800 hover:!text-white"
+                                >
+                                  Account
+                                </Link>
+                              </Button>
+                              {/* <Button
+                              variant="ghost"
+                              size="icon"
+                              asChild
+                              className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
+                            >
+                              <Link
+                                href={`/dashboard/customers/${user.id}/view`}
+                              >
+                                <Eye className="h-4 w-4" />
+                              </Link>
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
+                              asChild
+                            >
+                              <Link
+                                href={`/dashboard/customers/${user.id}/edit`}
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </Link>
+                            </Button> */}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+          <div
+            className="bg-black/40 fixed top-0 left-0 h-full w-full z-40"
+            onClick={handleClose}
+          ></div>
+        </>
+      ) : null}
     </div>
   );
 };
