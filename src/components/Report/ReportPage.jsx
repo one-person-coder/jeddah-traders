@@ -242,6 +242,29 @@ function formatDate(dateStr) {
   }); // Example: "1-Mar-2024, Friday"
 }
 
+function convertDateFormat(dateStr) {
+  const parts = dateStr.split(" "); // Split by space
+  const day = parts[1].padStart(2, "0"); // Ensure two-digit day
+  const monthMap = {
+    Jan: "01",
+    Feb: "02",
+    Mar: "03",
+    Apr: "04",
+    May: "05",
+    Jun: "06",
+    Jul: "07",
+    Aug: "08",
+    Sep: "09",
+    Oct: "10",
+    Nov: "11",
+    Dec: "12",
+  };
+  const month = monthMap[parts[2]]; // Convert short month to number
+  const year = parts[3]; // Get year
+
+  return `${year}-${month}-${day}`; // Return in YYYY-MM-DD format
+}
+
 function aggregateDailyData(dataList) {
   let dailySummary = {};
 
@@ -321,6 +344,7 @@ const ReportPage = ({ userData }) => {
   const [statusFilter, setStatusFilter] = useState("reports");
   const [itemsData, setItemsData] = useState();
   const [monthlyData, setMonthlyData] = useState([]);
+  const [isUpdate, setIsUpdate] = useState();
   const [allDaysData, setAllDaysData] = useState([]);
   const [users, setUsers] = useState([]);
   const [total, setTotal] = useState({
@@ -417,6 +441,22 @@ const ReportPage = ({ userData }) => {
     setIsVisible(true);
     console.log(daysData);
   };
+
+  const handleViewClick = (date) => {
+    const formattedDate = convertDateFormat(date);
+    setStartDate(formattedDate);
+    setEndDate(formattedDate);
+    setAllDaysData([]);
+    setIsVisible(false);
+    setIsUpdate(true);
+  };
+
+  useEffect(() => {
+    if (isUpdate) {
+      filterDateRangeData();
+      setIsUpdate(false);
+    }
+  }, [isUpdate]);
 
   return (
     <div>
@@ -1161,7 +1201,90 @@ const ReportPage = ({ userData }) => {
                     </CardContent>
                   </Card>
                 </div>
-              ) : null}
+              ) : (
+                <div className="fixed z-[600] w-full sm:w-[80%] left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%]">
+                  <Card className="border-none shadow-light">
+                    <CardContent className="p-6">
+                      <div>
+                        <h3 className="text-lg font-semibold mb-4 text-center text-gray-900">
+                          All Working Dates
+                        </h3>
+                      </div>
+                      <div className="rounded-lg border shadow-sm max-h-[500px] overflow-scroll">
+                        <Table>
+                          <TableHeader>
+                            <TableRow className="bg-gray-50">
+                              <TableHead>Sr.</TableHead>
+                              <TableHead>Date</TableHead>
+                              <TableHead>Count</TableHead>
+                              <TableHead>Bill</TableHead>
+                              <TableHead>Paid Amount</TableHead>
+                              <TableHead className="text-right">
+                                Action
+                              </TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {allDaysData?.map((user, index) => (
+                              <TableRow
+                                key={index}
+                                className="cursor-pointer hover:bg-gray-200/50 data-[selected=true]:bg-blue-100"
+                                onClick={(e) => {
+                                  document
+                                    .querySelectorAll("[data-selected]")
+                                    .forEach((row) => {
+                                      row.removeAttribute("data-selected");
+                                    });
+                                  e.currentTarget.setAttribute(
+                                    "data-selected",
+                                    "true"
+                                  );
+                                }}
+                              >
+                                <TableCell>
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-medium">
+                                      {index + 1}
+                                    </span>
+                                  </div>
+                                </TableCell>
+                                <TableCell>
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-medium">
+                                      {user?.date}
+                                    </span>
+                                  </div>
+                                </TableCell>
+
+                                <TableCell>{user?.count || "-"}</TableCell>
+                                <TableCell>
+                                  {user?.totalAmount || "-"}
+                                </TableCell>
+                                <TableCell>
+                                  {user?.totalPaidAmount || "-"}
+                                </TableCell>
+                                <TableCell>
+                                  <div className="flex items-center justify-end gap-2">
+                                    <Button
+                                      variant="outline"
+                                      className="border-2 border-blue-800 hover:bg-blue-800 duration-200 font-semibold hover:text-white"
+                                      onClick={() =>
+                                        handleViewClick(user?.date)
+                                      }
+                                    >
+                                      View
+                                    </Button>
+                                  </div>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
             </>
           )}
 
