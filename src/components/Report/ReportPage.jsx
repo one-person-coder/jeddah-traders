@@ -690,7 +690,7 @@ const ReportPage = ({ userData }) => {
 
       {isVisible ? (
         <>
-          <div className="fixed top-0 z-[600] w-full sm:w-[80%] left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%]">
+          <div className="fixed z-[600] w-full sm:w-[80%] left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%]">
             <Card className="border-none shadow-light">
               <CardContent className="p-6">
                 <div>
