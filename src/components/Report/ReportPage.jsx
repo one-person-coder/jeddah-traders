@@ -34,9 +34,9 @@ function getCurrentFormattedDate() {
 }
 
 function formatSpecificDate(currentDate) {
-  const now = new Date(currentDate + "Z");
+  const now = new Date(currentDate + "Z"); // Force UTC
 
-  const day = now.getUTCDate(); // Get local day
+  const day = now.getUTCDate(); // Get UTC day
   const month = now.toLocaleString("en-GB", {
     month: "short",
     timeZone: "UTC",
@@ -87,7 +87,7 @@ function filterUsersByPaymentDate(payments, startDate, endDate) {
     Dec: "12",
   };
 
-  // Function to convert "3-Mar-2025, Monday" to Date object
+  // Function to convert "3-Mar-2025, Monday" to Date object in UTC
   function parseDate(dateStr, isStartDate) {
     let cleanDateStr = dateStr.split(",")[0]; // "3-Mar-2025"
     let [day, monthStr, year] = cleanDateStr.split("-");
@@ -97,8 +97,8 @@ function filterUsersByPaymentDate(payments, startDate, endDate) {
       return new Date("Invalid Date");
     }
 
-    // Create the date in local time (without timezone shifts)
-    let date = new Date(year, monthMap[monthStr] - 1, day);
+    // Create the date in UTC
+    let date = new Date(Date.UTC(year, monthMap[monthStr] - 1, day));
 
     // Set time to the beginning of the day (00:00:00.000) for start date
     // Set time to the end of the day (23:59:59.999) for end date
@@ -120,8 +120,9 @@ function filterUsersByPaymentDate(payments, startDate, endDate) {
     return [];
   }
 
+  // Filter payments based on the date range
   return payments.filter((payment) => {
-    const paymentDate = new Date(payment.createdAt);
+    const paymentDate = new Date(payment.createdAt); // createdAt is already in UTC
 
     return (
       paymentDate.getTime() >= start.getTime() &&
@@ -236,7 +237,7 @@ const ReportPage = ({ userData }) => {
       formatSpecificDate(convertToDateInputFormat(formattedDate)),
       formatSpecificDate(convertToDateInputFormat(formattedDate))
     );
-  
+    console.log(filteredUsers)
     setUsers(filteredUsers || []);
   
     const isoDate = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
