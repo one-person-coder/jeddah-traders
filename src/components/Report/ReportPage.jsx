@@ -32,6 +32,7 @@ function getCurrentFormattedDate() {
 
   return `${day}-${month}-${year}, ${weekday}`;
 }
+
 function formatSpecificDate(currentDate) {
   const now = new Date(currentDate + "Z");
 
@@ -152,6 +153,7 @@ function convertToDateInputFormat(dateStr) {
   return `${year}-${month}-${day}`;
 }
 
+
 function aggregateUserData(dataList) {
   let userSummary = {};
 
@@ -226,18 +228,17 @@ const ReportPage = ({ userData }) => {
 
   useEffect(() => {
     const formattedDate = getCurrentFormattedDate();
-    // setFormattedDate(formattedDate);
     setStartDate(convertToDateInputFormat(formattedDate));
     setEndDate(convertToDateInputFormat(formattedDate));
-
+  
     const filteredUsers = filterUsersByPaymentDate(
       mainUsers,
       formatSpecificDate(convertToDateInputFormat(formattedDate)),
       formatSpecificDate(convertToDateInputFormat(formattedDate))
     );
-
+  
     setUsers(filteredUsers || []);
-
+  
     const isoDate = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
     const daysAgo = calculateDaysAgo(isoDate);
     setStatsHeading(getStatsHeading(daysAgo));
@@ -250,12 +251,12 @@ const ReportPage = ({ userData }) => {
         formatSpecificDate(startDate),
         formatSpecificDate(endDate)
       );
-      setUsers(filteredUsers || []);
-
+  
       if (statusFilter === "users") {
         const filterData = aggregateUserData(filteredUsers);
-
         setUsers(filterData);
+      } else if (statusFilter === "reports") {
+        setUsers(filteredUsers || []);
       }
     }
   };
