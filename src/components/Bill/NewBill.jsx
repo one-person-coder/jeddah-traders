@@ -46,7 +46,7 @@ const inventory = [
   { id: 6, name: "Watch", price: 500 },
 ];
 
-export default function SaleEntry({ username }) {
+export default function SaleEntry({ username, userRole }) {
   const params = useParams();
   const [inventory, setInventory] = React.useState([]);
 
@@ -70,7 +70,7 @@ export default function SaleEntry({ username }) {
 
   const { id: customerId } = params;
   const [date, setDate] = React.useState(() => {
-    const now = new Date();
+    const now = new Date(new Date() + "Z");
     return now.toISOString().slice(0, 16);
   });
   const [selectedInventory, setSelectedInventory] = React.useState("");
@@ -195,20 +195,20 @@ export default function SaleEntry({ username }) {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="space-y-4">
                 {/* Date Picker */}
-                <div>
-                  <h3 className="font-semibold  mb-2 text-sm">
-                    Birth <span className="text-red-500 text-lg">*</span>
-                  </h3>
-                  <input
-                    type="datetime-local"
-                    name="date"
-                    className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[7px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
-                    onChange={(e) => setDate(e.target.value)}
-                    value={date}
-                  />
-                </div>
-
-                {/* Inventory Search */}
+                {userRole === "admin" ? (
+                  <div>
+                    <h3 className="font-semibold  mb-2 text-sm">
+                      Date <span className="text-red-500 text-lg">*</span>
+                    </h3>
+                    <input
+                      type="datetime-local"
+                      name="date"
+                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[7px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
+                      onChange={(e) => setDate(e.target.value)}
+                      value={date}
+                    />
+                  </div>
+                ) : null}
                 <div className="flex flex-col space-y-1.5">
                   <Label className="text-sm font-medium text-gray-700">
                     Select (Inventory)

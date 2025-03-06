@@ -38,6 +38,9 @@ const Payments = async ({ params }) => {
 
   const payments = await prisma.paymentRecord.findMany({
     where: { customer_id: parseInt(id) },
+    orderBy: {
+      createdAt: "asc",
+    },
     include: {
       user: true,
       customer: true,

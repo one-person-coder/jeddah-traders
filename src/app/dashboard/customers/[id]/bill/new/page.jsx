@@ -3,6 +3,7 @@ import React from "react";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import prisma from "@/lib/prisma";
+import { User } from "lucide-react";
 
 const MakeBill = async ({ params }) => {
   const { id } = await params;
@@ -16,6 +17,7 @@ const MakeBill = async ({ params }) => {
   if (user.role === "customer") {
     return redirect("/dashboard");
   }
+  
 
   const currentUser = await prisma.userInfo.findUnique({
     where: { id: parseInt(id) },
@@ -26,7 +28,7 @@ const MakeBill = async ({ params }) => {
   return (
     <div>
       {permissions.includes("make bill") ? (
-        <SaleEntry username={currentUser.username} />
+        <SaleEntry username={currentUser.username} userRole={user.role} />
       ) : (
         <h3 className="text-3xl text-center py-20 font-bold text-red-600">
           Oops Not Found!

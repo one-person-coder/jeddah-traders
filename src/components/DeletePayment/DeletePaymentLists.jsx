@@ -331,11 +331,12 @@ export default function DeletePaymentLists({ data }) {
                   <TableRow className="bg-gray-50">
                     <TableHead>Sr.</TableHead>
                     <TableHead>USER</TableHead>
-                    <TableHead>DATE</TableHead>
                     {/* <TableHead>STATUS</TableHead> */}
                     <TableHead>Bill</TableHead>
                     <TableHead>PAID AMOUNT</TableHead>
                     <TableHead>DESCRIPTION</TableHead>
+                    <TableHead>Create Date</TableHead>
+                    <TableHead>Delete Date</TableHead>
                     <TableHead>ACTIONS</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -399,26 +400,6 @@ export default function DeletePaymentLists({ data }) {
                             </div>
                           </div>
                         </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <User2 className="h-4 w-4 text-purple-600" />
-                            <span className="font-medium">
-                              {new Date(user.createdAt).toLocaleDateString(
-                                "en-US",
-                                {
-                                  month: "short",
-                                  day: "2-digit",
-                                  year: "numeric",
-                                  timeZone: "UTC",
-                                  hour12: true,
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                  second: "2-digit",
-                                }
-                              )}
-                            </span>
-                          </div>
-                        </TableCell>
                         {/* <TableCell>
                           <div className="flex items-center gap-2">
                             <span
@@ -457,6 +438,46 @@ export default function DeletePaymentLists({ data }) {
                           <span className="text-sm text-muted-foreground">
                             {user.description}
                           </span>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <User2 className="h-4 w-4 text-purple-600" />
+                            <span className="font-medium">
+                              {new Date(user.createdAt).toLocaleDateString(
+                                "en-US",
+                                {
+                                  month: "short",
+                                  day: "2-digit",
+                                  year: "numeric",
+                                  timeZone: "UTC",
+                                  hour12: true,
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                  second: "2-digit",
+                                }
+                              )}
+                            </span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <User2 className="h-4 w-4 text-purple-600" />
+                            <span className="font-medium">
+                              {new Date(user.updatedAt).toLocaleDateString(
+                                "en-US",
+                                {
+                                  month: "short",
+                                  day: "2-digit",
+                                  year: "numeric",
+                                  timeZone: "UTC",
+                                  hour12: true,
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                  second: "2-digit",
+                                }
+                              )}
+                            </span>
+                          </div>
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center justify-end gap-2">

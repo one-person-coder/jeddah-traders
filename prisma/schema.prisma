@@ -8,21 +8,21 @@ datasource db {
 }
 
 model UserInfo {
-  id                      Int             @id @default(autoincrement())
-  account_number          Int?            @unique
-  fullname                String
-  father_name             String?
-  last_name               String?
-  username                String          @unique
-  email                   String          @unique
-  pNumber                 String?
-  cnic_no                 String?
-  user_img                Bytes?
-  cnic_back_img           Bytes?
-  cnic_front_img          Bytes?
-  address                 String?
-  description             String?
-  
+  id             Int     @id @default(autoincrement())
+  account_number Int?    @unique
+  fullname       String
+  father_name    String?
+  last_name      String?
+  username       String  @unique
+  email          String  @unique
+  pNumber        String?
+  cnic_no        String?
+  user_img       Bytes?
+  cnic_back_img  Bytes?
+  cnic_front_img Bytes?
+  address        String?
+  description    String?
+
   family_member_name      String?
   family_relation         String?
   family_contact_number   String?
@@ -30,17 +30,18 @@ model UserInfo {
   refferal_name           String?
   refferal_account_number String?
   refferal_description    String?
-  
-  permissions             String?         @db.VarChar(600)
-  password                String          @db.VarChar(255)
-  gender                  Gender          @default(male)
-  date                    DateTime
-  status                  Status          @default(pending)
-  role                    Role            @default(customer)
-  createdAt               DateTime        @default(now())
-  updatedAt               DateTime        @updatedAt
-  paymentRecords          PaymentRecord[] @relation("UserPayments")
-  customerPayments        PaymentRecord[] @relation("CustomerPayments")
+
+  permissions      String?         @db.VarChar(600)
+  password         String          @db.VarChar(255)
+  gender           Gender          @default(male)
+  date             DateTime
+  status           Status          @default(pending)
+  role             Role            @default(customer)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  paymentRecords   PaymentRecord[] @relation("UserPayments")
+  customerPayments PaymentRecord[] @relation("CustomerPayments")
+  deletedPayments  PaymentRecord[] @relation("DeletedByUser")
 }
 
 enum Gender {
@@ -81,27 +82,29 @@ model PaymentRecord {
   description String?
   method      PaymentMethod?
   createdAt   DateTime
-  updatedAt   DateTime       @updatedAt
+  updatedAt   DateTime       @default(now())
   isDelete    Boolean?       @default(false)
+  deletedBy   Int?
   total       Float?
   less        Float?
   payment     Float?
 
-  user       UserInfo      @relation(name: "UserPayments", fields: [user_id], references: [id], onDelete: NoAction)
-  customer   UserInfo      @relation(name: "CustomerPayments", fields: [customer_id], references: [id], onDelete: NoAction)
-  Product    Product?      @relation(fields: [product_id], references: [id], onDelete: SetNull)
-  product_id Int?
-  items      PaymentItem[] @relation("PaymentToItems") // One-to-Many relation
+  user          UserInfo      @relation(name: "UserPayments", fields: [user_id], references: [id], onDelete: NoAction)
+  customer      UserInfo      @relation(name: "CustomerPayments", fields: [customer_id], references: [id], onDelete: NoAction)
+  Product       Product?      @relation(fields: [product_id], references: [id], onDelete: SetNull)
+  product_id    Int?
+  items         PaymentItem[] @relation("PaymentToItems")
+  deletedByUser UserInfo?     @relation(name: "DeletedByUser", fields: [deletedBy], references: [id], onDelete: SetNull)
 }
 
 model PaymentItem {
   id         Int     @id @default(autoincrement())
-  payment_id Int // PaymentRecord ka ID
-  product_id Int? // Product ka ID
-  name       String? // Product ka naam
-  qty        Int? // Quantity
-  price      Float? // Single product ki price
-  amount     Float? // Total amount (price * qty)
+  payment_id Int
+  product_id Int?
+  name       String?
+  qty        Int?
+  price      Float?
+  amount     Float?
 
   paymentRecord PaymentRecord @relation(name: "PaymentToItems", fields: [payment_id], references: [id], onDelete: Cascade)
   product       Product?      @relation(fields: [product_id], references: [id], onDelete: SetNull)

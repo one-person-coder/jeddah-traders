@@ -65,7 +65,7 @@ export async function POST(request) {
         email: email || user.email,
         pNumber: pNumber || user.pNumber,
         gender: gender || user.gender,
-        date: date ? new Date(createdAt + "Z").toISOString() : user.date,
+        date: date ? new Date(date + "Z").toISOString() : user.date,
       },
     });
 

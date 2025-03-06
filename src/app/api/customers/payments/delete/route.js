@@ -30,7 +30,11 @@ export async function POST(request) {
 
     const deletedUser = await prisma.paymentRecord.update({
       where: { id: parseInt(id) },
-      data: { isDelete: true },
+      data: {
+        isDelete: true,
+        deletedBy: parseInt(login.id),
+        updatedAt: new Date(new Date() + "Z").toISOString(),
+      },
     });
 
     if (!deletedUser) {
