@@ -34,6 +34,15 @@ const Payments = async ({ params }) => {
 
   const currentUser = await prisma.userInfo.findUnique({
     where: { id: parseInt(id) },
+    select: {
+      username: true,
+      fullname: true,
+      pNumber: true,
+      cnic_no: true,
+      address: true,
+      user_img: true,
+      account_number: true,
+    },
   });
 
   const payments = await prisma.paymentRecord.findMany({
@@ -41,12 +50,43 @@ const Payments = async ({ params }) => {
     orderBy: {
       createdAt: "asc",
     },
-    include: {
-      user: true,
-      customer: true,
+    select: {
+      user: {
+        select: {
+          username: true,
+          fullname: true,
+          pNumber: true,
+          cnic_no: true,
+          address: true,
+          account_number: true,
+        },
+      },
+      customer: {
+        select: {
+          username: true,
+          fullname: true,
+          pNumber: true,
+          cnic_no: true,
+          address: true,
+          account_number: true,
+        },
+      },
+      id: true,
+      amount: true,
+      description: true,
+      method: true,
+      paid_amount: true,
+      total: true,
+      less: true,
+      payment: true,
+      isDelete: true,
+      createdAt: true,
+      updatedAt: true,
       items: true,
     },
   });
+
+  console.log("user", payments);
 
   let base64String;
   let imageSrc;

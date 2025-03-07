@@ -45,6 +45,8 @@ const CustomersPage = async () => {
     },
   });
 
+  console.log("customers", users)
+
   const permissions = user?.permissions ? user.permissions.split(",") : [];
   const userRole = user?.role;
 

@@ -22,9 +22,41 @@ export async function POST(request) {
 
   const payments = await prisma.paymentRecord.findMany({
     where: { customer_id: parseInt(customerId) },
-    include: {
-      user: true,
-      customer: true,
+    orderBy: {
+      createdAt: "asc",
+    },
+    select: {
+      user: {
+        select: {
+          username: true,
+          fullname: true,
+          pNumber: true,
+          cnic_no: true,
+          address: true,
+          account_number: true,
+        },
+      },
+      customer: {
+        select: {
+          username: true,
+          fullname: true,
+          pNumber: true,
+          cnic_no: true,
+          address: true,
+          account_number: true,
+        },
+      },
+      id: true,
+      amount: true,
+      description: true,
+      method: true,
+      paid_amount: true,
+      total: true,
+      less: true,
+      payment: true,
+      isDelete: true,
+      createdAt: true,
+      updatedAt: true,
       items: true,
     },
   });
