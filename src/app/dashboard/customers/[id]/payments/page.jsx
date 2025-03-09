@@ -86,8 +86,6 @@ const Payments = async ({ params }) => {
     },
   });
 
-  console.log("user", payments);
-
   let base64String;
   let imageSrc;
 

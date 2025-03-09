@@ -339,7 +339,7 @@ function formatNumber(num) {
   return num.toLocaleString("en-US"); // Adds commas (e.g., 3,13,000)
 }
 
-const ReportPage = ({ userData }) => {
+const UserDashboard = ({ userData }) => {
   const [mainUsers, MainSetUsers] = useState([...userData]);
   const [statusFilter, setStatusFilter] = useState("reports");
   const [itemsData, setItemsData] = useState();
@@ -517,7 +517,7 @@ const ReportPage = ({ userData }) => {
       </div>
 
       <h2 className="text-xl font-semibold text-center text-gray-900">
-        Stats Date [
+        My Today Stats [
         <span className="font-semibold text-purple-700 text-lg">
           {" "}
           {formatSpecificDate(startDate)}
@@ -533,62 +533,22 @@ const ReportPage = ({ userData }) => {
           <CardContent className="p-6">
             <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-dashed">
               <h3 className="text-lg font-semibold mb-4 text-center text-gray-900">
-                Date Closing Report Filter
-              </h3>
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 ">
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="bg-white">
-                    <SelectValue placeholder="Reports" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="reports">Reports</SelectItem>
-                    <SelectItem value="users">Users</SelectItem>
-                  </SelectContent>
-                </Select>
-                <div>
-                  <input
-                    type="date"
-                    name="startDate"
-                    onChange={(e) => setStartDate(e.target.value)}
-                    value={startDate}
-                    className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[3px] px-3 !bg-white"
-                  />
-                </div>
-                <div>
-                  <input
-                    type="date"
-                    name="endDate"
-                    onChange={(e) => setEndDate(e.target.value)}
-                    value={endDate}
-                    className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[3px] px-3 !bg-white"
-                  />
-                </div>
-                <div className="lg:justify-self-end">
-                  <Button
-                    onClick={filterDateRangeData}
-                    className="bg-purple-500 hover:bg-purple-600"
-                  >
-                    Search
-                  </Button>
-                </div>
-              </div>
-              <h3 className="text-lg font-semibold mt-7 mb-4 text-center text-gray-900">
                 Final Reports
               </h3>
               <div className="flex justify-center items-center gap-3">
-                <Button
+                {/* <Button
                   variant="outline"
                   className="border-2 px-12 border-blue-800 hover:bg-blue-800 hover:text-white"
                   onClick={() => showMonthsData()}
                 >
                   Months
-                </Button>
+                </Button> */}
                 <Button
                   variant="outline"
                   className="border-2 px-12 border-blue-800 hover:bg-blue-800 hover:text-white"
                   onClick={() => showAllDaysData()}
                 >
-                  All Days
+                  My Closing
                 </Button>
               </div>
             </div>
@@ -1296,4 +1256,4 @@ const ReportPage = ({ userData }) => {
   );
 };
 
-export default ReportPage;
+export default UserDashboard;
