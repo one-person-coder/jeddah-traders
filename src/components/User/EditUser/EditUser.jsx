@@ -35,6 +35,8 @@ const permissions = [
   "delete customer",
   "view customer payments",
   "create customer payments",
+  "change payment date",
+  "change bill date",
   "delete customer payments",
   "print customer payments",
   "make bill",

@@ -28,7 +28,7 @@ const MakeBill = async ({ params }) => {
   return (
     <div>
       {permissions.includes("make bill") ? (
-        <SaleEntry username={currentUser.username} userRole={user.role} />
+        <SaleEntry username={currentUser.username} permissions={permissions} />
       ) : (
         <h3 className="text-3xl text-center py-20 font-bold text-red-600">
           Oops Not Found!

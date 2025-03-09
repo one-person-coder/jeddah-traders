@@ -55,9 +55,16 @@ const StatePage = async () => {
       },
     },
   });
+
   return (
     <div className="custom-width">
-      <Stats statsData={paymentData} />
+      {user?.role === "admin" ? (
+        <Stats statsData={paymentData} />
+      ) : (
+        <h3 className="text-3xl text-center py-20 font-bold text-red-600">
+          Oops Not Found!
+        </h3>
+      )}
     </div>
   );
 };

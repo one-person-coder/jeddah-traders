@@ -21,7 +21,7 @@ const RegisterPayment = async () => {
   return (
     <div>
       {permissions.includes("create customer payments") ? (
-        <NewPayment />
+        <NewPayment permissions={permissions} />
       ) : (
         <h3 className="text-3xl text-center py-20 font-bold text-red-600">
           Oops Not Found!

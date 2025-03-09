@@ -40,11 +40,6 @@ export default function Sidebar({ children, userType, permissions }) {
       icon: LayoutDashboard,
       url: "/dashboard",
     });
-    navigation.push({
-      title: "Stats",
-      icon: ChartColumn,
-      url: "/dashboard/stats",
-    });
 
     if (permissions.includes("view user")) {
       navigation.push({
@@ -71,6 +66,12 @@ export default function Sidebar({ children, userType, permissions }) {
     }
 
     if (userType === "admin") {
+      navigation.splice(1, 0, {
+        title: "Stats",
+        icon: ChartColumn,
+        url: "/dashboard/stats",
+      });
+
       navigation.push({
         title: "Reports",
         icon: NotebookText,

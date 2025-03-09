@@ -15,8 +15,13 @@ import {
 import { ChevronDown } from "lucide-react";
 import { Checkbox } from "../ui/checkbox";
 
-export default function NewPayment() {
+export default function NewPayment({ permissions }) {
   const { id } = useParams();
+  const [date, setDate] = useState(() => {
+    const now = new Date(new Date() + "Z");
+    return now.toISOString().slice(0, 16);
+  });
+
   const [registerFormData, setRegisterFormData] = useState({
     paidAmount: "",
     description: "",
@@ -31,6 +36,13 @@ export default function NewPayment() {
     if (e.target.type === "checkbox") return;
     setIsChecked((prev) => !prev);
   };
+
+  useEffect(() => {
+    setRegisterFormData({
+      ...registerFormData,
+      createdAt: date,
+    });
+  }, [date]);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -131,18 +143,22 @@ export default function NewPayment() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div>
-                    <h3 className="font-semibold  mb-2 text-sm">
-                      Payment Date{" "}
-                      <span className="text-red-500 text-lg">*</span>
-                    </h3>
-                    <input
-                      type="datetime-local"
-                      name="createdAt"
-                      onChange={handleInputChange}
-                      className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[7px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
-                    />
-                  </div>
+                  {permissions.includes("change payment date") ? (
+                    <div>
+                      <h3 className="font-semibold  mb-2 text-sm">
+                        Payment Date{" "}
+                        <span className="text-red-500 text-lg">*</span>
+                      </h3>
+                      <input
+                        type="datetime-local"
+                        name="createdAt"
+                        onChange={(e) => setDate(e.target.value)}
+                        value={date}
+                        className="w-full border-2 border-transparent outline outline-1 outline-[#d1cfd4] rounded-[6px] duration-200 py-[7px] px-3 focus-visible:outline-none focus:border-2 focus:border-[#8C57FF]"
+                      />
+                    </div>
+                  ) : null}
+
                   <div className="sm:col-span-2">
                     <h3 className="font-semibold mb-2 text-sm">
                       Enter Description

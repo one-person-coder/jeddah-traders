@@ -46,7 +46,7 @@ const inventory = [
   { id: 6, name: "Watch", price: 500 },
 ];
 
-export default function SaleEntry({ username, userRole }) {
+export default function SaleEntry({ username, permissions }) {
   const params = useParams();
   const [inventory, setInventory] = React.useState([]);
 
@@ -195,7 +195,7 @@ export default function SaleEntry({ username, userRole }) {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="space-y-4">
                 {/* Date Picker */}
-                {userRole === "admin" ? (
+                {permissions.includes("change bill date") ? (
                   <div>
                     <h3 className="font-semibold  mb-2 text-sm">
                       Date <span className="text-red-500 text-lg">*</span>
