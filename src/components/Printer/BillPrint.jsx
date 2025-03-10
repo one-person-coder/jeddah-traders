@@ -15,11 +15,16 @@ export const BillPrint = ({ payments, id }) => {
   const [users, setUsers] = useState(payments);
   const filterData = users.find((user) => user.id === Number.parseInt(id));
 
-  const notDeletedPayments = payments.filter((payment) => !payment.isDelete);
-
-  const filterPayments = notDeletedPayments.filter(
-    (user) => !user.isDelete && user.id <= id
+  const sortedUsers = [...users].sort(
+    (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
   );
+
+  const filterPayments = sortedUsers.filter(
+    (user) =>
+      !user.isDelete &&
+      new Date(user.createdAt) <= new Date(filterData.createdAt)
+  );
+
   const totalAmount = filterPayments.reduce(
     (acc, user) => (user.isDelete ? acc : acc + user.amount),
     0
@@ -41,7 +46,7 @@ export const BillPrint = ({ payments, id }) => {
     day: "2-digit",
     month: "short",
     year: "numeric",
-    timeZone: "UTC"
+    timeZone: "UTC",
   };
 
   const formattedDate = date

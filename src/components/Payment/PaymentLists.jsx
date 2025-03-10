@@ -136,15 +136,23 @@ export default function PaymentLists({ data, customerId, permissions }) {
 
   const handleInvoiceClick = (id, remaining, totalRemaining) => {
     const filterData = users.find((user) => user.id === id);
-    const filterPayments = users.filter(
-      (user) => !user.isDelete && user.id <= id
+    const sortedUsers = [...users].sort(
+      (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
     );
+
+    const filterPayments = sortedUsers.filter(
+      (user) =>
+        !user.isDelete &&
+        new Date(user.createdAt) <= new Date(filterData.createdAt)
+    );
+
+
     const totalAmount = filterPayments.reduce(
-      (acc, user) => (user.isDelete ? acc : acc + user.amount),
+      (acc, user) => user.isDelete !== true && acc + user.amount,
       0
     );
     const totalPaid = filterPayments.reduce(
-      (acc, user) => (user.isDelete ? acc : acc + user.paid_amount),
+      (acc, user) => user.isDelete !== true && acc + user.paid_amount,
       0
     );
     const totalPending = totalAmount - totalPaid;

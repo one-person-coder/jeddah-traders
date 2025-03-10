@@ -194,7 +194,7 @@ function aggregateMonthlyData(dataList) {
       let monthYear = dateObj.toLocaleString("en-GB", {
         month: "long",
         year: "numeric",
-        timeZone: "UTC", // Enforce UTC timezone
+        timeZone: "UTC",
       });
 
       if (!monthlySummary[monthYear]) {
@@ -224,11 +224,19 @@ function aggregateMonthlyData(dataList) {
       totalPaidAmount: formatNumber(entry.totalPaidAmount),
       market: formatNumber(entry.market),
     }))
-    .sort(
-      (a, b) =>
-        new Date(Date.parse("01 " + a.date)) -
-        new Date(Date.parse("01 " + b.date))
-    ); // Sorting correctly
+    .sort((a, b) => {
+      let [monthA, yearA] = a.date.split(" ");
+      let [monthB, yearB] = b.date.split(" ");
+
+      let dateA = new Date(
+        Date.UTC(yearA, new Date(Date.parse(monthA + " 1")).getMonth(), 1)
+      );
+      let dateB = new Date(
+        Date.UTC(yearB, new Date(Date.parse(monthB + " 1")).getMonth(), 1)
+      );
+
+      return dateA - dateB;
+    }); // Sorting correctly
 }
 
 function formatDate(dateStr) {
@@ -430,6 +438,8 @@ const ReportPage = ({ userData }) => {
 
   const showMonthsData = () => {
     const monthsData = aggregateMonthlyData(mainUsers);
+    console.log(monthsData);
+
     setMonthlyData(monthsData);
     setIsVisible(true);
   };
