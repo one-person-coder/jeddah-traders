@@ -15,7 +15,7 @@ const printer = async ({ params }) => {
 
   const permissions = user?.permissions ? user.permissions.split(",") : [];
   const payments = await prisma.paymentRecord.findMany({
-    where: { customer_id: parseInt(id) },
+    where: { customer_id: parseInt(id), isDelete: false },
     select: {
       id: true,
       amount: true,

@@ -190,6 +190,20 @@ export const BillPrint = ({ payments, id }) => {
                     </TableRow>
                   ) : null}
 
+                  {singleUser?.items?.length <= 0 ? (
+                    <>
+                      <TableRow className="border-b border-gray-400">
+                        <TableHead className="font-semibold !py-0 !h-[31px] border-r border-gray-400">
+                          Previous
+                        </TableHead>
+                        <TableCell className="border-gray-400 font-bold">
+                          {(singleUser?.totalPending || 0) +
+                            (singleUser?.paid_amount || 0)}
+                        </TableCell>
+                      </TableRow>
+                    </>
+                  ) : null}
+
                   <TableRow className="border-b border-gray-400">
                     <TableHead className="font-semibold !py-0 !h-[31px] border-r border-gray-400">
                       Payment
